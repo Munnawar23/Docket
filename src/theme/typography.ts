@@ -1,19 +1,32 @@
 import { moderateScale } from "react-native-size-matters";
 
-// ─── Font Families ───────────────────────────────────────────────────────
+// ─── Default Font Families (Plus Jakarta Sans) ────────────────────────────────
 export const fontFamily = {
   regular: "PlusJakartaSans-Regular",
   medium: "PlusJakartaSans-Medium",
   semiBold: "PlusJakartaSans-SemiBold",
   bold: "PlusJakartaSans-Bold",
 
-  // Semantic aliases for consistency
+  // Semantic aliases
   heading: "PlusJakartaSans-Bold",
   title: "PlusJakartaSans-SemiBold",
   text: "PlusJakartaSans-Regular",
 };
 
-// ─── Semantic Font Sizes (pre-scaled) ────────────────────────────────────
+// ─── Aesthetic Theme Font Family (Boogaloo + Nunito) ──────────────────────────
+export const aestheticFontFamily = {
+  regular: "Nunito-Regular",
+  medium: "Nunito-Regular",       // Nunito has no Medium — fallback to Regular
+  semiBold: "Nunito-SemiBold",
+  bold: "Nunito-Bold",
+
+  // Semantic aliases — Boogaloo for headings, Nunito for everything else
+  heading: "Boogaloo-Regular",
+  title: "Boogaloo-Regular",
+  text: "Nunito-Regular",
+};
+
+// ─── Semantic Font Sizes (pre-scaled) ────────────────────────────────────────
 export const fontSize = {
   caption: moderateScale(12),
   bodySm: moderateScale(13),

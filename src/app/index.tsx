@@ -1,6 +1,6 @@
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { type ThemeMode } from "@/store/themeStore";
-import { fontFamily, fontSize, spacing } from "@/theme/theme";
+import { fontSize, spacing } from "@/theme/theme";
 import * as Haptics from "expo-haptics";
 import { StatusBar } from "expo-status-bar";
 import {
@@ -16,7 +16,9 @@ import {
 export default function Index() {
   const {
     colors,
+    fontFamily,
     isDark,
+    isAestheticTheme,
     themeMode,
     setThemeMode,
     activeScheme,
@@ -45,6 +47,40 @@ export default function Index() {
       label: "System",
       icon: "⚙️",
       desc: `Auto (${systemColorScheme})`,
+    },
+  ];
+
+  const aestheticOptions: {
+    mode: ThemeMode;
+    label: string;
+    icon: string;
+    desc: string;
+    bg: string;
+    accent: string;
+  }[] = [
+    {
+      mode: "rose",
+      label: "Rose",
+      icon: "🌸",
+      desc: "Soft & romantic",
+      bg: "#FFF0F5",
+      accent: "#F43F8E",
+    },
+    {
+      mode: "sky",
+      label: "Sky",
+      icon: "☁️",
+      desc: "Airy & calm",
+      bg: "#F0F8FF",
+      accent: "#38BDF8",
+    },
+    {
+      mode: "butter",
+      label: "Butter",
+      icon: "🧈",
+      desc: "Warm & cozy",
+      bg: "#FFFDE7",
+      accent: "#F59E0B",
     },
   ];
 
@@ -92,43 +128,64 @@ export default function Index() {
     },
   ];
 
+  // Status bar: dark text for light/aesthetic themes, light text for dark theme
+  const statusBarStyle = isDark ? "light" : "dark";
+
   return (
     <SafeAreaView
       style={[styles.safeArea, { backgroundColor: colors.background }]}
     >
-      <StatusBar style={isDark ? "light" : "dark"} />
+      <StatusBar style={statusBarStyle} />
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
         {/* Header Section */}
         <View style={styles.header}>
-          <Text style={[styles.appTitle, { color: colors.text }]}>
+          <Text
+            style={[
+              styles.appTitle,
+              { color: colors.text, fontFamily: fontFamily.heading },
+            ]}
+          >
             Docket 📋
           </Text>
-          <Text style={[styles.appSubtitle, { color: colors.subtext }]}>
+          <Text
+            style={[
+              styles.appSubtitle,
+              { color: colors.subtext, fontFamily: fontFamily.text },
+            ]}
+          >
             Minimal Notes Theme Demo
           </Text>
           <View
             style={[
               styles.badge,
               {
-                backgroundColor: isDark
-                  ? "rgba(251, 191, 36, 0.15)"
-                  : "rgba(245, 158, 11, 0.15)",
+                backgroundColor: `${colors.primary}22`,
               },
             ]}
           >
-            <Text style={[styles.badgeText, { color: colors.primary }]}>
-              Active: {activeScheme.toUpperCase()} MODE ({themeMode})
+            <Text
+              style={[
+                styles.badgeText,
+                { color: colors.primary, fontFamily: fontFamily.bold },
+              ]}
+            >
+              Active: {activeScheme.toUpperCase()} ({themeMode})
             </Text>
           </View>
         </View>
 
-        {/* 3 Theme Switcher Buttons */}
+        {/* Standard Theme Switcher */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: colors.text }]}>
-            Choose Theme Mode
+          <Text
+            style={[
+              styles.sectionTitle,
+              { color: colors.text, fontFamily: fontFamily.title },
+            ]}
+          >
+            Default Themes
           </Text>
           <View style={styles.buttonRow}>
             {themeOptions.map((item) => {
@@ -153,11 +210,7 @@ export default function Index() {
                     style={[
                       styles.buttonLabel,
                       {
-                        color: isSelected
-                          ? isDark
-                            ? "#121417"
-                            : "#FFFFFF"
-                          : colors.text,
+                        color: isSelected ? "#FFFFFF" : colors.text,
                         fontFamily: isSelected
                           ? fontFamily.bold
                           : fontFamily.medium,
@@ -171,10 +224,9 @@ export default function Index() {
                       styles.buttonDesc,
                       {
                         color: isSelected
-                          ? isDark
-                            ? "rgba(18, 20, 23, 0.8)"
-                            : "rgba(255, 255, 255, 0.9)"
+                          ? "rgba(255,255,255,0.85)"
                           : colors.subtext,
+                        fontFamily: fontFamily.regular,
                       },
                     ]}
                   >
@@ -186,9 +238,137 @@ export default function Index() {
           </View>
         </View>
 
+        {/* ✨ Aesthetic Themes */}
+        <View style={styles.section}>
+          <Text
+            style={[
+              styles.sectionTitle,
+              { color: colors.text, fontFamily: fontFamily.title },
+            ]}
+          >
+            ✨ Aesthetic Themes
+          </Text>
+          <Text
+            style={[
+              styles.sectionSubtitle,
+              { color: colors.subtext, fontFamily: fontFamily.text },
+            ]}
+          >
+            Standalone palette + Boogaloo & Nunito fonts
+          </Text>
+          <View style={styles.aestheticRow}>
+            {aestheticOptions.map((item) => {
+              const isSelected = themeMode === item.mode;
+              return (
+                <TouchableOpacity
+                  key={item.mode}
+                  activeOpacity={0.75}
+                  onPress={() => handleSelectMode(item.mode)}
+                  style={[
+                    styles.aestheticButton,
+                    {
+                      backgroundColor: item.bg,
+                      borderColor: isSelected ? item.accent : `${item.accent}44`,
+                      borderWidth: isSelected ? 2.5 : 1.5,
+                    },
+                  ]}
+                >
+                  {/* Selected indicator dot */}
+                  {isSelected && (
+                    <View
+                      style={[
+                        styles.selectedDot,
+                        { backgroundColor: item.accent },
+                      ]}
+                    />
+                  )}
+                  <Text style={styles.aestheticIcon}>{item.icon}</Text>
+                  <Text
+                    style={[
+                      styles.aestheticLabel,
+                      {
+                        color: isSelected ? item.accent : "#333",
+                        fontFamily: "Boogaloo-Regular",
+                      },
+                    ]}
+                  >
+                    {item.label}
+                  </Text>
+                  <Text
+                    style={[
+                      styles.aestheticDesc,
+                      {
+                        color: isSelected ? item.accent : "#888",
+                        fontFamily: "Nunito-Regular",
+                      },
+                    ]}
+                  >
+                    {item.desc}
+                  </Text>
+                  {/* Color preview strip */}
+                  <View
+                    style={[
+                      styles.accentStrip,
+                      { backgroundColor: item.accent },
+                    ]}
+                  />
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+
+          {/* Font preview when aesthetic theme active */}
+          {isAestheticTheme && (
+            <View
+              style={[
+                styles.fontPreviewCard,
+                { backgroundColor: colors.card, borderColor: colors.border },
+              ]}
+            >
+              <Text
+                style={[
+                  styles.fontPreviewHeading,
+                  { color: colors.primary, fontFamily: "Boogaloo-Regular" },
+                ]}
+              >
+                Boogaloo — Heading Style
+              </Text>
+              <Text
+                style={[
+                  styles.fontPreviewBody,
+                  { color: colors.text, fontFamily: "Nunito-Regular" },
+                ]}
+              >
+                Nunito Regular — body text flows cleanly
+              </Text>
+              <Text
+                style={[
+                  styles.fontPreviewBody,
+                  { color: colors.subtext, fontFamily: "Nunito-SemiBold" },
+                ]}
+              >
+                Nunito SemiBold — labels & subtitles
+              </Text>
+              <Text
+                style={[
+                  styles.fontPreviewBody,
+                  { color: colors.text, fontFamily: "Nunito-Bold" },
+                ]}
+              >
+                Nunito Bold — section headings
+              </Text>
+            </View>
+          )}
+        </View>
+
         {/* Color Palette List */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: colors.text }]}>
+          <Text
+            style={[
+              styles.sectionTitle,
+              { color: colors.text, fontFamily: fontFamily.title },
+            ]}
+          >
             Active Color Palette ({paletteItems.length} Tokens)
           </Text>
           <View style={styles.paletteContainer}>
@@ -214,14 +394,26 @@ export default function Index() {
                 />
                 <View style={styles.paletteInfo}>
                   <View style={styles.paletteTitleRow}>
-                    <Text style={[styles.tokenName, { color: colors.text }]}>
+                    <Text
+                      style={[
+                        styles.tokenName,
+                        { color: colors.text, fontFamily: fontFamily.semiBold },
+                      ]}
+                    >
                       {item.name}
                     </Text>
-                    <Text style={[styles.tokenHex, { color: colors.primary }]}>
+                    <Text
+                      style={[styles.tokenHex, { color: colors.primary }]}
+                    >
                       {item.hex}
                     </Text>
                   </View>
-                  <Text style={[styles.tokenUsage, { color: colors.subtext }]}>
+                  <Text
+                    style={[
+                      styles.tokenUsage,
+                      { color: colors.subtext, fontFamily: fontFamily.regular },
+                    ]}
+                  >
                     {item.usage}
                   </Text>
                 </View>
@@ -232,7 +424,12 @@ export default function Index() {
 
         {/* Live Note Card Preview */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: colors.text }]}>
+          <Text
+            style={[
+              styles.sectionTitle,
+              { color: colors.text, fontFamily: fontFamily.title },
+            ]}
+          >
             Live Note Preview
           </Text>
           <View
@@ -245,28 +442,42 @@ export default function Index() {
               <View
                 style={[
                   styles.previewTag,
-                  {
-                    backgroundColor: isDark
-                      ? "rgba(251, 191, 36, 0.2)"
-                      : "rgba(245, 158, 11, 0.15)",
-                  },
+                  { backgroundColor: `${colors.primary}22` },
                 ]}
               >
                 <Text
-                  style={[styles.previewTagText, { color: colors.primary }]}
+                  style={[
+                    styles.previewTagText,
+                    { color: colors.primary, fontFamily: fontFamily.bold },
+                  ]}
                 >
                   Productivity
                 </Text>
               </View>
-              <Text style={[styles.previewDate, { color: colors.subtext }]}>
+              <Text
+                style={[
+                  styles.previewDate,
+                  { color: colors.subtext, fontFamily: fontFamily.medium },
+                ]}
+              >
                 Today, 3:30 PM
               </Text>
             </View>
 
-            <Text style={[styles.previewTitle, { color: colors.text }]}>
+            <Text
+              style={[
+                styles.previewTitle,
+                { color: colors.text, fontFamily: fontFamily.heading },
+              ]}
+            >
               Design System & Scaled Typography
             </Text>
-            <Text style={[styles.previewBody, { color: colors.subtext }]}>
+            <Text
+              style={[
+                styles.previewBody,
+                { color: colors.subtext, fontFamily: fontFamily.text },
+              ]}
+            >
               Responsive spacing and typography scale seamlessly across devices
               with react-native-size-matters.
             </Text>
@@ -280,10 +491,20 @@ export default function Index() {
             { backgroundColor: colors.card, borderColor: colors.border },
           ]}
         >
-          <Text style={[styles.infoTitle, { color: colors.text }]}>
+          <Text
+            style={[
+              styles.infoTitle,
+              { color: colors.text, fontFamily: fontFamily.bold },
+            ]}
+          >
             💾 Persistent State
           </Text>
-          <Text style={[styles.infoText, { color: colors.subtext }]}>
+          <Text
+            style={[
+              styles.infoText,
+              { color: colors.subtext, fontFamily: fontFamily.regular },
+            ]}
+          >
             Theme mode changes are automatically saved to storage via{" "}
             <Text
               style={{ color: colors.primary, fontFamily: fontFamily.semiBold }}
@@ -314,12 +535,10 @@ const styles = StyleSheet.create({
   },
   appTitle: {
     fontSize: fontSize.heading,
-    fontFamily: fontFamily.bold,
     letterSpacing: -0.5,
   },
   appSubtitle: {
     fontSize: fontSize.body,
-    fontFamily: fontFamily.regular,
     marginTop: spacing.vXs,
   },
   badge: {
@@ -330,7 +549,6 @@ const styles = StyleSheet.create({
   },
   badgeText: {
     fontSize: fontSize.caption,
-    fontFamily: fontFamily.bold,
     letterSpacing: 0.5,
   },
   section: {
@@ -338,9 +556,12 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: fontSize.title,
-    fontFamily: fontFamily.semiBold,
-    marginBottom: spacing.sectionHeaderBottom,
+    marginBottom: 4,
     letterSpacing: -0.2,
+  },
+  sectionSubtitle: {
+    fontSize: fontSize.caption,
+    marginBottom: spacing.sectionHeaderBottom,
   },
   buttonRow: {
     flexDirection: "row",
@@ -361,14 +582,66 @@ const styles = StyleSheet.create({
   },
   buttonLabel: {
     fontSize: fontSize.body,
-    fontFamily: fontFamily.medium,
     marginBottom: 2,
   },
   buttonDesc: {
     fontSize: fontSize.caption - 1,
-    fontFamily: fontFamily.regular,
     textAlign: "center",
   },
+  // Aesthetic themes
+  aestheticRow: {
+    flexDirection: "row",
+    gap: spacing.itemGap,
+  },
+  aestheticButton: {
+    flex: 1,
+    paddingVertical: spacing.vMd,
+    paddingHorizontal: spacing.sm,
+    borderRadius: spacing.md,
+    alignItems: "center",
+    overflow: "hidden",
+  },
+  selectedDot: {
+    position: "absolute",
+    top: spacing.vXs,
+    right: spacing.xs,
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+  },
+  aestheticIcon: {
+    fontSize: fontSize.heading,
+    marginBottom: spacing.vXs,
+  },
+  aestheticLabel: {
+    fontSize: fontSize.bodyLg,
+    marginBottom: 2,
+  },
+  aestheticDesc: {
+    fontSize: fontSize.caption - 1,
+    textAlign: "center",
+    marginBottom: spacing.vSm,
+  },
+  accentStrip: {
+    height: 3,
+    width: "60%",
+    borderRadius: 2,
+    marginTop: spacing.vXs,
+  },
+  fontPreviewCard: {
+    marginTop: spacing.vMd,
+    padding: spacing.lg,
+    borderRadius: spacing.md,
+    borderWidth: 1,
+    gap: spacing.vXs,
+  },
+  fontPreviewHeading: {
+    fontSize: fontSize.cardTitle,
+  },
+  fontPreviewBody: {
+    fontSize: fontSize.body,
+  },
+  // Palette
   paletteContainer: {
     gap: spacing.itemGap,
   },
@@ -397,7 +670,6 @@ const styles = StyleSheet.create({
   },
   tokenName: {
     fontSize: fontSize.bodyLg,
-    fontFamily: fontFamily.semiBold,
   },
   tokenHex: {
     fontSize: fontSize.caption,
@@ -405,8 +677,8 @@ const styles = StyleSheet.create({
   },
   tokenUsage: {
     fontSize: fontSize.caption,
-    fontFamily: fontFamily.regular,
   },
+  // Note preview
   previewCard: {
     padding: spacing.lg,
     borderRadius: spacing.md,
@@ -425,21 +697,17 @@ const styles = StyleSheet.create({
   },
   previewTagText: {
     fontSize: fontSize.caption,
-    fontFamily: fontFamily.bold,
   },
   previewDate: {
     fontSize: fontSize.caption,
-    fontFamily: fontFamily.medium,
   },
   previewTitle: {
     fontSize: fontSize.title,
-    fontFamily: fontFamily.semiBold,
     marginBottom: spacing.vXs,
     letterSpacing: -0.2,
   },
   previewBody: {
     fontSize: fontSize.body,
-    fontFamily: fontFamily.regular,
     lineHeight: spacing.vXl,
   },
   infoCard: {
@@ -450,12 +718,10 @@ const styles = StyleSheet.create({
   },
   infoTitle: {
     fontSize: fontSize.bodyLg,
-    fontFamily: fontFamily.bold,
     marginBottom: spacing.vXs,
   },
   infoText: {
     fontSize: fontSize.caption,
-    fontFamily: fontFamily.regular,
     lineHeight: spacing.vLg,
   },
 });
