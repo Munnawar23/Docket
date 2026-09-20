@@ -1330,6 +1330,25 @@
     invariant "^2.2.4"
     nullthrows "^1.1.1"
 
+"@react-navigation/drawer@^7.14.2":
+  version "7.14.2"
+  resolved "https://registry.yarnpkg.com/@react-navigation/drawer/-/drawer-7.14.2.tgz#7b221cbdef3c40e8ad3d9b0a585239f715e3b544"
+  integrity sha512-vHDJ5TlKZ2RWW1z+Zy7k4mwuo3kLXfhO2+EpDWBTPcaeb8b/3upouKDALQviWCQ1KqyUAme+DbE8cIoGcuSQvg==
+  dependencies:
+    "@react-navigation/elements" "^2.9.43"
+    color "^4.2.3"
+    react-native-drawer-layout "^4.2.10"
+    use-latest-callback "^0.2.4"
+
+"@react-navigation/elements@^2.9.43":
+  version "2.9.43"
+  resolved "https://registry.yarnpkg.com/@react-navigation/elements/-/elements-2.9.43.tgz#55adfac3ca360139cebad305744e5112d5246056"
+  integrity sha512-XOYpRfgT9RPV2VIoXeEfTVdmXwEPpHwkezDkZVsVNEN6rTWDo07BPyLmWsvXooczyMf3jHe9AB2p/U9lJArtiQ==
+  dependencies:
+    color "^4.2.3"
+    use-latest-callback "^0.2.4"
+    use-sync-external-store "^1.5.0"
+
 "@shopify/flash-list@2.0.2":
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/@shopify/flash-list/-/flash-list-2.0.2.tgz#644748f883fccf8cf2e0ca251e0ef88673b89120"
@@ -3674,7 +3693,7 @@ react-is@^19.1.0:
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-19.3.0.tgz#716028d67e9993d23a2d353c6d08a3c1ef2bbeb4"
   integrity sha512-UpMYezM4v5/18F28aC66AEsjXIgE02kyEMH6yLdgLXu/UTfa1Ntwck/nNLrbqJsEXW7gPb0coNO9FQse9WTovA==
 
-react-native-drawer-layout@^4.2.2:
+react-native-drawer-layout@^4.2.10, react-native-drawer-layout@^4.2.2:
   version "4.2.10"
   resolved "https://registry.yarnpkg.com/react-native-drawer-layout/-/react-native-drawer-layout-4.2.10.tgz#80eb37b6cce4bca95a2b58ca7efc7003ea2a3cdb"
   integrity sha512-O6TQdZ5LSm3dqnuR4rX9KPtE+9dVg7jsezEYz1l01rkQTe4fQvYZIoPu2sZFl5X2N70uhRdjnPULySVR3sBUwA==
@@ -4340,6 +4359,11 @@ use-sidecar@^1.1.3:
   dependencies:
     detect-node-es "^1.1.0"
     tslib "^2.0.0"
+
+use-sync-external-store@^1.5.0:
+  version "1.7.0"
+  resolved "https://registry.yarnpkg.com/use-sync-external-store/-/use-sync-external-store-1.7.0.tgz#6dcb66ef569e02f186af6b3d575f414ce746e18f"
+  integrity sha512-6L+EeigHMQhdaIPNIFUKwfWJSwWFQ8gJbJ2DLOs5sDIegTwR9fRxvnM3uciHKjIZhFz+KAv2emhWMRvDmMcY8A==
 
 utils-merge@1.0.1:
   version "1.0.1"
