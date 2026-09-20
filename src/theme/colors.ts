@@ -1,19 +1,21 @@
 export const lightColors = {
-  background: "#F8F9FA",
+  // OnePlus OxygenOS light: clean white canvas, very subtle off-white cards
+  background: "#F2F2F2",
   card: "#FFFFFF",
-  text: "#111827",
-  subtext: "#6B7280",
-  primary: "#F59E0B",
-  border: "#E5E7EB",
+  text: "#0D0D0D",
+  subtext: "#888888",
+  primary: "#FF3B30",
+  border: "#E0E0E0",
 };
 
 export const darkColors = {
-  background: "#121417",
-  card: "#1C1F26",
-  text: "#F9FAFB",
-  subtext: "#9CA3AF",
-  primary: "#FBBF24",
-  border: "#2E3440",
+  // OnePlus OxygenOS dark: OLED true black, dark charcoal cards
+  background: "#000000",
+  card: "#1A1A1A",
+  text: "#FFFFFF",
+  subtext: "#888888",
+  primary: "#FF3B30",
+  border: "#2A2A2A",
 };
 
 // ─── Aesthetic Themes (standalone — no dark/light variant) ───────────────────
@@ -37,12 +39,12 @@ export const skyColors = {
 };
 
 export const butterColors = {
-  background: "#FFFDE7",
-  card: "#FFF9C4",
-  text: "#4A3B00",
-  subtext: "#8A6F00",
-  primary: "#F59E0B",
-  border: "#FEF08A",
+  background: "#FFFEF7",
+  card: "#FFFDF0",
+  text: "#1C1917",
+  subtext: "#78716C",
+  primary: "#FAD02C",
+  border: "#FEF3C7",
 };
 
 export type ThemeColors = typeof lightColors;

@@ -24,6 +24,15 @@ export const spacing = {
   cardMarginTop: verticalScale(6),
   cardMarginBottom: verticalScale(16),
   itemGap: scale(8),
+
+  // Icon sizes
+  iconSm: scale(18),
+  iconMd: scale(24),
+  iconLg: scale(36),
+
+  // Component sizes
+  avatarMd: scale(48),
+  avatarLg: scale(68),
 };
 
 export type ThemeSpacing = typeof spacing;

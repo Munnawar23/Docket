@@ -1,11 +1,11 @@
+import { ThemeBackground } from "@/components";
 import { useAppTheme } from "@/hooks/useAppTheme";
+import { Haptics } from "@/lib/haptics";
 import { type ThemeMode } from "@/store/themeStore";
 import { fontSize, spacing } from "@/theme/theme";
-import * as Haptics from "expo-haptics";
-import { StatusBar } from "expo-status-bar";
+import React, { useState } from "react";
 import {
   Platform,
-  SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
@@ -14,6 +14,14 @@ import {
 } from "react-native";
 
 export default function Index() {
+  const [shouldCrash, setShouldCrash] = useState(false);
+
+  if (shouldCrash) {
+    throw new Error(
+      "Simulated Test Crash: ErrorBoundary caught this error triggered from the Index screen."
+    );
+  }
+
   const {
     colors,
     fontFamily,
@@ -26,11 +34,7 @@ export default function Index() {
   } = useAppTheme();
 
   const handleSelectMode = (mode: ThemeMode) => {
-    try {
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    } catch {
-      // safe fallback on platforms without haptics
-    }
+    Haptics.light();
     setThemeMode(mode);
   };
 
@@ -79,8 +83,8 @@ export default function Index() {
       label: "Butter",
       icon: "🧈",
       desc: "Warm & cozy",
-      bg: "#FFFDE7",
-      accent: "#F59E0B",
+      bg: "#FFFEF7",
+      accent: "#FAD02C",
     },
   ];
 
@@ -128,14 +132,8 @@ export default function Index() {
     },
   ];
 
-  // Status bar: dark text for light/aesthetic themes, light text for dark theme
-  const statusBarStyle = isDark ? "light" : "dark";
-
   return (
-    <SafeAreaView
-      style={[styles.safeArea, { backgroundColor: colors.background }]}
-    >
-      <StatusBar style={statusBarStyle} />
+    <ThemeBackground>
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
@@ -175,6 +173,30 @@ export default function Index() {
               Active: {activeScheme.toUpperCase()} ({themeMode})
             </Text>
           </View>
+
+          {/* Atmospheric Decoration Status (Special Themes Only) */}
+          {isAestheticTheme && (
+            <View
+              style={[
+                styles.decorationBadge,
+                {
+                  backgroundColor: colors.card,
+                  borderColor: colors.border,
+                },
+              ]}
+            >
+              <Text
+                style={[
+                  styles.decorationBadgeText,
+                  { color: colors.subtext, fontFamily: fontFamily.medium },
+                ]}
+              >
+                {themeMode === "rose" && "🌸 Background: Blooming Roses & Floating Petals"}
+                {themeMode === "butter" && "☀️ Background: Glowing Sun, Sunbeams & Golden Twinkles"}
+                {themeMode === "sky" && "☁️ Background: Drifting Soft Clouds & Sky Breeze"}
+              </Text>
+            </View>
+          )}
         </View>
 
         {/* Standard Theme Switcher */}
@@ -514,16 +536,42 @@ export default function Index() {
             (Zustand persist).
           </Text>
         </View>
+
+        {/* Error Boundary Test Button */}
+        <View style={styles.section}>
+          <TouchableOpacity
+            activeOpacity={0.8}
+            onPress={() => {
+              Haptics.heavy();
+              setShouldCrash(true);
+            }}
+            style={[
+              styles.errorTestButton,
+              {
+                backgroundColor: colors.card,
+                borderColor: `${colors.border}`,
+              },
+            ]}
+          >
+            <Text
+              style={[
+                styles.errorTestButtonText,
+                {
+                  color: "#FF3B30",
+                  fontFamily: fontFamily.semiBold,
+                },
+              ]}
+            >
+              ⚠️ Trigger Error Boundary (Test)
+            </Text>
+          </TouchableOpacity>
+        </View>
       </ScrollView>
-    </SafeAreaView>
+    </ThemeBackground>
   );
 }
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    paddingTop: Platform.OS === "android" ? spacing.vXl : 0,
-  },
   scrollContent: {
     paddingHorizontal: spacing.screenPadding,
     paddingBottom: spacing.vXxxl,
@@ -550,6 +598,17 @@ const styles = StyleSheet.create({
   badgeText: {
     fontSize: fontSize.caption,
     letterSpacing: 0.5,
+  },
+  decorationBadge: {
+    marginTop: spacing.vSm,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.vXs,
+    borderRadius: spacing.sm,
+    borderWidth: 1,
+    alignItems: "center",
+  },
+  decorationBadgeText: {
+    fontSize: fontSize.caption - 1,
   },
   section: {
     marginBottom: spacing.vXxl,
@@ -723,5 +782,19 @@ const styles = StyleSheet.create({
   infoText: {
     fontSize: fontSize.caption,
     lineHeight: spacing.vLg,
+  },
+  errorTestButton: {
+    width: "100%",
+    paddingVertical: spacing.vMd,
+    paddingHorizontal: spacing.lg,
+    borderRadius: spacing.md,
+    borderWidth: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: spacing.vSm,
+    marginBottom: spacing.vXxl,
+  },
+  errorTestButtonText: {
+    fontSize: fontSize.body,
   },
 });
