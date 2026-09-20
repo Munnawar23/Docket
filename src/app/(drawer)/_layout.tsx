@@ -8,7 +8,7 @@ export default function DrawerLayout() {
 
   return (
     <Drawer
-      initialRouteName="home/index"
+      initialRouteName="index"
       screenOptions={{
         headerStyle: {
           backgroundColor: colors.background,
@@ -32,13 +32,7 @@ export default function DrawerLayout() {
       <Drawer.Screen
         name="index"
         options={{
-          drawerItemStyle: { display: "none" },
-          title: "",
-        }}
-      />
-      <Drawer.Screen
-        name="home/index"
-        options={{
+          headerShown: false,
           drawerLabel: "Home",
           title: "Home",
           drawerIcon: ({ color, size }) => (
@@ -47,7 +41,7 @@ export default function DrawerLayout() {
         }}
       />
       <Drawer.Screen
-        name="settings/index"
+        name="settings"
         options={{
           drawerLabel: "Settings",
           title: "Settings",
