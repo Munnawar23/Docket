@@ -63,8 +63,6 @@ export function Button({
               style={styles.text}
               numberOfLines={1}
               ellipsizeMode="tail"
-              adjustsFontSizeToFit
-              minimumFontScale={0.85}
             >
               {title}
             </AppText>

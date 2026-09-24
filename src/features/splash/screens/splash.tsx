@@ -33,25 +33,16 @@ export function SplashScreen() {
         </View>
 
         <AppText
-          style={[
-            styles.appName,
-            {
-              color: colors.text,
-              fontFamily: fontFamily.heading,
-            },
-          ]}
+          variant="heading"
+          style={styles.appName}
         >
           Docket
         </AppText>
 
         <AppText
-          style={[
-            styles.tagline,
-            {
-              color: colors.subtext,
-              fontFamily: fontFamily.text,
-            },
-          ]}
+          variant="body"
+          color="subtext"
+          style={styles.tagline}
         >
           Minimal & aesthetic notes
         </AppText>

@@ -37,12 +37,48 @@ export const fontSize = {
   heading: rs.font(24),
 };
 
+// ─── Semantic Line Heights (paired with fontSize to prevent text clipping) ───
+export const lineHeight = {
+  caption: Math.round(fontSize.caption * 1.4),
+  bodySm: Math.round(fontSize.bodySm * 1.4),
+  body: Math.round(fontSize.body * 1.4),
+  bodyLg: Math.round(fontSize.bodyLg * 1.4),
+  title: Math.round(fontSize.title * 1.35),
+  cardTitle: Math.round(fontSize.cardTitle * 1.35),
+  heading: Math.round(fontSize.heading * 1.3),
+};
+
+// ─── Semantic Letter Spacing ──────────────────────────────────────────────────
+export const letterSpacing = {
+  caption: 0.2,
+  bodySm: 0.1,
+  body: 0,
+  bodyLg: -0.1,
+  title: -0.3,
+  cardTitle: -0.4,
+  heading: -0.5,
+};
+
+// ─── Font Weights ─────────────────────────────────────────────────────────────
+export const fontWeight = {
+  regular: "400",
+  medium: "500",
+  semiBold: "600",
+  bold: "700",
+} as const;
+
 export const fonts = {
   fontFamily,
   aestheticFontFamily,
   fontSize,
+  lineHeight,
+  letterSpacing,
+  fontWeight,
 };
 
 export type ThemeFontSize = typeof fontSize;
+export type ThemeLineHeight = typeof lineHeight;
+export type ThemeLetterSpacing = typeof letterSpacing;
+export type ThemeFontWeight = typeof fontWeight;
 export type ThemeFontFamily = typeof fontFamily;
 export type Fonts = typeof fonts;

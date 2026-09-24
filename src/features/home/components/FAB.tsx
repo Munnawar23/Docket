@@ -398,7 +398,7 @@ const OptionPill = React.memo(function OptionPill({
               color="#FFFFFF"
             />
           </View>
-          <AppText style={[styles.pillLabel, { fontFamily: fontFamily.semiBold }]}>
+          <AppText semiBold style={styles.pillLabel}>
             {option.label}
           </AppText>
         </View>
