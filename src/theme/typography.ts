@@ -1,4 +1,4 @@
-import { moderateScale } from "react-native-size-matters";
+import { rs } from "@/helpers/responsive.utils";
 
 // ─── Default Font Families (Plus Jakarta Sans) ────────────────────────────────
 export const fontFamily = {
@@ -28,13 +28,13 @@ export const aestheticFontFamily = {
 
 // ─── Semantic Font Sizes (pre-scaled) ────────────────────────────────────────
 export const fontSize = {
-  caption: moderateScale(12),
-  bodySm: moderateScale(13),
-  body: moderateScale(14),
-  bodyLg: moderateScale(16),
-  title: moderateScale(18),
-  cardTitle: moderateScale(20),
-  heading: moderateScale(24),
+  caption: rs.font(12),
+  bodySm: rs.font(13),
+  body: rs.font(14),
+  bodyLg: rs.font(16),
+  title: rs.font(18),
+  cardTitle: rs.font(20),
+  heading: rs.font(24),
 };
 
 export type ThemeFontSize = typeof fontSize;

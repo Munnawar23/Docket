@@ -4,6 +4,7 @@ import type { ThemeColors } from "@/theme/colors";
 import { spacing } from "@/theme/theme";
 import { fontSize } from "@/theme/typography";
 import type { ThemeFontFamily } from "@/theme/typography";
+import { AppText } from "@/components";
 import { Ionicons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
@@ -13,7 +14,6 @@ import {
   Pressable,
   type StyleProp,
   StyleSheet,
-  Text,
   View,
   type ViewStyle,
 } from "react-native";
@@ -28,7 +28,7 @@ import Animated, {
   withSpring,
   type SharedValue,
 } from "react-native-reanimated";
-import { scale, verticalScale } from "react-native-size-matters";
+import { scale, verticalScale } from "@/helpers/responsive.utils";
 
 const FAB_SIZE = scale(48);
 const PILL_HEIGHT = verticalScale(46);
@@ -401,9 +401,9 @@ const OptionPill = React.memo(function OptionPill({
               color="#FFFFFF"
             />
           </View>
-          <Text style={[styles.pillLabel, { fontFamily: fontFamily.semiBold }]}>
+          <AppText style={[styles.pillLabel, { fontFamily: fontFamily.semiBold }]}>
             {option.label}
-          </Text>
+          </AppText>
         </View>
       </Pressable>
     </Animated.View>

@@ -7,7 +7,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation } from "expo-router";
 import React, { useCallback, useMemo } from "react";
 import { Platform, Pressable, StyleSheet, View } from "react-native";
-import { scale, verticalScale } from "react-native-size-matters";
+import { scale, verticalScale } from "@/helpers/responsive.utils";
 import SearchBar from "./SearchBar";
 
 const BUTTON_SIZE = scale(40);

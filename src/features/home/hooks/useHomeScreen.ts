@@ -11,7 +11,7 @@ import Animated, {
   type WithSpringConfig,
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { scale, verticalScale } from "react-native-size-matters";
+import { scale, verticalScale } from "@/helpers/responsive.utils";
 import { scheduleOnRN, scheduleOnUI } from "react-native-worklets";
 
 export type HomeTab = "notes" | "tasks";

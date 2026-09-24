@@ -8,7 +8,7 @@
     "scheme": "docket",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "supportsTablet": true,
+      "supportsTablet": false,
       "icon": "./assets/images/icon.png"
     },
     "android": {

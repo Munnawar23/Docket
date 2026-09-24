@@ -4,7 +4,6 @@ import {
   Pressable,
   StyleProp,
   StyleSheet,
-  Text,
   type ViewStyle,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
@@ -13,6 +12,8 @@ import { Haptics } from "@/lib/haptics";
 import { fontSize, spacing } from "@/theme/theme";
 import type { ThemeColors } from "@/theme/colors";
 import type { ThemeFontFamily } from "@/theme/typography";
+import { AppText } from "./AppText";
+import { rs } from "@/helpers/responsive.utils";
 
 export interface ButtonProps {
   title: string;
@@ -60,14 +61,15 @@ export function Button({
             <Ionicons name={icon} size={spacing.iconSm} color="#FFFFFF" />
           )}
           {title ? (
-            <Text
+            <AppText
               style={styles.text}
               numberOfLines={1}
+              ellipsizeMode="tail"
               adjustsFontSizeToFit
               minimumFontScale={0.85}
             >
               {title}
-            </Text>
+            </AppText>
           ) : null}
           {children}
         </>
@@ -85,6 +87,7 @@ const createStyles = (colors: ThemeColors, fontFamily: ThemeFontFamily) =>
       alignItems: "center",
       justifyContent: "center",
       borderRadius: spacing.xxl,
+      minHeight: rs.space(48),
       paddingVertical: spacing.vMd,
       paddingHorizontal: spacing.xxl,
       gap: spacing.xs,
@@ -100,5 +103,7 @@ const createStyles = (colors: ThemeColors, fontFamily: ThemeFontFamily) =>
       color: "#FFFFFF",
       fontFamily: fontFamily.semiBold,
       fontSize: fontSize.bodyLg,
+      flexShrink: 1,
     },
   });
+

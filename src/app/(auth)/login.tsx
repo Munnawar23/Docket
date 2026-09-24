@@ -1,16 +1,23 @@
-import { ThemeBackground } from "@/components";
+import { AppText, ThemeBackground } from "@/components";
 import { useAppTheme } from "@/hooks/useAppTheme";
+import { rs } from "@/helpers/responsive.utils";
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 
 export default function LoginScreen() {
   const { colors, fontFamily } = useAppTheme();
 
   return (
     <ThemeBackground style={styles.container}>
-      <Text style={{ color: colors.text, fontFamily: fontFamily.heading }}>
+      <AppText
+        style={{
+          color: colors.text,
+          fontFamily: fontFamily.heading,
+          fontSize: rs.font(24),
+        }}
+      >
         Login
-      </Text>
+      </AppText>
     </ThemeBackground>
   );
 }

@@ -1,38 +1,38 @@
-import { scale, verticalScale } from "react-native-size-matters";
+import { rs } from "@/helpers/responsive.utils";
 
 export const spacing = {
-  xs: scale(4),
-  sm: scale(8),
-  md: scale(12),
-  lg: scale(16),
-  xl: scale(20),
-  xxl: scale(24),
-  xxxl: scale(32),
+  xs: rs.space(4),
+  sm: rs.space(8),
+  md: rs.space(12),
+  lg: rs.space(16),
+  xl: rs.space(20),
+  xxl: rs.space(24),
+  xxxl: rs.space(32),
 
-  vXs: verticalScale(4),
-  vSm: verticalScale(8),
-  vMd: verticalScale(12),
-  vLg: verticalScale(16),
-  vXl: verticalScale(20),
-  vXxl: verticalScale(24),
-  vXxxl: verticalScale(32),
+  vXs: rs.space(4),
+  vSm: rs.space(8),
+  vMd: rs.space(12),
+  vLg: rs.space(16),
+  vXl: rs.space(20),
+  vXxl: rs.space(24),
+  vXxxl: rs.space(32),
 
   // Semantic layout tokens
-  screenPadding: scale(16),
-  sectionHeaderTop: verticalScale(16),
-  sectionHeaderBottom: verticalScale(10),
-  cardMarginTop: verticalScale(6),
-  cardMarginBottom: verticalScale(16),
-  itemGap: scale(8),
+  screenPadding: rs.space(16),
+  sectionHeaderTop: rs.space(16),
+  sectionHeaderBottom: rs.space(10),
+  cardMarginTop: rs.space(6),
+  cardMarginBottom: rs.space(16),
+  itemGap: rs.space(8),
 
   // Icon sizes
-  iconSm: scale(18),
-  iconMd: scale(24),
-  iconLg: scale(36),
+  iconSm: rs.icon(18),
+  iconMd: rs.icon(24),
+  iconLg: rs.icon(36),
 
   // Component sizes
-  avatarMd: scale(48),
-  avatarLg: scale(68),
+  avatarMd: rs.space(48),
+  avatarLg: rs.space(68),
 };
 
 export type ThemeSpacing = typeof spacing;

@@ -8,10 +8,10 @@ import {
   Platform,
   ScrollView,
   StyleSheet,
-  Text,
   TouchableOpacity,
   View,
 } from "react-native";
+import { AppText as Text } from "./AppText";
 
 export function DevTheme() {
   const [shouldCrash, setShouldCrash] = useState(false);
@@ -501,7 +501,7 @@ export function DevTheme() {
               ]}
             >
               Responsive spacing and typography scale seamlessly across devices
-              with react-native-size-matters.
+              with responsive utils.
             </Text>
           </View>
         </View>

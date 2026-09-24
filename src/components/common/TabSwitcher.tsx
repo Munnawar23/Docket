@@ -3,6 +3,7 @@ import { Haptics } from "@/lib/haptics";
 import type { ThemeColors } from "@/theme/colors";
 import { fontSize, spacing } from "@/theme/theme";
 import type { ThemeFontFamily } from "@/theme/typography";
+import { AppText } from "./AppText";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -10,7 +11,6 @@ import {
   Platform,
   Pressable,
   StyleSheet,
-  Text,
   View,
   type LayoutChangeEvent,
   type ViewStyle,
@@ -25,7 +25,7 @@ import Animated, {
   withTiming,
   type WithSpringConfig,
 } from "react-native-reanimated";
-import { scale, verticalScale } from "react-native-size-matters";
+import { scale, verticalScale } from "@/helpers/responsive.utils";
 import { scheduleOnRN } from "react-native-worklets";
 
 export interface TabOption {
@@ -302,7 +302,7 @@ export const TabSwitcher = React.memo<TabSwitcherProps>(function TabSwitcher({
                     }
                   }}
                 >
-                  <Text
+                  <AppText
                     style={[
                       styles.tabText,
                       isActive ? styles.tabTextActive : styles.tabTextInactive,
@@ -310,7 +310,7 @@ export const TabSwitcher = React.memo<TabSwitcherProps>(function TabSwitcher({
                     numberOfLines={1}
                   >
                     {tab.label}
-                  </Text>
+                  </AppText>
                 </Pressable>
               );
             })}

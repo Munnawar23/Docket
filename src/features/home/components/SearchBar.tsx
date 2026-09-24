@@ -7,6 +7,7 @@ import type { ThemeFontFamily } from "@/theme/typography";
 import { Ionicons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
+import { AppTextInput, type AppTextInputRef } from "@/components";
 import React, { useCallback, useMemo, useRef, useState } from "react";
 import {
   Animated as RNAnimated,
@@ -14,11 +15,10 @@ import {
   Pressable,
   type StyleProp,
   StyleSheet,
-  TextInput,
   View,
   type ViewStyle,
 } from "react-native";
-import { scale, verticalScale } from "react-native-size-matters";
+import { scale, verticalScale } from "@/helpers/responsive.utils";
 
 const HEIGHT = verticalScale(44);
 const BORDER_RADIUS = scale(16);
@@ -52,7 +52,7 @@ export const SearchBar = React.memo(function SearchBar({
 
   const [isFocused, setIsFocused] = useState(false);
   const glowAnim = useRef(new RNAnimated.Value(0)).current;
-  const inputRef = useRef<TextInput>(null);
+  const inputRef = useRef<AppTextInputRef>(null);
 
   const styles = useMemo(
     () => createStyles(colors, fontFamily, isDark, isAestheticTheme),
@@ -176,7 +176,7 @@ export const SearchBar = React.memo(function SearchBar({
         />
 
         {/* Input */}
-        <TextInput
+        <AppTextInput
           ref={inputRef}
           style={[
             styles.input,
@@ -246,7 +246,7 @@ const createStyles = (
   StyleSheet.create({
     outerWrapper: {
       flex: 1,
-      height: HEIGHT,
+      minHeight: HEIGHT,
       borderRadius: BORDER_RADIUS,
       overflow: "hidden",
       borderWidth: 1,

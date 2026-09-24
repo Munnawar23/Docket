@@ -1,10 +1,10 @@
-import { ThemeBackground } from "@/components";
+import { AppText, ThemeBackground } from "@/components";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { fontSize, spacing } from "@/theme/theme";
 import { router } from "expo-router";
 import * as ExpoSplashScreen from "expo-splash-screen";
 import React, { useEffect } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 
 export function SplashScreen() {
   const { colors, fontFamily } = useAppTheme();
@@ -29,10 +29,10 @@ export function SplashScreen() {
             },
           ]}
         >
-          <Text style={styles.icon}>📋</Text>
+          <AppText style={styles.icon}>📋</AppText>
         </View>
 
-        <Text
+        <AppText
           style={[
             styles.appName,
             {
@@ -42,9 +42,9 @@ export function SplashScreen() {
           ]}
         >
           Docket
-        </Text>
+        </AppText>
 
-        <Text
+        <AppText
           style={[
             styles.tagline,
             {
@@ -54,7 +54,7 @@ export function SplashScreen() {
           ]}
         >
           Minimal & aesthetic notes
-        </Text>
+        </AppText>
       </View>
     </ThemeBackground>
   );

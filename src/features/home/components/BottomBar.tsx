@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet, View, type StyleProp, type ViewStyle } from "react-native";
-import { verticalScale } from "react-native-size-matters";
+import { verticalScale } from "@/helpers/responsive.utils";
 import { TabSwitcher, type TabOption } from "@/components/common/TabSwitcher";
 import { FAB } from "./FAB";
 

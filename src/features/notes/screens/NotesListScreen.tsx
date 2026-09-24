@@ -1,9 +1,10 @@
+import { AppText } from "@/components";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import type { ThemeColors } from "@/theme/colors";
 import { fontSize, spacing } from "@/theme/theme";
 import type { ThemeFontFamily } from "@/theme/typography";
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 
 export const NotesListScreen = React.memo(function NotesListScreen() {
   const { colors, fontFamily } = useAppTheme();
@@ -11,7 +12,7 @@ export const NotesListScreen = React.memo(function NotesListScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Notes</Text>
+      <AppText style={styles.text}>Notes</AppText>
     </View>
   );
 });
