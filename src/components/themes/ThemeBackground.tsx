@@ -1,9 +1,9 @@
 import { useAppTheme } from "@/hooks/useAppTheme";
 import React from "react";
 import { StyleSheet, View, type StyleProp, type ViewStyle } from "react-native";
-import { ButterDecoration } from "./decorations/ButterDecoration";
-import { RoseDecoration } from "./decorations/RoseDecoration";
-import { SkyDecoration } from "./decorations/SkyDecoration";
+import { ButterDecoration } from "./ButterDecoration";
+import { RoseDecoration } from "./RoseDecoration";
+import { SkyDecoration } from "./SkyDecoration";
 
 export interface ThemeBackgroundProps {
   children?: React.ReactNode;

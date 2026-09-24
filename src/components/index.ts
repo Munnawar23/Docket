@@ -1,15 +1,16 @@
-export { Button, type ButtonProps } from "./common/Button";
-export { DevTheme } from "./common/DevTheme";
-export { TabSwitcher, type TabOption, type TabSwitcherProps } from "./common/TabSwitcher";
-export { AppText, type AppTextProps } from "./common/AppText";
-export { AppTextInput, type AppTextInputProps, type AppTextInputRef } from "./common/AppTextInput";
-export { ButterDecoration } from "./decorations/ButterDecoration";
-export { RoseDecoration } from "./decorations/RoseDecoration";
-export { SkyDecoration } from "./decorations/SkyDecoration";
+export { Button, type ButtonProps } from "./ui/Button";
+export { DevTheme } from "./ui/DevTheme";
+export { TabSwitcher, type TabOption, type TabSwitcherProps } from "./ui/TabSwitcher";
+export { AppText, type AppTextProps } from "./ui/AppText";
+export { AppTextInput, type AppTextInputProps, type AppTextInputRef } from "./ui/AppTextInput";
+export { ButterDecoration } from "./themes/ButterDecoration";
+export { RoseDecoration } from "./themes/RoseDecoration";
+export { SkyDecoration } from "./themes/SkyDecoration";
 export {
     ThemeBackground,
     ThemeDecorationLayer,
     type ThemeBackgroundProps
-} from "./ThemeBackground";
+} from "./themes/ThemeBackground";
+
 
 

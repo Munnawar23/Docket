@@ -1,15 +1,12 @@
 import { Dimensions, PixelRatio } from "react-native";
 
-const { width: SCREEN_W, height: SCREEN_H } = Dimensions.get("window");
-
-export const width = SCREEN_W;
-export const height = SCREEN_H;
+export const { width, height } = Dimensions.get("window");
 
 const BASE_WIDTH = 375;
 const BASE_HEIGHT = 812;
 
-const _scaleW = (size: number): number => (SCREEN_W / BASE_WIDTH) * size;
-const _scaleH = (size: number): number => (SCREEN_H / BASE_HEIGHT) * size;
+const _scaleW = (size: number): number => (width / BASE_WIDTH) * size;
+const _scaleH = (size: number): number => (height / BASE_HEIGHT) * size;
 
 const _moderate = (size: number, factor: number): number =>
   size + (_scaleW(size) - size) * factor;
@@ -30,14 +27,15 @@ export const fSize = rs.font;
 
 export const wp = (val: string | number): number => {
   const p = typeof val === "string" ? parseFloat(val) : val;
-  return PixelRatio.roundToNearestPixel((SCREEN_W * p) / 100);
+  return PixelRatio.roundToNearestPixel((width * p) / 100);
 };
 
 export const hp = (val: string | number): number => {
   const p = typeof val === "string" ? parseFloat(val) : val;
-  return PixelRatio.roundToNearestPixel((SCREEN_H * p) / 100);
+  return PixelRatio.roundToNearestPixel((height * p) / 100);
 };
 
 export const scale = (size: number): number => _scaleW(size);
 
 export const verticalScale = (size: number): number => _scaleH(size);
+

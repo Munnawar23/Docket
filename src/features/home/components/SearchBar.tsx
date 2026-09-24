@@ -1,9 +1,6 @@
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { Haptics } from "@/lib/haptics";
-import type { ThemeColors } from "@/theme/colors";
-import { spacing } from "@/theme/theme";
-import { fontSize } from "@/theme/typography";
-import type { ThemeFontFamily } from "@/theme/typography";
+import { fontSize, spacing, type ThemeColors, type ThemeFontFamily } from "@/theme";
 import { Ionicons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
@@ -18,7 +15,7 @@ import {
   View,
   type ViewStyle,
 } from "react-native";
-import { scale, verticalScale } from "@/helpers/responsive.utils";
+import { scale, verticalScale } from "@/helpers/responsiveHelper";
 
 const HEIGHT = verticalScale(44);
 const BORDER_RADIUS = scale(16);

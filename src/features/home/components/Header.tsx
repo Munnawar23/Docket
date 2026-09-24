@@ -1,13 +1,13 @@
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { Haptics } from "@/lib/haptics";
-import { spacing } from "@/theme/theme";
+import { spacing } from "@/theme";
 import { Ionicons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation } from "expo-router";
 import React, { useCallback, useMemo } from "react";
 import { Platform, Pressable, StyleSheet, View } from "react-native";
-import { scale, verticalScale } from "@/helpers/responsive.utils";
+import { scale, verticalScale } from "@/helpers/responsiveHelper";
 import SearchBar from "./SearchBar";
 
 const BUTTON_SIZE = scale(40);

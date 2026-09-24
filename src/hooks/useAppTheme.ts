@@ -1,7 +1,6 @@
 import { useColorScheme } from "react-native";
 import { AESTHETIC_THEMES, useThemeStore, type ThemeMode } from "@/store/themeStore";
-import { theme, type ResolvedTheme, type ThemeColors } from "@/theme/theme";
-import { type ThemeFontFamily } from "@/theme/typography";
+import { theme, type ResolvedTheme, type ThemeColors, type ThemeFontFamily } from "@/theme";
 
 export function useAppTheme() {
   const themeMode = useThemeStore((state) => state.themeMode);

@@ -1,7 +1,7 @@
 import React from "react";
 import { StyleSheet, View, type StyleProp, type ViewStyle } from "react-native";
-import { verticalScale } from "@/helpers/responsive.utils";
-import { TabSwitcher, type TabOption } from "@/components/common/TabSwitcher";
+import { verticalScale } from "@/helpers/responsiveHelper";
+import { TabSwitcher, type TabOption } from "@/components";
 import { FAB } from "./FAB";
 
 export interface BottomBarProps {

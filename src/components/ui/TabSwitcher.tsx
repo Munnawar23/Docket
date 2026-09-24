@@ -1,8 +1,6 @@
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { Haptics } from "@/lib/haptics";
-import type { ThemeColors } from "@/theme/colors";
-import { fontSize, spacing } from "@/theme/theme";
-import type { ThemeFontFamily } from "@/theme/typography";
+import { fontSize, spacing, type ThemeColors, type ThemeFontFamily } from "@/theme";
 import { AppText } from "./AppText";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
@@ -25,7 +23,7 @@ import Animated, {
   withTiming,
   type WithSpringConfig,
 } from "react-native-reanimated";
-import { scale, verticalScale } from "@/helpers/responsive.utils";
+import { scale, verticalScale } from "@/helpers/responsiveHelper";
 import { scheduleOnRN } from "react-native-worklets";
 
 export interface TabOption {

@@ -1,6 +1,6 @@
 import { AppText, ThemeBackground } from "@/components";
 import { useAppTheme } from "@/hooks/useAppTheme";
-import { rs } from "@/helpers/responsive.utils";
+import { rs } from "@/helpers/responsiveHelper";
 import React from "react";
 import { StyleSheet, View } from "react-native";
 

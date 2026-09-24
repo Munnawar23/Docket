@@ -10,7 +10,7 @@ import Animated, {
   withSequence,
   withTiming,
 } from "react-native-reanimated";
-import { scale, verticalScale } from "@/helpers/responsive.utils";
+import { scale, verticalScale } from "@/helpers/responsiveHelper";
 import Svg, { Path } from "react-native-svg";
 
 interface SkyDecorationProps {

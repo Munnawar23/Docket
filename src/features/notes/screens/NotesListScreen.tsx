@@ -1,8 +1,6 @@
 import { AppText } from "@/components";
 import { useAppTheme } from "@/hooks/useAppTheme";
-import type { ThemeColors } from "@/theme/colors";
-import { fontSize, spacing } from "@/theme/theme";
-import type { ThemeFontFamily } from "@/theme/typography";
+import { fontSize, spacing, type ThemeColors, type ThemeFontFamily } from "@/theme";
 import React from "react";
 import { StyleSheet, View } from "react-native";
 

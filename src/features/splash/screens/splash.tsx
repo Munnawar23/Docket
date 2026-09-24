@@ -1,6 +1,6 @@
 import { AppText, ThemeBackground } from "@/components";
 import { useAppTheme } from "@/hooks/useAppTheme";
-import { fontSize, spacing } from "@/theme/theme";
+import { fontSize, spacing } from "@/theme";
 import { router } from "expo-router";
 import * as ExpoSplashScreen from "expo-splash-screen";
 import React, { useEffect } from "react";

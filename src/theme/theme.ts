@@ -6,14 +6,11 @@ import {
   skyColors,
   type ThemeColors,
 } from "./colors";
-import { spacing, type ThemeSpacing } from "./spacing";
 import {
   fontFamily,
-  fontSize,
   aestheticFontFamily,
   type ThemeFontFamily,
-  type ThemeFontSize,
-} from "./typography";
+} from "./fonts";
 
 // ─── Theme Entries ─────────────────────────────────────────────────────────────
 
@@ -48,7 +45,4 @@ export type ResolvedTheme = {
   fontFamily: ThemeFontFamily;
 };
 
-export { darkColors, lightColors, roseColors, skyColors, butterColors };
-export { spacing, fontFamily, aestheticFontFamily, fontSize };
-export type { ThemeColors, ThemeSpacing, ThemeFontFamily, ThemeFontSize };
 export type AppTheme = typeof theme;

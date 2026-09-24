@@ -1,4 +1,4 @@
-import { rs } from "@/helpers/responsive.utils";
+import { rs } from "@/helpers/responsiveHelper";
 
 export const spacing = {
   xs: rs.space(4),

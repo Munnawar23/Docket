@@ -9,11 +9,9 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { Haptics } from "@/lib/haptics";
-import { fontSize, spacing } from "@/theme/theme";
-import type { ThemeColors } from "@/theme/colors";
-import type { ThemeFontFamily } from "@/theme/typography";
+import { fontSize, spacing, type ThemeColors, type ThemeFontFamily } from "@/theme";
 import { AppText } from "./AppText";
-import { rs } from "@/helpers/responsive.utils";
+import { rs } from "@/helpers/responsiveHelper";
 
 export interface ButtonProps {
   title: string;

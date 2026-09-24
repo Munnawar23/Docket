@@ -1,9 +1,48 @@
-import { fontFamily, type ThemeFontFamily } from "./typography";
+import { rs } from "@/helpers/responsiveHelper";
+
+// ─── Default Font Families (Plus Jakarta Sans) ────────────────────────────────
+export const fontFamily = {
+  regular: "PlusJakartaSans-Regular",
+  medium: "PlusJakartaSans-Medium",
+  semiBold: "PlusJakartaSans-SemiBold",
+  bold: "PlusJakartaSans-Bold",
+
+  // Semantic aliases
+  heading: "PlusJakartaSans-Bold",
+  title: "PlusJakartaSans-SemiBold",
+  text: "PlusJakartaSans-Regular",
+};
+
+// ─── Aesthetic Theme Font Family (Boogaloo + Nunito) ──────────────────────────
+export const aestheticFontFamily = {
+  regular: "Nunito-Regular",
+  medium: "Nunito-Regular",
+  semiBold: "Nunito-SemiBold",
+  bold: "Nunito-Bold",
+
+  // Semantic aliases — Boogaloo for headings, Nunito for everything else
+  heading: "Boogaloo-Regular",
+  title: "Boogaloo-Regular",
+  text: "Nunito-Regular",
+};
+
+// ─── Semantic Font Sizes (pre-scaled with rs.font) ───────────────────────────
+export const fontSize = {
+  caption: rs.font(12),
+  bodySm: rs.font(13),
+  body: rs.font(14),
+  bodyLg: rs.font(16),
+  title: rs.font(18),
+  cardTitle: rs.font(20),
+  heading: rs.font(24),
+};
 
 export const fonts = {
   fontFamily,
+  aestheticFontFamily,
+  fontSize,
 };
 
-export { fontFamily };
-export type { ThemeFontFamily };
+export type ThemeFontSize = typeof fontSize;
+export type ThemeFontFamily = typeof fontFamily;
 export type Fonts = typeof fonts;

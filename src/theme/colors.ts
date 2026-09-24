@@ -1,5 +1,4 @@
 export const lightColors = {
-  // OnePlus OxygenOS light: clean white canvas, very subtle off-white cards
   background: "#F2F2F2",
   card: "#FFFFFF",
   text: "#0D0D0D",
@@ -9,7 +8,6 @@ export const lightColors = {
 };
 
 export const darkColors = {
-  // OnePlus OxygenOS dark: OLED true black, dark charcoal cards
   background: "#000000",
   card: "#1A1A1A",
   text: "#FFFFFF",

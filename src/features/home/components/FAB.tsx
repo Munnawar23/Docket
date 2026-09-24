@@ -1,9 +1,6 @@
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { Haptics } from "@/lib/haptics";
-import type { ThemeColors } from "@/theme/colors";
-import { spacing } from "@/theme/theme";
-import { fontSize } from "@/theme/typography";
-import type { ThemeFontFamily } from "@/theme/typography";
+import { fontSize, spacing, type ThemeColors, type ThemeFontFamily } from "@/theme";
 import { AppText } from "@/components";
 import { Ionicons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
@@ -28,7 +25,7 @@ import Animated, {
   withSpring,
   type SharedValue,
 } from "react-native-reanimated";
-import { scale, verticalScale } from "@/helpers/responsive.utils";
+import { scale, verticalScale } from "@/helpers/responsiveHelper";
 
 const FAB_SIZE = scale(48);
 const PILL_HEIGHT = verticalScale(46);

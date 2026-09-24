@@ -1,8 +1,8 @@
-import { ThemeBackground } from "../ThemeBackground";
+import { ThemeBackground } from "../themes/ThemeBackground";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { Haptics } from "@/lib/haptics";
 import { type ThemeMode } from "@/store/themeStore";
-import { fontSize, spacing } from "@/theme/theme";
+import { fontSize, spacing } from "@/theme";
 import React, { useState } from "react";
 import {
   Platform,
