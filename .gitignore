@@ -1,15 +1,35 @@
-# Learn more https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files
+# OSX
+.DS_Store
 
-# dependencies
-node_modules/
+# Xcode
+build/
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
+xcuserdata
+*.xccheckout
+*.moved-aside
+DerivedData
+*.hmap
+*.ipa
+*.xcuserstate
+**/.xcode.env.local
 
-# Expo
-.expo/
-dist/
-web-build/
-expo-env.d.ts
-
-# Native
+# Android / IntelliJ
+build/
+.idea
+.gradle
+local.properties
+*.iml
+*.hprof
+.cxx/
+*.keystore
+!debug.keystore
 .kotlin/
 *.orig.*
 *.jks
@@ -18,17 +38,36 @@ expo-env.d.ts
 *.key
 *.mobileprovision
 
-# Metro
-.metro-health-check*
-
-# debug
+# node.js / dependencies
+node_modules/
 npm-debug.*
 yarn-debug.*
 yarn-error.*
 
-# macOS
-.DS_Store
-*.pem
+# Expo
+.expo/
+dist/
+web-build/
+expo-env.d.ts
+
+# fastlane
+**/fastlane/report.xml
+**/fastlane/Preview.html
+**/fastlane/screenshots
+**/fastlane/test_output
+
+# Bundle artifact
+*.jsbundle
+
+# Ruby / CocoaPods
+**/Pods/
+/vendor/bundle/
+
+# Metro
+.metro-health-check*
+
+# testing
+/coverage
 
 # local env files
 .env*.local
@@ -36,8 +75,23 @@ yarn-error.*
 # typescript
 *.tsbuildinfo
 
-example
+# Yarn
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
 
-# generated native folders
-/ios
-/android
+# Docs & Agent scratch
+docs/
+.code-review-graph/
+.agents/
+
+# Lockfiles (this project uses yarn)
+package-lock.json
+
+# Built APKs / AABs
+apk-out/
+*.apk
+*.aab

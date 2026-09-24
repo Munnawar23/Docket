@@ -16,7 +16,8 @@
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/images/icon.png"
       },
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.munnawar.docket"
     },
     "web": {
       "output": "static",
@@ -39,4 +40,3 @@
     }
   }
 }
-
