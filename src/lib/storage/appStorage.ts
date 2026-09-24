@@ -1,5 +1,11 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { createMMKV, type MMKV } from "react-native-mmkv";
 import { StateStorage } from "zustand/middleware";
+
+// ─── MMKV Instance ────────────────────────────────────────────────────────────
+
+export const storage: MMKV = createMMKV({
+  id: "docket-storage",
+});
 
 // ─── Storage Keys ─────────────────────────────────────────────────────────────
 
@@ -15,9 +21,9 @@ export const appStorage = {
   /**
    * Retrieve a parsed JSON object or primitive value from storage.
    */
-  async get<T>(key: string): Promise<T | null> {
+  get<T>(key: string): T | null {
     try {
-      const raw = await AsyncStorage.getItem(key);
+      const raw = storage.getString(key);
       if (raw == null) return null;
       try {
         return JSON.parse(raw) as T;
@@ -31,12 +37,12 @@ export const appStorage = {
   },
 
   /**
-   * Save a JSON object or string value to storage.
+   * Save a JSON object or primitive value to storage.
    */
-  async set<T>(key: string, value: T): Promise<void> {
+  set<T>(key: string, value: T): void {
     try {
       const raw = typeof value === "string" ? value : JSON.stringify(value);
-      await AsyncStorage.setItem(key, raw);
+      storage.set(key, raw);
     } catch (error) {
       console.error(`[appStorage] Error writing key "${key}":`, error);
     }
@@ -45,9 +51,9 @@ export const appStorage = {
   /**
    * Remove an item from storage by key.
    */
-  async remove(key: string): Promise<void> {
+  remove(key: string): void {
     try {
-      await AsyncStorage.removeItem(key);
+      storage.remove(key);
     } catch (error) {
       console.error(`[appStorage] Error removing key "${key}":`, error);
     }
@@ -56,29 +62,45 @@ export const appStorage = {
   /**
    * Clear all items in storage.
    */
-  async clear(): Promise<void> {
+  clear(): void {
     try {
-      await AsyncStorage.clear();
+      storage.clearAll();
     } catch (error) {
       console.error("[appStorage] Error clearing storage:", error);
     }
+  },
+
+  /**
+   * Check if key exists in storage.
+   */
+  contains(key: string): boolean {
+    return storage.contains(key);
+  },
+
+  /**
+   * Retrieve all keys in storage.
+   */
+  getAllKeys(): string[] {
+    return storage.getAllKeys();
   },
 };
 
 // ─── Zustand Persist Adapter ──────────────────────────────────────────────────
 
 /**
- * Zustand `StateStorage` adapter configured for `@react-native-async-storage/async-storage`.
+ * High-performance synchronous Zustand `StateStorage` adapter powered by MMKV.
+ * Eliminates state rehydration flash/delay on startup.
  */
 export const zustandStorage: StateStorage = {
-  getItem: async (name: string): Promise<string | null> => {
-    const value = await AsyncStorage.getItem(name);
+  getItem: (name: string): string | null => {
+    const value = storage.getString(name);
     return value ?? null;
   },
-  setItem: async (name: string, value: string): Promise<void> => {
-    await AsyncStorage.setItem(name, value);
+  setItem: (name: string, value: string): void => {
+    storage.set(name, value);
   },
-  removeItem: async (name: string): Promise<void> => {
-    await AsyncStorage.removeItem(name);
+  removeItem: (name: string): void => {
+    storage.remove(name);
   },
 };
+
