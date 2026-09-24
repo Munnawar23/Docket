@@ -1,9 +1,3 @@
-import { useAppTheme } from "@/hooks/useAppTheme";
-import { Haptics } from "@/lib/haptics";
-import { fontSize, spacing, type ThemeColors, type ThemeFontFamily } from "@/theme";
-import { AppText } from "./AppText";
-import { BlurView } from "expo-blur";
-import { LinearGradient } from "expo-linear-gradient";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Platform,
@@ -11,8 +5,11 @@ import {
   StyleSheet,
   View,
   type LayoutChangeEvent,
+  type StyleProp,
   type ViewStyle,
 } from "react-native";
+import { BlurView } from "expo-blur";
+import { LinearGradient } from "expo-linear-gradient";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
   Easing,
@@ -23,8 +20,13 @@ import Animated, {
   withTiming,
   type WithSpringConfig,
 } from "react-native-reanimated";
-import { scale, verticalScale } from "@/helpers/responsiveHelper";
 import { scheduleOnRN } from "react-native-worklets";
+
+import { useAppTheme } from "@/hooks/useAppTheme";
+import { Haptics } from "@/lib/haptics";
+import { fontSize, spacing, type ThemeColors, type ThemeFontFamily } from "@/theme";
+import { scale, verticalScale } from "@/helpers/responsiveHelper";
+import { AppText } from "./AppText";
 
 export interface TabOption {
   label: string;
@@ -35,19 +37,10 @@ export interface TabSwitcherProps {
   tabs: TabOption[];
   activeTab: string;
   onTabChange: (value: string) => void;
-  containerStyle?: ViewStyle;
-  activeTextColor?: string;
-  inactiveTextColor?: string;
-  activePillColor?: string;
-  activePillBorderColor?: string;
-  trackBorderColor?: string;
-  glassBaseBg?: string;
-  sheenColors?: [string, string, string];
-  blurIntensity?: number;
-  blurTint?: "light" | "dark";
+  style?: StyleProp<ViewStyle>;
 }
 
-// Bouncier, more springy iOS-like physics
+// Bouncy iOS-like physics
 const SPRING_CONFIG: WithSpringConfig = {
   mass: 0.65,
   damping: 17,
@@ -62,17 +55,21 @@ const SCALE_SPRING_CONFIG: WithSpringConfig = {
   overshootClamping: false,
 };
 
-interface ThemeGlassConfig {
-  sheenColors: [string, string, string];
-  blurIntensity: number;
-  blurTint: "light" | "dark";
-  glassBaseBg: string;
-}
+export const TabSwitcher = React.memo(function TabSwitcher({
+  tabs,
+  activeTab,
+  onTabChange,
+  style,
+}: TabSwitcherProps) {
+  const { colors, fontFamily, isDark, isAestheticTheme } = useAppTheme();
+  const styles = useMemo(
+    () => createStyles(colors, fontFamily, isDark, isAestheticTheme),
+    [colors, fontFamily, isDark, isAestheticTheme],
+  );
 
-const getDefaultGlassConfig = (
-  isDark: boolean,
-  isAestheticTheme: boolean,
-): ThemeGlassConfig => {
+  const [containerWidth, setContainerWidth] = useState(0);
+
+  // Liquid glass theme values
   const sheenColors: [string, string, string] = isDark
     ? [
         "rgba(255, 255, 255, 0.22)",
@@ -91,77 +88,17 @@ const getDefaultGlassConfig = (
           "rgba(230, 230, 238, 0.3)",
         ];
 
-  const blurIntensity = isDark ? 60 : isAestheticTheme ? 80 : 75;
-  const blurTint: "light" | "dark" = isDark ? "dark" : "light";
-
   const glassBaseBg =
     Platform.OS === "android"
       ? isDark
         ? "rgba(30, 30, 34, 0.72)"
-        : isAestheticTheme
-          ? "rgba(255, 255, 255, 0.65)"
-          : "rgba(255, 255, 255, 0.65)"
+        : "rgba(255, 255, 255, 0.65)"
       : isDark
         ? "rgba(28, 28, 30, 0.4)"
-        : isAestheticTheme
-          ? "rgba(255, 255, 255, 0.4)"
-          : "rgba(255, 255, 255, 0.4)";
+        : "rgba(255, 255, 255, 0.4)";
 
-  return { sheenColors, blurIntensity, blurTint, glassBaseBg };
-};
-
-export const TabSwitcher = React.memo<TabSwitcherProps>(function TabSwitcher({
-  tabs,
-  activeTab,
-  onTabChange,
-  containerStyle,
-  activeTextColor,
-  inactiveTextColor,
-  activePillColor,
-  activePillBorderColor,
-  trackBorderColor,
-  glassBaseBg: customGlassBaseBg,
-  sheenColors: customSheenColors,
-  blurIntensity: customBlurIntensity,
-  blurTint: customBlurTint,
-}) {
-  const { colors, fontFamily, isDark, isAestheticTheme } = useAppTheme();
-  const styles = useMemo(
-    () =>
-      createStyles({
-        colors,
-        fontFamily,
-        isDark,
-        isAestheticTheme,
-        activeTextColor,
-        inactiveTextColor,
-        activePillColor,
-        activePillBorderColor,
-        trackBorderColor,
-      }),
-    [
-      colors,
-      fontFamily,
-      isDark,
-      isAestheticTheme,
-      activeTextColor,
-      inactiveTextColor,
-      activePillColor,
-      activePillBorderColor,
-      trackBorderColor,
-    ],
-  );
-  const [containerWidth, setContainerWidth] = useState(0);
-
-  const defaultGlass = useMemo(
-    () => getDefaultGlassConfig(isDark, isAestheticTheme),
-    [isDark, isAestheticTheme],
-  );
-
-  const sheenColors = customSheenColors ?? defaultGlass.sheenColors;
-  const blurIntensity = customBlurIntensity ?? defaultGlass.blurIntensity;
-  const blurTint = customBlurTint ?? defaultGlass.blurTint;
-  const glassBaseBg = customGlassBaseBg ?? defaultGlass.glassBaseBg;
+  const blurIntensity = isDark ? 60 : isAestheticTheme ? 80 : 75;
+  const blurTint: "light" | "dark" = isDark ? "dark" : "light";
 
   const activeIndex = Math.max(
     tabs.findIndex((t) => t.value === activeTab),
@@ -183,7 +120,6 @@ export const TabSwitcher = React.memo<TabSwitcherProps>(function TabSwitcher({
         translateX.value = activeIndex * tabWidth;
         return;
       }
-      // Fluid zoom surge during transit, then springs back to 1.0
       pillScale.value = withSequence(
         withTiming(1.45, {
           duration: 140,
@@ -208,7 +144,6 @@ export const TabSwitcher = React.memo<TabSwitcherProps>(function TabSwitcher({
       "worklet";
       isDragging.value = true;
       startX.value = translateX.value;
-      // Fluid zoom while dragging
       pillScale.value = withSpring(1.45, SCALE_SPRING_CONFIG);
     })
     .onUpdate((event) => {
@@ -216,7 +151,6 @@ export const TabSwitcher = React.memo<TabSwitcherProps>(function TabSwitcher({
       if (tabWidth <= 0) return;
       const maxTranslate = tabWidth * (tabs.length - 1);
       const rawX = startX.value + event.translationX;
-      // Allow elastic rubberband movement outside the left/right tab boundaries
       if (rawX < 0) {
         translateX.value = rawX * 0.45;
       } else if (rawX > maxTranslate) {
@@ -228,7 +162,6 @@ export const TabSwitcher = React.memo<TabSwitcherProps>(function TabSwitcher({
     .onFinalize(() => {
       "worklet";
       isDragging.value = false;
-      // Snap back to normal scale with bouncy spring
       pillScale.value = withSpring(1.0, SCALE_SPRING_CONFIG);
       if (tabWidth <= 0) return;
       const closestIndex = Math.round(translateX.value / tabWidth);
@@ -250,14 +183,11 @@ export const TabSwitcher = React.memo<TabSwitcherProps>(function TabSwitcher({
   }, []);
 
   return (
-    <View style={[styles.container, containerStyle]}>
+    <View style={[styles.container, style]}>
       <View style={styles.track}>
-        {/* Track Glass Background (clipped cleanly to pill shape) */}
+        {/* Track Glass Background */}
         <View style={styles.trackBackground}>
-          {/* 1. Base Glass Underlay */}
           <View style={[styles.glassBase, { backgroundColor: glassBaseBg }]} />
-
-          {/* 2. BlurView (iOS only) */}
           {Platform.OS === "ios" && (
             <BlurView
               intensity={blurIntensity}
@@ -265,8 +195,6 @@ export const TabSwitcher = React.memo<TabSwitcherProps>(function TabSwitcher({
               style={StyleSheet.absoluteFill}
             />
           )}
-
-          {/* 3. Liquid Glass Specular Gradient Sheen */}
           <LinearGradient
             colors={sheenColors}
             start={{ x: 0, y: 0 }}
@@ -278,7 +206,7 @@ export const TabSwitcher = React.memo<TabSwitcherProps>(function TabSwitcher({
 
         <GestureDetector gesture={panGesture}>
           <View style={styles.tabContainer} onLayout={onLayoutContainer}>
-            {/* Animated Active Pill Indicator (allowed to zoom and pop OUTSIDE the track without clipping!) */}
+            {/* Animated Active Pill Indicator */}
             {tabWidth > 0 && (
               <Animated.View
                 pointerEvents="none"
@@ -286,7 +214,7 @@ export const TabSwitcher = React.memo<TabSwitcherProps>(function TabSwitcher({
               />
             )}
 
-            {/* Tab Items */}
+            {/* Tab Items (Notes / Tasks) */}
             {tabs.map((tab) => {
               const isActive = activeTab === tab.value;
               return (
@@ -321,29 +249,12 @@ export const TabSwitcher = React.memo<TabSwitcherProps>(function TabSwitcher({
 
 export default TabSwitcher;
 
-interface StyleConfig {
-  colors: ThemeColors;
-  fontFamily: ThemeFontFamily;
-  isDark: boolean;
-  isAestheticTheme: boolean;
-  activeTextColor?: string;
-  inactiveTextColor?: string;
-  activePillColor?: string;
-  activePillBorderColor?: string;
-  trackBorderColor?: string;
-}
-
-const createStyles = ({
-  colors,
-  fontFamily,
-  isDark,
-  isAestheticTheme,
-  activeTextColor,
-  inactiveTextColor,
-  activePillColor,
-  activePillBorderColor,
-  trackBorderColor,
-}: StyleConfig) =>
+const createStyles = (
+  colors: ThemeColors,
+  fontFamily: ThemeFontFamily,
+  isDark: boolean,
+  isAestheticTheme: boolean,
+) =>
   StyleSheet.create({
     container: {
       width: scale(190),
@@ -360,13 +271,11 @@ const createStyles = ({
       borderRadius: spacing.xxl,
       overflow: "hidden",
       borderWidth: 1,
-      borderColor:
-        trackBorderColor ??
-        (isDark
-          ? "rgba(255, 255, 255, 0.2)"
-          : isAestheticTheme
-            ? "rgba(255, 255, 255, 0.9)"
-            : "rgba(255, 255, 255, 0.85)"),
+      borderColor: isDark
+        ? "rgba(255, 255, 255, 0.2)"
+        : isAestheticTheme
+          ? "rgba(255, 255, 255, 0.9)"
+          : "rgba(255, 255, 255, 0.85)",
     },
     glassBase: {
       ...(StyleSheet.absoluteFill as any),
@@ -384,14 +293,11 @@ const createStyles = ({
       bottom: spacing.xs,
       left: spacing.xs,
       borderRadius: spacing.xl,
-      backgroundColor:
-        activePillColor ?? (isDark ? "rgba(58, 58, 60, 0.9)" : colors.card),
+      backgroundColor: isDark ? "rgba(58, 58, 60, 0.9)" : colors.card,
       borderWidth: 1,
-      borderColor:
-        activePillBorderColor ??
-        (isDark
-          ? "rgba(255, 255, 255, 0.22)"
-          : "rgba(255, 255, 255, 0.95)"),
+      borderColor: isDark
+        ? "rgba(255, 255, 255, 0.22)"
+        : "rgba(255, 255, 255, 0.95)",
       shadowColor: "#000000",
       shadowOffset: { width: 0, height: verticalScale(3) },
       shadowOpacity: isDark ? 0.35 : 0.16,
@@ -413,10 +319,10 @@ const createStyles = ({
     },
     tabTextActive: {
       fontFamily: fontFamily.bold,
-      color: activeTextColor ?? colors.primary,
+      color: colors.primary,
     },
     tabTextInactive: {
       fontFamily: fontFamily.medium,
-      color: inactiveTextColor ?? colors.subtext,
+      color: colors.subtext,
     },
   });
