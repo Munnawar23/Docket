@@ -35,6 +35,7 @@ export const fontSize = {
   title: rs.font(18),
   cardTitle: rs.font(20),
   heading: rs.font(24),
+  largeTitle: rs.font(34),
 };
 
 // ─── Semantic Line Heights (paired with fontSize to prevent text clipping) ───
@@ -46,6 +47,7 @@ export const lineHeight = {
   title: Math.round(fontSize.title * 1.35),
   cardTitle: Math.round(fontSize.cardTitle * 1.35),
   heading: Math.round(fontSize.heading * 1.3),
+  largeTitle: Math.round(fontSize.largeTitle * 1.25),
 };
 
 // ─── Semantic Letter Spacing ──────────────────────────────────────────────────
@@ -57,6 +59,7 @@ export const letterSpacing = {
   title: -0.3,
   cardTitle: -0.4,
   heading: -0.5,
+  largeTitle: -0.5,
 };
 
 // ─── Font Weights ─────────────────────────────────────────────────────────────

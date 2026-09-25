@@ -5,6 +5,7 @@ import {
   type TextStyle,
   type StyleProp,
 } from "react-native";
+import Animated from "react-native-reanimated";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { rs } from "@/helpers/responsiveHelper";
 import {
@@ -23,7 +24,7 @@ export type TextColor = keyof ThemeColors | (string & {});
 export interface AppTextProps extends Omit<TextProps, "style"> {
   /**
    * Predefined typography preset combining font size, line height, letter spacing, and font family.
-   * Options: 'caption' | 'bodySm' | 'body' | 'bodyLg' | 'title' | 'cardTitle' | 'heading'
+   * Options: 'caption' | 'bodySm' | 'body' | 'bodyLg' | 'title' | 'cardTitle' | 'heading' | 'largeTitle'
    * @default 'body'
    */
   variant?: TextVariant;
@@ -81,20 +82,36 @@ export const AppText = forwardRef<RNText, AppTextProps>(function AppText(
   },
   ref
 ) {
-  const { colors, fontFamily } = useAppTheme();
+  const { colors, fontFamily, isAestheticTheme } = useAppTheme();
 
   // 1. Resolve Font Size (from variant, or size override with moderate scale)
-  const resolvedSize =
+  const baseSize =
     typeof size === "number"
       ? rs.font(size)
       : size && size in fontSize
       ? fontSize[size as keyof ThemeFontSize]
       : fontSize[variant] ?? fontSize.body;
 
+  // In special/aesthetic themes (Boogaloo font), heading and largeTitle glyphs are narrower and smaller.
+  // Scale up in aesthetic themes so they visually match the prominent boldness of the normal theme.
+  const resolvedSize = isAestheticTheme
+    ? variant === "largeTitle" || size === "largeTitle"
+      ? rs.font(44)
+      : variant === "heading" || size === "heading"
+      ? rs.font(30)
+      : variant === "cardTitle" || size === "cardTitle"
+      ? rs.font(23)
+      : variant === "title" || size === "title"
+      ? rs.font(21)
+      : baseSize
+    : baseSize;
+
   // 2. Resolve Line Height (paired with font size to prevent vertical clipping)
   const resolvedLineHeight =
     typeof customLineHeight === "number"
       ? customLineHeight
+      : isAestheticTheme && (variant === "largeTitle" || variant === "heading" || variant === "cardTitle" || variant === "title")
+      ? Math.round(resolvedSize * 1.25)
       : typeof size === "number"
       ? Math.round(resolvedSize * 1.35)
       : size && size in lineHeight
@@ -105,13 +122,15 @@ export const AppText = forwardRef<RNText, AppTextProps>(function AppText(
   const resolvedLetterSpacing =
     typeof customLetterSpacing === "number"
       ? customLetterSpacing
+      : isAestheticTheme && (variant === "largeTitle" || variant === "heading")
+      ? 0.2
       : size && size in letterSpacing
       ? letterSpacing[size as keyof ThemeFontSize]
       : letterSpacing[variant] ?? 0;
 
   // 4. Resolve Font Family & Weight (from variant, or family/flags override)
   const defaultWeight: TextWeight =
-    variant === "heading"
+    variant === "largeTitle" || variant === "heading"
       ? "heading"
       : variant === "cardTitle" || variant === "title"
       ? "title"
@@ -154,5 +173,7 @@ export const AppText = forwardRef<RNText, AppTextProps>(function AppText(
     </RNText>
   );
 });
+
+export const AnimatedAppText = Animated.createAnimatedComponent(AppText);
 
 export default AppText;

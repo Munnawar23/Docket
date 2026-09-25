@@ -29,7 +29,7 @@ import { scale, verticalScale } from "@/helpers/responsiveHelper";
 
 const FAB_SIZE = scale(48);
 const PILL_HEIGHT = verticalScale(46);
-const PILL_WIDTH = scale(134);
+const PILL_WIDTH = scale(105);
 const PILL_GAP = verticalScale(10);
 const PILL_OFFSET_Y = verticalScale(14); // slide-in distance
 const STAGGER_MS = 60; // delay between each pill on open
@@ -42,7 +42,7 @@ const CLOSE_SPRING    = { damping: 22, stiffness: 340, mass: 0.55 };
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
-type FABOptionId = "note" | "task";
+type FABOptionId = "note" | "task" | "image" | "audio";
 
 type FABOption = {
   id: FABOptionId;
@@ -53,11 +53,15 @@ type FABOption = {
 const FAB_OPTIONS: FABOption[] = [
   { id: "note", label: "Note", icon: "document-text-outline" },
   { id: "task", label: "Task", icon: "checkbox-outline" },
+  { id: "image", label: "Image", icon: "image-outline" },
+  { id: "audio", label: "Audio", icon: "mic-outline" },
 ];
 
 export interface FABProps {
   onAddNote?: () => void;
   onAddTask?: () => void;
+  onAddImage?: () => void;
+  onAddAudio?: () => void;
   bottomOffset?: number;
   style?: StyleProp<ViewStyle>;
 }
@@ -67,6 +71,8 @@ export interface FABProps {
 export const FAB = React.memo(function FAB({
   onAddNote,
   onAddTask,
+  onAddImage,
+  onAddAudio,
   bottomOffset = verticalScale(24),
   style,
 }: FABProps = {}) {
@@ -126,7 +132,9 @@ export const FAB = React.memo(function FAB({
   // One shared value per pill — explicit (rules of hooks: no hooks in loops)
   const pill0 = useSharedValue(0);
   const pill1 = useSharedValue(0);
-  const pillProgress = useMemo(() => [pill0, pill1], [pill0, pill1]);
+  const pill2 = useSharedValue(0);
+  const pill3 = useSharedValue(0);
+  const pillProgress = useMemo(() => [pill0, pill1, pill2, pill3], [pill0, pill1, pill2, pill3]);
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -142,19 +150,23 @@ export const FAB = React.memo(function FAB({
     Haptics.light();
     backdropProgress.value = withSpring(1, BACKDROP_SPRING);
     iconProgress.value     = withSpring(1, ICON_SPRING);
-    // Stagger: pill0 fires immediately, pill1 fires after STAGGER_MS
+    // Stagger: pill0 fires immediately, subsequent pills fire after STAGGER_MS steps
     pill0.value = withSpring(1, PILL_SPRING);
     pill1.value = withDelay(STAGGER_MS, withSpring(1, PILL_SPRING));
-  }, [backdropProgress, iconProgress, pill0, pill1]);
+    pill2.value = withDelay(STAGGER_MS * 2, withSpring(1, PILL_SPRING));
+    pill3.value = withDelay(STAGGER_MS * 3, withSpring(1, PILL_SPRING));
+  }, [backdropProgress, iconProgress, pill0, pill1, pill2, pill3]);
 
   const closeMenu = useCallback(() => {
     Haptics.light();
-    // Reverse stagger on close: pill1 first, then pill0
-    pill1.value = withSpring(0, CLOSE_SPRING);
-    pill0.value = withDelay(STAGGER_MS, withSpring(0, CLOSE_SPRING));
-    backdropProgress.value = withDelay(STAGGER_MS, withSpring(0, CLOSE_SPRING));
+    // Reverse stagger on close
+    pill3.value = withSpring(0, CLOSE_SPRING);
+    pill2.value = withDelay(STAGGER_MS, withSpring(0, CLOSE_SPRING));
+    pill1.value = withDelay(STAGGER_MS * 2, withSpring(0, CLOSE_SPRING));
+    pill0.value = withDelay(STAGGER_MS * 3, withSpring(0, CLOSE_SPRING));
+    backdropProgress.value = withDelay(STAGGER_MS * 3, withSpring(0, CLOSE_SPRING));
     iconProgress.value     = withSpring(0, ICON_SPRING);
-  }, [backdropProgress, iconProgress, pill0, pill1]);
+  }, [backdropProgress, iconProgress, pill0, pill1, pill2, pill3]);
 
   const toggleMenu = useCallback(() => {
     if (isMenuOpen) closeMenu();
@@ -223,8 +235,12 @@ export const FAB = React.memo(function FAB({
               closeMenu();
               if (option.id === "note") {
                 onAddNote?.();
-              } else {
+              } else if (option.id === "task") {
                 onAddTask?.();
+              } else if (option.id === "image") {
+                onAddImage?.();
+              } else if (option.id === "audio") {
+                onAddAudio?.();
               }
             }}
           />
@@ -389,8 +405,11 @@ const OptionPill = React.memo(function OptionPill({
           pointerEvents="none"
         />
 
-        {/* 4. Pill Content (Circular Icon Badge + Refined Label) */}
+        {/* 4. Pill Content (Refined Label on Left + Circular Icon Badge on Right) */}
         <View style={styles.pillContent}>
+          <AppText semiBold style={styles.pillLabel}>
+            {option.label}
+          </AppText>
           <View style={styles.pillIconBadge}>
             <Ionicons
               name={option.icon}
@@ -398,9 +417,6 @@ const OptionPill = React.memo(function OptionPill({
               color="#FFFFFF"
             />
           </View>
-          <AppText semiBold style={styles.pillLabel}>
-            {option.label}
-          </AppText>
         </View>
       </Pressable>
     </Animated.View>
@@ -511,8 +527,9 @@ const createStyles = (
       flex: 1,
       flexDirection: "row",
       alignItems: "center",
-      paddingHorizontal: scale(13),
-      gap: scale(10),
+      justifyContent: "space-between",
+      paddingLeft: scale(14),
+      paddingRight: scale(8),
       zIndex: 1,
     },
     pillIconBadge: {

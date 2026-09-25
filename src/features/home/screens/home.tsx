@@ -1,8 +1,8 @@
-import { ThemeBackground } from "@/components";
+import { AnimatedAppText, ThemeBackground } from "@/components";
 import NotesListScreen from "@/features/notes/screens/NotesListScreen";
 import TasksListScreen from "@/features/tasks/screens/TasksListScreen";
 import { useAppTheme } from "@/hooks/useAppTheme";
-import { fontSize, spacing, type ThemeColors, type ThemeFontFamily } from "@/theme";
+import { spacing, type ThemeColors, type ThemeFontFamily } from "@/theme";
 import React, { useMemo } from "react";
 import { StyleSheet, View } from "react-native";
 import { GestureDetector } from "react-native-gesture-handler";
@@ -37,12 +37,18 @@ export function HomeScreen() {
 
         {/* Large Page Title with synchronized horizontal slide */}
         <View style={styles.titleContainer}>
-          <Animated.Text style={[styles.largeTitle, notesTitleStyle]}>
+          <AnimatedAppText
+            variant="largeTitle"
+            style={[styles.largeTitle, notesTitleStyle]}
+          >
             Notes
-          </Animated.Text>
-          <Animated.Text style={[styles.largeTitle, styles.absoluteTitle, tasksTitleStyle]}>
+          </AnimatedAppText>
+          <AnimatedAppText
+            variant="largeTitle"
+            style={[styles.largeTitle, styles.absoluteTitle, tasksTitleStyle]}
+          >
             Tasks
-          </Animated.Text>
+          </AnimatedAppText>
         </View>
 
         {/* Tab Content Body (Swipeable & Animated Sliding Pages) */}
@@ -84,12 +90,7 @@ const createStyles = (colors: ThemeColors, fontFamily: ThemeFontFamily) =>
       position: "relative",
       justifyContent: "center",
     },
-    largeTitle: {
-      fontSize: fontSize.heading + 10,
-      letterSpacing: -0.5,
-      color: colors.text,
-      fontFamily: fontFamily.heading,
-    },
+    largeTitle: {},
     absoluteTitle: {
       position: "absolute",
       left: spacing.screenPadding,
