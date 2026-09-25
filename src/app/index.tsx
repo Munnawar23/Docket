@@ -1,5 +1,6 @@
-import SplashScreen from "@/features/splash/screens/splash";
+import { Redirect } from "expo-router";
 
 export default function Index() {
-  return <SplashScreen />;
+  return <Redirect href="/(drawer)" />;
 }
+
