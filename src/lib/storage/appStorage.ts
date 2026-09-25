@@ -1,106 +1,51 @@
 import { createMMKV, type MMKV } from "react-native-mmkv";
 import { StateStorage } from "zustand/middleware";
 
-// ─── MMKV Instance ────────────────────────────────────────────────────────────
-
-export const storage: MMKV = createMMKV({
-  id: "docket-storage",
-});
-
-// ─── Storage Keys ─────────────────────────────────────────────────────────────
+export const storage: MMKV = createMMKV({ id: "docket-storage" });
 
 export const STORAGE_KEYS = {
   THEME: "theme-storage",
 } as const;
 
 export type StorageKey = (typeof STORAGE_KEYS)[keyof typeof STORAGE_KEYS];
-
-// ─── Core Storage API ─────────────────────────────────────────────────────────
+export type AppStorageKey = StorageKey | (string & {});
 
 export const appStorage = {
-  /**
-   * Retrieve a parsed JSON object or primitive value from storage.
-   */
-  get<T>(key: string): T | null {
+  get<T>(key: AppStorageKey): T | null {
     try {
       const raw = storage.getString(key);
-      if (raw == null) return null;
-      try {
-        return JSON.parse(raw) as T;
-      } catch {
-        return raw as unknown as T;
-      }
-    } catch (error) {
-      console.error(`[appStorage] Error reading key "${key}":`, error);
+      return raw != null ? (JSON.parse(raw) as T) : null;
+    } catch {
       return null;
     }
   },
 
-  /**
-   * Save a JSON object or primitive value to storage.
-   */
-  set<T>(key: string, value: T): void {
+  set<T>(key: AppStorageKey, value: T): void {
     try {
-      const raw = typeof value === "string" ? value : JSON.stringify(value);
-      storage.set(key, raw);
-    } catch (error) {
-      console.error(`[appStorage] Error writing key "${key}":`, error);
-    }
+      storage.set(key, JSON.stringify(value));
+    } catch {}
   },
 
-  /**
-   * Remove an item from storage by key.
-   */
-  remove(key: string): void {
-    try {
-      storage.remove(key);
-    } catch (error) {
-      console.error(`[appStorage] Error removing key "${key}":`, error);
-    }
-  },
+  getString: (key: AppStorageKey): string | null => storage.getString(key) ?? null,
+  setString: (key: AppStorageKey, value: string): void => storage.set(key, value),
 
-  /**
-   * Clear all items in storage.
-   */
-  clear(): void {
-    try {
-      storage.clearAll();
-    } catch (error) {
-      console.error("[appStorage] Error clearing storage:", error);
-    }
-  },
+  remove: (key: AppStorageKey): boolean => storage.remove(key),
+  delete: (key: AppStorageKey): boolean => storage.remove(key),
 
-  /**
-   * Check if key exists in storage.
-   */
-  contains(key: string): boolean {
-    return storage.contains(key);
-  },
+  contains: (key: AppStorageKey): boolean => storage.contains(key),
+  has: (key: AppStorageKey): boolean => storage.contains(key),
 
-  /**
-   * Retrieve all keys in storage.
-   */
-  getAllKeys(): string[] {
-    return storage.getAllKeys();
-  },
+  clear: (): void => storage.clearAll(),
+  getAllKeys: (): string[] => storage.getAllKeys(),
 };
 
-// ─── Zustand Persist Adapter ──────────────────────────────────────────────────
-
 /**
- * High-performance synchronous Zustand `StateStorage` adapter powered by MMKV.
- * Eliminates state rehydration flash/delay on startup.
+ * Synchronous Zustand StateStorage adapter.
+ * Zustand handles its own JSON serialization, so we use raw MMKV strings directly.
  */
 export const zustandStorage: StateStorage = {
-  getItem: (name: string): string | null => {
-    const value = storage.getString(name);
-    return value ?? null;
-  },
-  setItem: (name: string, value: string): void => {
-    storage.set(name, value);
-  },
-  removeItem: (name: string): void => {
-    storage.remove(name);
-  },
+  getItem: (name) => storage.getString(name) ?? null,
+  setItem: (name, value) => storage.set(name, value),
+  removeItem: (name) => storage.remove(name),
 };
 

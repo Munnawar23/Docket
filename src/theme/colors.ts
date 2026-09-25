@@ -19,30 +19,32 @@ export const darkColors = {
 // ─── Aesthetic Themes (standalone — no dark/light variant) ───────────────────
 
 export const roseColors = {
-  background: "#FFF0F5",
-  card: "#FFE4EE",
-  text: "#4A1230",
-  subtext: "#9D5070",
-  primary: "#F43F8E",
-  border: "#FBCFE8",
+  background: "#F7DEE8",
+  card: "#FFF2F6",
+  text: "#3E0F27",
+  subtext: "#8A3D63",
+  primary: "#E83685",
+  border: "#ECC3D5",
 };
 
 export const skyColors = {
-  background: "#F0F8FF",
-  card: "#E0F2FF",
-  text: "#0C3A5F",
-  subtext: "#4A7FA5",
-  primary: "#38BDF8",
-  border: "#BAE6FD",
+  background: "#E2EFFB",
+  card: "#F4FAFF",
+  text: "#0A2540",
+  subtext: "#366485",
+  primary: "#0284C7",
+  border: "#BFDCF5",
 };
 
-export const butterColors = {
-  background: "#FFFEF7",
-  card: "#FFFDF0",
-  text: "#1C1917",
-  subtext: "#78716C",
-  primary: "#FAD02C",
-  border: "#FEF3C7",
+export const sageColors = {
+  background: "#EBF1E8",
+  card: "#F6FAF4",
+  text: "#192413",
+  subtext: "#4D6636",
+  primary: "#557E34",
+  border: "#CBDCC3",
 };
 
 export type ThemeColors = typeof lightColors;
+
+

@@ -2,9 +2,9 @@ import { STORAGE_KEYS, zustandStorage } from "@/lib/storage/appStorage";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
-export type ThemeMode = "light" | "dark" | "system" | "rose" | "sky" | "butter";
+export type ThemeMode = "light" | "dark" | "system" | "rose" | "sky" | "sage";
 
-export const AESTHETIC_THEMES: ThemeMode[] = ["rose", "sky", "butter"];
+export const AESTHETIC_THEMES: ThemeMode[] = ["rose", "sky", "sage"];
 
 interface ThemeState {
   themeMode: ThemeMode;

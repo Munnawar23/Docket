@@ -11,7 +11,7 @@ export function useAppTheme() {
 
   // Aesthetic themes bypass light/dark system entirely
   const resolvedTheme: ResolvedTheme = isAestheticTheme
-    ? theme[themeMode as "rose" | "sky" | "butter"]
+    ? theme[themeMode as "rose" | "sky" | "sage"]
     : (() => {
         const activeScheme: "light" | "dark" =
           themeMode === "system"
@@ -24,10 +24,11 @@ export function useAppTheme() {
 
   const colors: ThemeColors = resolvedTheme.colors;
   const fontFamily: ThemeFontFamily = resolvedTheme.fontFamily;
-  const isDark = !isAestheticTheme && (
-    themeMode === "dark" ||
-    (themeMode === "system" && systemColorScheme === "dark")
-  );
+  const isDark =
+    !isAestheticTheme && (
+      themeMode === "dark" ||
+      (themeMode === "system" && systemColorScheme === "dark")
+    );
 
   return {
     colors,

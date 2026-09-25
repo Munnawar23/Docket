@@ -1,8 +1,8 @@
 import {
-  butterColors,
   darkColors,
   lightColors,
   roseColors,
+  sageColors,
   skyColors,
   type ThemeColors,
 } from "./colors";
@@ -34,8 +34,8 @@ export const theme = {
     colors: skyColors,
     fontFamily: aestheticFontFamily,
   },
-  butter: {
-    colors: butterColors,
+  sage: {
+    colors: sageColors,
     fontFamily: aestheticFontFamily,
   },
 };

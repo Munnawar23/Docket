@@ -75,16 +75,16 @@ export function DevTheme() {
       label: "Sky",
       icon: "☁️",
       desc: "Airy & calm",
-      bg: "#F0F8FF",
-      accent: "#38BDF8",
+      bg: "#E2EFFB",
+      accent: "#0284C7",
     },
     {
-      mode: "butter",
-      label: "Butter",
-      icon: "🧈",
-      desc: "Warm & cozy",
-      bg: "#FFFEF7",
-      accent: "#FAD02C",
+      mode: "sage",
+      label: "Olive",
+      icon: "🫒",
+      desc: "Rich olive botanical",
+      bg: "#EBF1E8",
+      accent: "#557E34",
     },
   ];
 
@@ -192,8 +192,8 @@ export function DevTheme() {
                 ]}
               >
                 {themeMode === "rose" && "🌸 Background: Blooming Roses & Floating Petals"}
-                {themeMode === "butter" && "☀️ Background: Glowing Sun, Sunbeams & Golden Twinkles"}
-                {themeMode === "sky" && "☁️ Background: Drifting Soft Clouds & Sky Breeze"}
+                {themeMode === "sky" && "☁️ Background: Soft Clouds, Birds & Sky Glints"}
+                {themeMode === "sage" && "🫒 Background: Olive Branch, Fern & Dewdrop Leaves"}
               </Text>
             </View>
           )}
