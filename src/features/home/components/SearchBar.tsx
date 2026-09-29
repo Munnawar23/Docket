@@ -5,17 +5,18 @@ import { fontSize, spacing, type ThemeColors, type ThemeFontFamily } from "@/the
 import { Ionicons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
-import { AppTextInput, type AppTextInputRef } from "@/components";
+import { AppTextInput, type AppTextInputRef, WalkingCat } from "@/components";
 import {
   Animated as RNAnimated,
   Platform,
   Pressable,
+  type LayoutChangeEvent,
   type StyleProp,
   StyleSheet,
   View,
   type ViewStyle,
 } from "react-native";
-import { hp, wp } from "@/helpers/responsiveHelper";
+import { hp, scale, verticalScale, wp } from "@/helpers/responsiveHelper";
 
 const HEIGHT = hp(5.4);
 const BORDER_RADIUS = spacing.lg;
@@ -42,14 +43,19 @@ export const SearchBar = React.memo(function SearchBar({
   onSubmit,
   style,
 }: SearchBarProps = {}) {
-  const { colors, fontFamily, isDark, isAestheticTheme } = useAppTheme();
+  const { colors, fontFamily, isDark, isAestheticTheme, themeMode } = useAppTheme();
   const [internalQuery, setInternalQuery] = useState("");
   const isControlled = controlledValue !== undefined;
   const query = isControlled ? controlledValue : internalQuery;
 
   const [isFocused, setIsFocused] = useState(false);
+  const [barWidth, setBarWidth] = useState(0);
   const glowAnim = useRef(new RNAnimated.Value(0)).current;
   const inputRef = useRef<AppTextInputRef>(null);
+
+  const handleContainerLayout = useCallback((e: LayoutChangeEvent) => {
+    setBarWidth(e.nativeEvent.layout.width);
+  }, []);
 
   const styles = useMemo(
     () => createStyles(colors, fontFamily, isDark, isAestheticTheme),
@@ -140,9 +146,17 @@ export const SearchBar = React.memo(function SearchBar({
   const blurTint = isDark ? "dark" : "light";
 
   return (
-    <RNAnimated.View style={[styles.outerWrapper, { borderColor }, style]}>
-      {/* 1. Base translucent underlay */}
-      <View style={styles.glassBase} />
+    <View style={[styles.container, style]} onLayout={handleContainerLayout}>
+      {/* Skia 120 FPS Walking Cat (Rose Theme Only) */}
+      {themeMode === "rose" && (
+        <View style={styles.catWrapper} pointerEvents="box-none">
+          <WalkingCat barWidth={barWidth} isFocused={isFocused} />
+        </View>
+      )}
+
+      <RNAnimated.View style={[styles.outerWrapper, { borderColor }]}>
+        {/* 1. Base translucent underlay */}
+        <View style={styles.glassBase} />
 
       {/* 2. Blur layer (iOS only; avoids dimezisBlurView redraw artifacts on Android) */}
       {Platform.OS === "ios" && (
@@ -229,6 +243,7 @@ export const SearchBar = React.memo(function SearchBar({
         )}
       </View>
     </RNAnimated.View>
+  </View>
   );
 });
 
@@ -241,6 +256,19 @@ const createStyles = (
   isAestheticTheme: boolean
 ) =>
   StyleSheet.create({
+    container: {
+      flex: 1,
+      position: "relative",
+      overflow: "visible",
+    },
+    catWrapper: {
+      position: "absolute",
+      top: -verticalScale(28),
+      left: 0,
+      right: 0,
+      zIndex: 10,
+      overflow: "visible",
+    },
     outerWrapper: {
       flex: 1,
       minHeight: HEIGHT,

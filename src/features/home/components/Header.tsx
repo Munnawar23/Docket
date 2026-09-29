@@ -71,5 +71,6 @@ const createStyles = (topInset: number) =>
     },
     searchBarWrapper: {
       flex: 1,
+      overflow: "visible",
     },
   });

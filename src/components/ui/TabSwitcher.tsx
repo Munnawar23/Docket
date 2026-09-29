@@ -25,8 +25,9 @@ import { scheduleOnRN } from "react-native-worklets";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { Haptics } from "@/lib/haptics";
 import { fontSize, spacing, type ThemeColors, type ThemeFontFamily } from "@/theme";
-import { scale, verticalScale } from "@/helpers/responsiveHelper";
+import { hp, scale, verticalScale, wp } from "@/helpers/responsiveHelper";
 import { AppText } from "./AppText";
+import { PeekingCat } from "../skia/PeekingCat";
 
 export interface TabOption {
   label: string;
@@ -61,7 +62,7 @@ export const TabSwitcher = React.memo(function TabSwitcher({
   onTabChange,
   style,
 }: TabSwitcherProps) {
-  const { colors, fontFamily, isDark, isAestheticTheme } = useAppTheme();
+  const { colors, fontFamily, isDark, isAestheticTheme, themeMode } = useAppTheme();
   const styles = useMemo(
     () => createStyles(colors, fontFamily, isDark, isAestheticTheme),
     [colors, fontFamily, isDark, isAestheticTheme],
@@ -196,6 +197,17 @@ export const TabSwitcher = React.memo(function TabSwitcher({
 
   return (
     <Animated.View style={[styles.container, style, animatedContainerStyle]}>
+      {/* Peeking Cat standing behind TabSwitcher (Rose Theme Only) */}
+      {themeMode === "rose" && (
+        <View style={styles.peekingCatWrapper} pointerEvents="box-none">
+          <PeekingCat
+            activeX={translateX}
+            tabWidth={tabWidth}
+            containerWidth={containerWidth}
+          />
+        </View>
+      )}
+
       <View style={styles.track}>
         {/* Track Glass Background */}
         <View style={styles.trackBackground}>
@@ -284,11 +296,21 @@ const createStyles = (
       width: scale(190),
       alignSelf: "center",
       overflow: "visible",
+      position: "relative",
+    },
+    peekingCatWrapper: {
+      position: "absolute",
+      top: -verticalScale(26),
+      left: 0,
+      right: 0,
+      zIndex: 2,
+      overflow: "visible",
     },
     track: {
       width: "100%",
       position: "relative",
       overflow: "visible",
+      zIndex: 1,
     },
     trackBackground: {
       ...(StyleSheet.absoluteFill as any),

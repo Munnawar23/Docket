@@ -12,6 +12,9 @@ export {
     ThemeDecorationLayer,
     type ThemeBackgroundProps
 } from "./themes/ThemeBackground";
-
-
-
+export {
+  WalkingCat,
+  type WalkingCatProps,
+  PeekingCat,
+  type PeekingCatProps,
+} from "./skia";
