@@ -3,6 +3,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import Svg, { Circle, Path } from "react-native-svg";
+import { CartoonSky } from "../skia/CartoonSky";
 
 interface SkyDecorationProps {
   color?: string;
@@ -205,6 +206,9 @@ export function SkyDecoration({ color = "#0284C7" }: SkyDecorationProps) {
       <View style={styles.glint4}>
         <SkyGlint size={scale(11)} color={glintColor} />
       </View>
+
+      {/* ── Skia 120 FPS Cartoon Wind Gusts & Origami Paper Airplane ── */}
+      <CartoonSky />
     </View>
   );
 }

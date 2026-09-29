@@ -17,4 +17,6 @@ export {
   type WalkingCatProps,
   PeekingCat,
   type PeekingCatProps,
+  CartoonSky,
+  type CartoonSkyProps,
 } from "./skia";
