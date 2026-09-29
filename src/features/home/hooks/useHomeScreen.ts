@@ -10,7 +10,7 @@ import Animated, {
   withSpring,
   type WithSpringConfig,
 } from "react-native-reanimated";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useAppSafeArea } from "@/hooks/useAppSafeArea";
 import { scale, verticalScale } from "@/helpers/responsiveHelper";
 import { scheduleOnRN, scheduleOnUI } from "react-native-worklets";
 
@@ -34,7 +34,7 @@ const TITLE_OFFSET = scale(30);
 
 export function useHomeScreen() {
   const [activeTab, setActiveTab] = useState<HomeTab>("notes");
-  const insets = useSafeAreaInsets();
+  const { bottom } = useAppSafeArea();
 
   // Keep pageWidth on the UI thread — gesture handlers read it without bridging
   const pageWidth = useSharedValue(SCREEN_WIDTH);
@@ -136,7 +136,7 @@ export function useHomeScreen() {
     };
   });
 
-  const floatingBottom = Math.max(insets.bottom, verticalScale(16)) + verticalScale(22);
+  const floatingBottom = Math.max(bottom, verticalScale(16)) + verticalScale(22);
 
   return {
     activeTab,
@@ -146,7 +146,6 @@ export function useHomeScreen() {
     animatedPageStyle,
     notesTitleStyle,
     tasksTitleStyle,
-    insets,
     floatingBottom,
   };
 }

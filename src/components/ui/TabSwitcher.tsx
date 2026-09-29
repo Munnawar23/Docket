@@ -109,26 +109,32 @@ export const TabSwitcher = React.memo(function TabSwitcher({
 
   const translateX = useSharedValue(0);
   const pillScale = useSharedValue(1);
+  const containerScale = useSharedValue(1);
   const startX = useSharedValue(0);
   const isDragging = useSharedValue(false);
-  const isFirstMount = useRef(true);
+  // Tracks whether the pill has been snapped to its initial position.
+  // We can only do this once tabWidth > 0 (after the first layout).
+  const isInitialized = useRef(false);
 
   useEffect(() => {
-    if (tabWidth > 0 && !isDragging.value) {
-      if (isFirstMount.current) {
-        isFirstMount.current = false;
-        translateX.value = activeIndex * tabWidth;
-        return;
-      }
-      pillScale.value = withSequence(
-        withTiming(1.45, {
-          duration: 140,
-          easing: Easing.out(Easing.quad),
-        }),
-        withSpring(1.0, SCALE_SPRING_CONFIG),
-      );
-      translateX.value = withSpring(activeIndex * tabWidth, SPRING_CONFIG);
+    if (tabWidth <= 0 || isDragging.value) return;
+
+    if (!isInitialized.current) {
+      // Snap instantly on first render — no animation
+      translateX.value = activeIndex * tabWidth;
+      isInitialized.current = true;
+      return;
     }
+
+    // Subsequent tab changes: animate with spring + scale pop
+    pillScale.value = withSequence(
+      withTiming(1.45, {
+        duration: 140,
+        easing: Easing.out(Easing.quad),
+      }),
+      withSpring(1.0, SCALE_SPRING_CONFIG),
+    );
+    translateX.value = withSpring(activeIndex * tabWidth, SPRING_CONFIG);
   }, [activeIndex, tabWidth]);
 
   const handleTabChange = useCallback(
@@ -145,6 +151,7 @@ export const TabSwitcher = React.memo(function TabSwitcher({
       isDragging.value = true;
       startX.value = translateX.value;
       pillScale.value = withSpring(1.45, SCALE_SPRING_CONFIG);
+      containerScale.value = withSpring(1.08, SCALE_SPRING_CONFIG);
     })
     .onUpdate((event) => {
       "worklet";
@@ -163,6 +170,7 @@ export const TabSwitcher = React.memo(function TabSwitcher({
       "worklet";
       isDragging.value = false;
       pillScale.value = withSpring(1.0, SCALE_SPRING_CONFIG);
+      containerScale.value = withSpring(1.0, SCALE_SPRING_CONFIG);
       if (tabWidth <= 0) return;
       const closestIndex = Math.round(translateX.value / tabWidth);
       const boundedIndex = Math.max(0, Math.min(closestIndex, tabs.length - 1));
@@ -178,12 +186,16 @@ export const TabSwitcher = React.memo(function TabSwitcher({
     width: tabWidth > 0 ? tabWidth : 0,
   }));
 
+  const animatedContainerStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: containerScale.value }],
+  }));
+
   const onLayoutContainer = useCallback((e: LayoutChangeEvent) => {
     setContainerWidth(e.nativeEvent.layout.width);
   }, []);
 
   return (
-    <View style={[styles.container, style]}>
+    <Animated.View style={[styles.container, style, animatedContainerStyle]}>
       <View style={styles.track}>
         {/* Track Glass Background */}
         <View style={styles.trackBackground}>
@@ -222,6 +234,18 @@ export const TabSwitcher = React.memo(function TabSwitcher({
                   key={tab.value}
                   style={styles.tab}
                   hitSlop={spacing.xs}
+                  onPressIn={() => {
+                    containerScale.value = withSpring(1.08, SCALE_SPRING_CONFIG);
+                    if (isActive) {
+                      pillScale.value = withSpring(1.2, SCALE_SPRING_CONFIG);
+                    }
+                  }}
+                  onPressOut={() => {
+                    containerScale.value = withSpring(1.0, SCALE_SPRING_CONFIG);
+                    if (isActive) {
+                      pillScale.value = withSpring(1.0, SCALE_SPRING_CONFIG);
+                    }
+                  }}
                   onPress={() => {
                     if (!isActive) {
                       handleTabChange(tab.value);
@@ -243,7 +267,7 @@ export const TabSwitcher = React.memo(function TabSwitcher({
           </View>
         </GestureDetector>
       </View>
-    </View>
+    </Animated.View>
   );
 });
 

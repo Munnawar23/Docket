@@ -1,4 +1,4 @@
-import { AnimatedAppText, ThemeBackground } from "@/components";
+import { AnimatedAppText } from "@/components";
 import NotesListScreen from "@/features/notes/screens/NotesListScreen";
 import TasksListScreen from "@/features/tasks/screens/TasksListScreen";
 import { useAppTheme } from "@/hooks/useAppTheme";
@@ -10,8 +10,6 @@ import Animated from "react-native-reanimated";
 import BottomBar from "../components/BottomBar";
 import Header from "../components/Header";
 import { HOME_TABS, type HomeTab, useHomeScreen } from "../hooks";
-
-export type { HomeTab };
 
 export function HomeScreen() {
   const { colors, fontFamily } = useAppTheme();
@@ -25,46 +23,43 @@ export function HomeScreen() {
     animatedPageStyle,
     notesTitleStyle,
     tasksTitleStyle,
-    insets,
     floatingBottom,
   } = useHomeScreen();
 
   return (
-    <ThemeBackground style={styles.container}>
-      <View style={[styles.safeArea, { paddingTop: insets.top }]}>
-        {/* Top Header: Drawer Toggle + SearchBar + Profile */}
-        <Header />
+    <View style={styles.container}>
+      {/* Top Header: Drawer Toggle + SearchBar + Profile (Handles Top Safe Area) */}
+      <Header />
 
-        {/* Large Page Title with synchronized horizontal slide */}
-        <View style={styles.titleContainer}>
-          <AnimatedAppText
-            variant="largeTitle"
-            style={[styles.largeTitle, notesTitleStyle]}
-          >
-            Notes
-          </AnimatedAppText>
-          <AnimatedAppText
-            variant="largeTitle"
-            style={[styles.largeTitle, styles.absoluteTitle, tasksTitleStyle]}
-          >
-            Tasks
-          </AnimatedAppText>
-        </View>
-
-        {/* Tab Content Body (Swipeable & Animated Sliding Pages) */}
-        <GestureDetector gesture={swipeGesture}>
-          <View style={styles.contentContainer} onLayout={onContentLayout}>
-            <Animated.View style={[styles.pageStrip, animatedPageStyle]}>
-              <View style={styles.pageWrapper}>
-                <NotesListScreen />
-              </View>
-              <View style={styles.pageWrapper}>
-                <TasksListScreen />
-              </View>
-            </Animated.View>
-          </View>
-        </GestureDetector>
+      {/* Large Page Title with synchronized horizontal slide */}
+      <View style={styles.titleContainer}>
+        <AnimatedAppText
+          variant="largeTitle"
+          style={notesTitleStyle}
+        >
+          Notes
+        </AnimatedAppText>
+        <AnimatedAppText
+          variant="largeTitle"
+          style={[styles.absoluteTitle, tasksTitleStyle]}
+        >
+          Tasks
+        </AnimatedAppText>
       </View>
+
+      {/* Tab Content Body (Swipeable & Animated Sliding Pages) */}
+      <GestureDetector gesture={swipeGesture}>
+        <View style={styles.contentContainer} onLayout={onContentLayout}>
+          <Animated.View style={[styles.pageStrip, animatedPageStyle]}>
+            <View style={styles.pageWrapper}>
+              <NotesListScreen />
+            </View>
+            <View style={styles.pageWrapper}>
+              <TasksListScreen />
+            </View>
+          </Animated.View>
+        </View>
+      </GestureDetector>
 
       {/* Unified Floating Bottom Bar (TabSwitcher + Inline FAB Button) */}
       <BottomBar
@@ -73,16 +68,17 @@ export function HomeScreen() {
         onTabChange={(val) => handleTabPress(val as HomeTab)}
         bottomOffset={floatingBottom}
       />
-    </ThemeBackground>
+    </View>
   );
 }
 
 export default HomeScreen;
 
+// ─── Styles ───────────────────────────────────────────────────────────────────
+
 const createStyles = (colors: ThemeColors, fontFamily: ThemeFontFamily) =>
   StyleSheet.create({
     container: { flex: 1 },
-    safeArea: { flex: 1 },
     titleContainer: {
       paddingHorizontal: spacing.screenPadding,
       paddingTop: spacing.vXs,
@@ -90,7 +86,6 @@ const createStyles = (colors: ThemeColors, fontFamily: ThemeFontFamily) =>
       position: "relative",
       justifyContent: "center",
     },
-    largeTitle: {},
     absoluteTitle: {
       position: "absolute",
       left: spacing.screenPadding,

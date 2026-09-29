@@ -1,3 +1,4 @@
+import React, { useCallback, useMemo, useRef, useState } from "react";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { Haptics } from "@/lib/haptics";
 import { fontSize, spacing, type ThemeColors, type ThemeFontFamily } from "@/theme";
@@ -5,7 +6,6 @@ import { Ionicons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import { AppTextInput, type AppTextInputRef } from "@/components";
-import React, { useCallback, useMemo, useRef, useState } from "react";
 import {
   Animated as RNAnimated,
   Platform,
@@ -15,11 +15,11 @@ import {
   View,
   type ViewStyle,
 } from "react-native";
-import { scale, verticalScale } from "@/helpers/responsiveHelper";
+import { hp, wp } from "@/helpers/responsiveHelper";
 
-const HEIGHT = verticalScale(44);
-const BORDER_RADIUS = scale(16);
-const ICON_SIZE = scale(17);
+const HEIGHT = hp(5.4);
+const BORDER_RADIUS = spacing.lg;
+const ICON_SIZE = spacing.iconSm;
 
 export interface SearchBarProps {
   value?: string;
@@ -102,8 +102,8 @@ export const SearchBar = React.memo(function SearchBar({
   const restBorderColor = isDark
     ? "rgba(255, 255, 255, 0.2)"
     : isAestheticTheme
-    ? "rgba(255, 255, 255, 0.9)"
-    : "rgba(255, 255, 255, 0.85)";
+    ? `${colors.border}E6`
+    : `${colors.border}B3`;
 
   const activeBorderColor = `${colors.primary}CC`;
 
@@ -251,31 +251,31 @@ const createStyles = (
       backgroundColor: "transparent",
       ...Platform.select({
         ios: {
-          shadowColor: "#000000",
-          shadowOffset: { width: 0, height: verticalScale(3) },
+          shadowColor: isDark ? "#000000" : colors.text,
+          shadowOffset: { width: 0, height: hp(0.4) },
           shadowOpacity: isDark ? 0.35 : 0.08,
-          shadowRadius: scale(8),
+          shadowRadius: wp(2),
         },
         android: {
           elevation: 0,
         },
         web: {
-          shadowColor: "#000000",
-          shadowOffset: { width: 0, height: verticalScale(3) },
+          shadowColor: isDark ? "#000000" : colors.text,
+          shadowOffset: { width: 0, height: hp(0.4) },
           shadowOpacity: isDark ? 0.35 : 0.08,
-          shadowRadius: scale(8),
+          shadowRadius: wp(2),
         },
       }),
     },
     glassBase: {
-      ...StyleSheet.absoluteFill as any,
+      ...(StyleSheet.absoluteFill as any),
       backgroundColor:
         Platform.OS === "android"
           ? isDark
-            ? "rgba(30, 30, 34, 0.68)"
+            ? `${colors.card}B3`
             : isAestheticTheme
-            ? "rgba(255, 255, 255, 0.55)"
-            : "rgba(255, 255, 255, 0.6)"
+            ? `${colors.card}CC`
+            : `${colors.card}99`
           : isDark
           ? "rgba(28, 28, 30, 0.35)"
           : isAestheticTheme

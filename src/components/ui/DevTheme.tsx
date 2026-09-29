@@ -1,4 +1,4 @@
-import { ThemeBackground } from "../themes/ThemeBackground";
+
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { Haptics } from "@/lib/haptics";
 import { type ThemeMode } from "@/store/themeStore";
@@ -133,7 +133,7 @@ export function DevTheme() {
   ];
 
   return (
-    <ThemeBackground>
+    <View style={styles.container}>
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
@@ -567,13 +567,16 @@ export function DevTheme() {
           </TouchableOpacity>
         </View>
       </ScrollView>
-    </ThemeBackground>
+    </View>
   );
 }
 
 export default DevTheme;
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
   scrollContent: {
     paddingHorizontal: spacing.screenPadding,
     paddingBottom: spacing.vXxxl,

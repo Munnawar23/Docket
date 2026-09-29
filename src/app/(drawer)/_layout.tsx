@@ -27,6 +27,9 @@ export default function DrawerLayout() {
         drawerLabelStyle: {
           fontFamily: fontFamily.medium,
         },
+        sceneStyle: {
+          backgroundColor: "transparent",
+        },
       }}
     >
       <Drawer.Screen

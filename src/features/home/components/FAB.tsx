@@ -25,7 +25,7 @@ import Animated, {
   withSpring,
   type SharedValue,
 } from "react-native-reanimated";
-import { scale, verticalScale } from "@/helpers/responsiveHelper";
+import { hp, wp, scale, verticalScale } from "@/helpers/responsiveHelper";
 
 const FAB_SIZE = scale(48);
 const PILL_HEIGHT = verticalScale(46);
@@ -73,7 +73,7 @@ export const FAB = React.memo(function FAB({
   onAddTask,
   onAddImage,
   onAddAudio,
-  bottomOffset = verticalScale(24),
+  bottomOffset = hp(3),
   style,
 }: FABProps = {}) {
   const { colors, fontFamily, isDark, isAestheticTheme } = useAppTheme();
@@ -444,7 +444,7 @@ const createStyles = (
     },
     fabArea: {
       position: "absolute",
-      right: spacing.screenPadding,
+      right: wp(4.2),
       alignItems: "flex-end",
       zIndex: 100,
     },
@@ -458,19 +458,19 @@ const createStyles = (
       backgroundColor: "transparent",
       ...Platform.select({
         ios: {
-          shadowColor: "#000000",
-          shadowOffset: { width: 0, height: verticalScale(4) },
-          shadowOpacity: 0.22,
-          shadowRadius: scale(8),
+          shadowColor: isDark ? "#000000" : colors.text,
+          shadowOffset: { width: 0, height: hp(0.5) },
+          shadowOpacity: isDark ? 0.35 : 0.22,
+          shadowRadius: wp(2),
         },
         android: {
           elevation: 0,
         },
         web: {
-          shadowColor: "#000000",
-          shadowOffset: { width: 0, height: verticalScale(4) },
-          shadowOpacity: 0.22,
-          shadowRadius: scale(8),
+          shadowColor: isDark ? "#000000" : colors.text,
+          shadowOffset: { width: 0, height: hp(0.5) },
+          shadowOpacity: isDark ? 0.35 : 0.22,
+          shadowRadius: wp(2),
         },
       }),
     },
@@ -485,11 +485,11 @@ const createStyles = (
       transform: [{ scale: 0.94 }],
     },
     glassBase: {
-      ...StyleSheet.absoluteFill as any,
+      ...(StyleSheet.absoluteFill as any),
     },
     pillWrapper: {
       position: "absolute",
-      right: 0,
+      right: wp(0),
       alignItems: "flex-end",
     },
     pill: {

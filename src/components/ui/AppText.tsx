@@ -1,25 +1,34 @@
+import { rs } from "@/helpers/responsiveHelper";
+import { useAppTheme } from "@/hooks/useAppTheme";
+import {
+  fontSize,
+  letterSpacing,
+  lineHeight,
+  type ThemeColors,
+  type ThemeFontFamily,
+  type ThemeFontSize,
+} from "@/theme";
 import React, { forwardRef } from "react";
 import {
   Text as RNText,
+  type StyleProp,
   type TextProps,
   type TextStyle,
-  type StyleProp,
 } from "react-native";
 import Animated from "react-native-reanimated";
-import { useAppTheme } from "@/hooks/useAppTheme";
-import { rs } from "@/helpers/responsiveHelper";
-import {
-  fontSize,
-  lineHeight,
-  letterSpacing,
-  type ThemeFontSize,
-  type ThemeFontFamily,
-  type ThemeColors,
-} from "@/theme";
 
+// ─── Types & Presets ──────────────────────────────────────────────────────────
+
+/** Typography preset names (e.g. 'body', 'heading', 'caption') */
 export type TextVariant = keyof ThemeFontSize;
+
+/** Available font weights from theme */
 export type TextWeight = keyof ThemeFontFamily;
+
+/** Theme color token or any custom hex/rgb color string */
 export type TextColor = keyof ThemeColors | (string & {});
+
+// ─── Component Props ──────────────────────────────────────────────────────────
 
 export interface AppTextProps extends Omit<TextProps, "style"> {
   /**
@@ -62,6 +71,8 @@ export interface AppTextProps extends Omit<TextProps, "style"> {
   children?: React.ReactNode;
 }
 
+// ─── Main AppText Component ───────────────────────────────────────────────────
+
 export const AppText = forwardRef<RNText, AppTextProps>(function AppText(
   {
     variant = "body",
@@ -77,82 +88,92 @@ export const AppText = forwardRef<RNText, AppTextProps>(function AppText(
     align,
     style,
     children,
-    maxFontSizeMultiplier = 1.2,
+    maxFontSizeMultiplier = 1.2, // Limits system accessibility zoom to 1.2x to prevent UI overflow
     ...rest
   },
-  ref
+  ref,
 ) {
+  // Get active theme colors, font families, and theme mode
   const { colors, fontFamily, isAestheticTheme } = useAppTheme();
 
-  // 1. Resolve Font Size (from variant, or size override with moderate scale)
+  // ── Step 1: Calculate Responsive Font Size ──
+  // If custom number is passed, scale it with rs.font(). Otherwise use theme preset.
   const baseSize =
     typeof size === "number"
       ? rs.font(size)
       : size && size in fontSize
-      ? fontSize[size as keyof ThemeFontSize]
-      : fontSize[variant] ?? fontSize.body;
+        ? fontSize[size as keyof ThemeFontSize]
+        : (fontSize[variant] ?? fontSize.body);
 
-  // In special/aesthetic themes (Boogaloo font), heading and largeTitle glyphs are narrower and smaller.
-  // Scale up in aesthetic themes so they visually match the prominent boldness of the normal theme.
+  // In special/aesthetic themes (Boogaloo font), heading glyphs are naturally smaller.
+  // Scale up headers in aesthetic theme so they match visual weight.
   const resolvedSize = isAestheticTheme
     ? variant === "largeTitle" || size === "largeTitle"
       ? rs.font(44)
       : variant === "heading" || size === "heading"
-      ? rs.font(30)
-      : variant === "cardTitle" || size === "cardTitle"
-      ? rs.font(23)
-      : variant === "title" || size === "title"
-      ? rs.font(21)
-      : baseSize
+        ? rs.font(30)
+        : variant === "cardTitle" || size === "cardTitle"
+          ? rs.font(23)
+          : variant === "title" || size === "title"
+            ? rs.font(21)
+            : baseSize
     : baseSize;
 
-  // 2. Resolve Line Height (paired with font size to prevent vertical clipping)
+  // ── Step 2: Calculate Line Height ──
+  // Pairs line height with font size to prevent text from clipping at the top/bottom
   const resolvedLineHeight =
     typeof customLineHeight === "number"
       ? customLineHeight
-      : isAestheticTheme && (variant === "largeTitle" || variant === "heading" || variant === "cardTitle" || variant === "title")
-      ? Math.round(resolvedSize * 1.25)
-      : typeof size === "number"
-      ? Math.round(resolvedSize * 1.35)
-      : size && size in lineHeight
-      ? lineHeight[size as keyof ThemeFontSize]
-      : lineHeight[variant] ?? lineHeight.body;
+      : isAestheticTheme &&
+          (variant === "largeTitle" ||
+            variant === "heading" ||
+            variant === "cardTitle" ||
+            variant === "title")
+        ? Math.round(resolvedSize * 1.25)
+        : typeof size === "number"
+          ? Math.round(resolvedSize * 1.35)
+          : size && size in lineHeight
+            ? lineHeight[size as keyof ThemeFontSize]
+            : (lineHeight[variant] ?? lineHeight.body);
 
-  // 3. Resolve Letter Spacing
+  // ── Step 3: Calculate Letter Spacing ──
+  // Spacing between characters for crisp readability
   const resolvedLetterSpacing =
     typeof customLetterSpacing === "number"
       ? customLetterSpacing
       : isAestheticTheme && (variant === "largeTitle" || variant === "heading")
-      ? 0.2
-      : size && size in letterSpacing
-      ? letterSpacing[size as keyof ThemeFontSize]
-      : letterSpacing[variant] ?? 0;
+        ? 0.2
+        : size && size in letterSpacing
+          ? letterSpacing[size as keyof ThemeFontSize]
+          : (letterSpacing[variant] ?? 0);
 
-  // 4. Resolve Font Family & Weight (from variant, or family/flags override)
+  // ── Step 4: Resolve Font Family & Weight ──
+  // Pick default weight from variant, or use shorthand flags (bold, semiBold, medium)
   const defaultWeight: TextWeight =
     variant === "largeTitle" || variant === "heading"
       ? "heading"
       : variant === "cardTitle" || variant === "title"
-      ? "title"
-      : "regular";
+        ? "title"
+        : "regular";
 
   const selectedWeight: TextWeight = bold
     ? "bold"
     : semiBold
-    ? "semiBold"
-    : medium
-    ? "medium"
-    : fontFamilyProp ?? family ?? defaultWeight;
+      ? "semiBold"
+      : medium
+        ? "medium"
+        : (fontFamilyProp ?? family ?? defaultWeight);
 
-  const resolvedFontFamily =
-    fontFamily[selectedWeight] ?? fontFamily.regular;
+  const resolvedFontFamily = fontFamily[selectedWeight] ?? fontFamily.regular;
 
-  // 5. Resolve Color (theme token or direct string)
+  // ── Step 5: Resolve Text Color ──
+  // Look up color from theme palette, or allow direct color string (e.g. '#FF0000')
   const resolvedColor =
     color && color in colors
       ? colors[color as keyof ThemeColors]
       : color || colors.text;
 
+  // ── Step 6: Assemble Styles ──
   const baseStyle: TextStyle = {
     color: resolvedColor,
     fontSize: resolvedSize,
@@ -162,6 +183,7 @@ export const AppText = forwardRef<RNText, AppTextProps>(function AppText(
     ...(align ? { textAlign: align } : {}),
   };
 
+  // ── Step 7: Render Text ──
   return (
     <RNText
       ref={ref}
@@ -174,6 +196,9 @@ export const AppText = forwardRef<RNText, AppTextProps>(function AppText(
   );
 });
 
+// ─── Exports ──────────────────────────────────────────────────────────────────
+
+// Reanimated-compatible version for animations
 export const AnimatedAppText = Animated.createAnimatedComponent(AppText);
 
 export default AppText;

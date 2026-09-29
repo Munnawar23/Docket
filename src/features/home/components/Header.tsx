@@ -1,20 +1,21 @@
+import React, { useCallback, useMemo } from "react";
+import { StyleSheet, View } from "react-native";
+import { useNavigation } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
+import { GlassIconButton } from "@/components";
 import { useAppTheme } from "@/hooks/useAppTheme";
+import { useAppSafeArea } from "@/hooks/useAppSafeArea";
 import { Haptics } from "@/lib/haptics";
 import { spacing } from "@/theme";
-import { Ionicons } from "@expo/vector-icons";
-import { BlurView } from "expo-blur";
-import { LinearGradient } from "expo-linear-gradient";
-import { useNavigation } from "expo-router";
-import React, { useCallback, useMemo } from "react";
-import { Platform, Pressable, StyleSheet, View } from "react-native";
-import { scale, verticalScale } from "@/helpers/responsiveHelper";
+import { hp } from "@/helpers/responsiveHelper";
 import SearchBar from "./SearchBar";
 
-const BUTTON_SIZE = scale(40);
-
 export const Header = React.memo(function Header() {
-  const { colors, isDark, isAestheticTheme } = useAppTheme();
+  const { colors } = useAppTheme();
+  const { top } = useAppSafeArea();
   const navigation = useNavigation<any>();
+
+  const styles = useMemo(() => createStyles(top), [top]);
 
   const handleOpenDrawer = useCallback(() => {
     Haptics.light();
@@ -29,11 +30,7 @@ export const Header = React.memo(function Header() {
   return (
     <View style={styles.container}>
       {/* Drawer Toggle */}
-      <GlassIconButton
-        isDark={isDark}
-        isAestheticTheme={isAestheticTheme}
-        onPress={handleOpenDrawer}
-      >
+      <GlassIconButton onPress={handleOpenDrawer}>
         <Ionicons
           name="reorder-four-outline"
           size={spacing.iconMd}
@@ -47,11 +44,7 @@ export const Header = React.memo(function Header() {
       </View>
 
       {/* Profile */}
-      <GlassIconButton
-        isDark={isDark}
-        isAestheticTheme={isAestheticTheme}
-        onPress={handleProfilePress}
-      >
+      <GlassIconButton onPress={handleProfilePress}>
         <Ionicons
           name="person-outline"
           size={spacing.iconMd}
@@ -64,151 +57,19 @@ export const Header = React.memo(function Header() {
 
 export default Header;
 
-// ─── Glass Icon Button ────────────────────────────────────────────────────────
+// ─── Styles ───────────────────────────────────────────────────────────────────
 
-type GlassIconButtonProps = {
-  isDark: boolean;
-  isAestheticTheme: boolean;
-  onPress: () => void;
-  children: React.ReactNode;
-};
-
-function GlassIconButton({
-  isDark,
-  isAestheticTheme,
-  onPress,
-  children,
-}: GlassIconButtonProps) {
-  const sheenColors = useMemo<[string, string, string]>(() => {
-    if (isDark) {
-      return [
-        "rgba(255, 255, 255, 0.22)",
-        "rgba(58, 58, 60, 0.35)",
-        "rgba(28, 28, 30, 0.5)",
-      ];
-    }
-    if (isAestheticTheme) {
-      return [
-        "rgba(255, 255, 255, 0.9)",
-        "rgba(255, 255, 255, 0.45)",
-        "rgba(255, 255, 255, 0.15)",
-      ];
-    }
-    return [
-      "rgba(255, 255, 255, 0.85)",
-      "rgba(255, 255, 255, 0.35)",
-      "rgba(230, 230, 238, 0.3)",
-    ];
-  }, [isDark, isAestheticTheme]);
-
-  const blurIntensity = isDark ? 60 : isAestheticTheme ? 80 : 75;
-  const blurTint = isDark ? "dark" : "light";
-
-  const borderColor = isDark
-    ? "rgba(255, 255, 255, 0.2)"
-    : isAestheticTheme
-      ? "rgba(255, 255, 255, 0.9)"
-      : "rgba(255, 255, 255, 0.85)";
-
-  const glassBaseBg =
-    Platform.OS === "android"
-      ? isDark
-        ? "rgba(30, 30, 34, 0.68)"
-        : isAestheticTheme
-          ? "rgba(255, 255, 255, 0.55)"
-          : "rgba(255, 255, 255, 0.6)"
-      : isDark
-        ? "rgba(28, 28, 30, 0.35)"
-        : isAestheticTheme
-          ? "rgba(255, 255, 255, 0.35)"
-          : "rgba(255, 255, 255, 0.35)";
-
-  return (
-    <Pressable
-      onPress={onPress}
-      hitSlop={spacing.xs}
-      style={({ pressed }) => [
-        styles.buttonWrapper,
-        { borderColor },
-        pressed && styles.buttonPressed,
-      ]}
-    >
-      {/* 1. Android & Fallback Translucent Underlay */}
-      <View style={[styles.glassBase, { backgroundColor: glassBaseBg }]} />
-
-      {/* 2. Expo Blur (iOS only) */}
-      {Platform.OS === "ios" && (
-        <BlurView
-          intensity={blurIntensity}
-          tint={blurTint}
-          style={StyleSheet.absoluteFill}
-        />
-      )}
-
-      {/* 3. Liquid Glass Specular Gradient */}
-      <LinearGradient
-        colors={sheenColors}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 0.8, y: 1 }}
-        style={StyleSheet.absoluteFill}
-        pointerEvents="none"
-      />
-
-      {/* 4. Icon Content */}
-      <View style={styles.buttonContent}>{children}</View>
-    </Pressable>
-  );
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: spacing.screenPadding,
-    paddingTop: spacing.vSm,
-    paddingBottom: spacing.vXs,
-    gap: spacing.sm,
-  },
-  searchBarWrapper: {
-    flex: 1,
-  },
-  buttonWrapper: {
-    width: BUTTON_SIZE,
-    height: BUTTON_SIZE,
-    borderRadius: BUTTON_SIZE / 2,
-    overflow: "hidden",
-    borderWidth: 1,
-    position: "relative",
-    backgroundColor: "transparent",
-    ...Platform.select({
-      ios: {
-        shadowColor: "#000000",
-        shadowOffset: { width: 0, height: verticalScale(3) },
-        shadowOpacity: 0.08,
-        shadowRadius: scale(6),
-      },
-      android: {
-        elevation: 0,
-      },
-      web: {
-        shadowColor: "#000000",
-        shadowOffset: { width: 0, height: verticalScale(3) },
-        shadowOpacity: 0.08,
-        shadowRadius: scale(6),
-      },
-    }),
-  },
-  glassBase: {
-    ...(StyleSheet.absoluteFill as any),
-  },
-  buttonContent: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    zIndex: 1,
-  },
-  buttonPressed: {
-    opacity: 0.65,
-    transform: [{ scale: 0.93 }],
-  },
-});
+const createStyles = (topInset: number) =>
+  StyleSheet.create({
+    container: {
+      flexDirection: "row",
+      alignItems: "center",
+      paddingHorizontal: spacing.screenPadding,
+      paddingTop: topInset + hp(1),
+      paddingBottom: hp(0.5),
+      gap: spacing.sm,
+    },
+    searchBarWrapper: {
+      flex: 1,
+    },
+  });

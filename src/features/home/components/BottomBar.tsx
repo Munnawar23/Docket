@@ -1,8 +1,12 @@
 import React from "react";
 import { StyleSheet, View, type StyleProp, type ViewStyle } from "react-native";
-import { verticalScale } from "@/helpers/responsiveHelper";
+import { hp, wp } from "@/helpers/responsiveHelper";
+import { spacing } from "@/theme";
+import { useAppTheme } from "@/hooks/useAppTheme";
 import { TabSwitcher, type TabOption } from "@/components";
 import { FAB } from "./FAB";
+
+// ─── Props ────────────────────────────────────────────────────────────────────
 
 export interface BottomBarProps {
   tabs: TabOption[];
@@ -10,9 +14,13 @@ export interface BottomBarProps {
   onTabChange: (tab: string) => void;
   onAddNote?: () => void;
   onAddTask?: () => void;
+  onAddImage?: () => void;
+  onAddAudio?: () => void;
   bottomOffset?: number;
   style?: StyleProp<ViewStyle>;
 }
+
+// ─── Component ────────────────────────────────────────────────────────────────
 
 export const BottomBar = React.memo(function BottomBar({
   tabs,
@@ -20,12 +28,16 @@ export const BottomBar = React.memo(function BottomBar({
   onTabChange,
   onAddNote,
   onAddTask,
-  bottomOffset = verticalScale(24),
+  onAddImage,
+  onAddAudio,
+  bottomOffset = hp(3),
   style,
 }: BottomBarProps) {
+  const { colors, isDark } = useAppTheme();
+
   return (
     <>
-      {/* Centered Tab Switcher */}
+      {/* Centered Floating Tab Switcher */}
       <View
         pointerEvents="box-none"
         style={[styles.tabBarContainer, { bottom: bottomOffset }, style]}
@@ -37,6 +49,8 @@ export const BottomBar = React.memo(function BottomBar({
       <FAB
         onAddNote={onAddNote}
         onAddTask={onAddTask}
+        onAddImage={onAddImage}
+        onAddAudio={onAddAudio}
         bottomOffset={bottomOffset}
       />
     </>
@@ -45,13 +59,17 @@ export const BottomBar = React.memo(function BottomBar({
 
 export default BottomBar;
 
+// ─── Styles ───────────────────────────────────────────────────────────────────
+
 const styles = StyleSheet.create({
   tabBarContainer: {
     position: "absolute",
-    left: 0,
-    right: 0,
+    left: wp(0),
+    right: wp(0),
+    width: wp(100),
     alignItems: "center",
     justifyContent: "center",
+    paddingHorizontal: wp(4),
     zIndex: 90,
   },
 });
