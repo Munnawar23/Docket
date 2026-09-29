@@ -31,7 +31,7 @@ export const fontSize = {
   caption: rs.font(12),
   bodySm: rs.font(13),
   body: rs.font(14),
-  bodyLg: rs.font(16),
+  bodyLg: rs.font(15),
   title: rs.font(18),
   cardTitle: rs.font(20),
   heading: rs.font(24),

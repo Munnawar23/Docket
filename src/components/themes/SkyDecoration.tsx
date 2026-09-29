@@ -3,7 +3,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import Svg, { Circle, Path } from "react-native-svg";
-import { CartoonSky } from "../skia/CartoonSky";
+import { CartoonSky } from "@/components";
 
 interface SkyDecorationProps {
   color?: string;

@@ -27,7 +27,7 @@ import { Haptics } from "@/lib/haptics";
 import { fontSize, spacing, type ThemeColors, type ThemeFontFamily } from "@/theme";
 import { hp, scale, verticalScale, wp } from "@/helpers/responsiveHelper";
 import { AppText } from "./AppText";
-import { PeekingCat } from "../skia/PeekingCat";
+import { JumpingFrog, PeekingCat } from "@/components";
 
 export interface TabOption {
   label: string;
@@ -207,6 +207,16 @@ export const TabSwitcher = React.memo(function TabSwitcher({
           />
         </View>
       )}
+      {/* Jumping Frog on TabSwitcher (Sage Theme Only) */}
+      {themeMode === "sage" && (
+        <View style={styles.jumpingFrogWrapper} pointerEvents="box-none">
+          <JumpingFrog
+            activeX={translateX}
+            tabWidth={tabWidth}
+            containerWidth={containerWidth}
+          />
+        </View>
+      )}
 
       <View style={styles.track}>
         {/* Track Glass Background */}
@@ -304,6 +314,14 @@ const createStyles = (
       left: 0,
       right: 0,
       zIndex: 2,
+      overflow: "visible",
+    },
+    jumpingFrogWrapper: {
+      position: "absolute",
+      top: -verticalScale(63),
+      left: 0,
+      right: 0,
+      zIndex: 20,
       overflow: "visible",
     },
     track: {

@@ -8,6 +8,7 @@ import Svg, {
   Stop,
   LinearGradient as SvgLinearGradient,
 } from "react-native-svg";
+import { FloatingLeaves } from "@/components";
 
 interface SageDecorationProps {
   color?: string;
@@ -136,35 +137,6 @@ function FernFrond({
   );
 }
 
-// ─── SVG Single Olive Leaf Particle ──────────────────────────────────────────
-function OliveLeaf({
-  size = scale(24),
-  color = "#557E34",
-}: {
-  size?: number;
-  color?: string;
-}) {
-  return (
-    <Svg width={size} height={size * 1.3} viewBox="0 0 30 40" fill="none">
-      {/* Leaf blade */}
-      <Path
-        d="M15 2 C27 12, 28 28, 15 38 C2 28, 3 12, 15 2 Z"
-        fill={color}
-        fillOpacity={0.45}
-        stroke={color}
-        strokeWidth={1}
-        strokeOpacity={0.65}
-      />
-      {/* Center vein */}
-      <Path
-        d="M15 6 L15 34"
-        stroke="rgba(255,255,255,0.35)"
-        strokeWidth={0.8}
-      />
-    </Svg>
-  );
-}
-
 // ─── SVG Dewdrop Glint ───────────────────────────────────────────────────────
 function Dewdrop({
   size = scale(12),
@@ -211,36 +183,8 @@ export function SageDecoration({ color = "#557E34" }: SageDecorationProps) {
         <FernFrond size={scale(120)} color={color} />
       </View>
 
-      {/* ── Balanced Drifting Olive Leaf Particles ──────────────────────── */}
-      {/* Top right near branch */}
-      <View style={styles.leaf1}>
-        <OliveLeaf size={scale(25)} color={color} />
-      </View>
-
-      {/* Upper center */}
-      <View style={styles.leaf2}>
-        <OliveLeaf size={scale(21)} color={accentColor} />
-      </View>
-
-      {/* Mid left */}
-      <View style={styles.leaf3}>
-        <OliveLeaf size={scale(24)} color={color} />
-      </View>
-
-      {/* Mid-lower center */}
-      <View style={styles.leaf4}>
-        <OliveLeaf size={scale(20)} color={accentColor} />
-      </View>
-
-      {/* Lower left near fern */}
-      <View style={styles.leaf5}>
-        <OliveLeaf size={scale(23)} color={color} />
-      </View>
-
-      {/* Lower right */}
-      <View style={styles.leaf6}>
-        <OliveLeaf size={scale(19)} color={accentColor} />
-      </View>
+      {/* ── Skia 120 FPS Minimal Drifting Botanical Leaves ── */}
+      <FloatingLeaves />
 
       {/* ── Subtle Dewdrop Glints ───────────────────────────────────────── */}
       <View style={styles.dew1}>
@@ -302,50 +246,6 @@ const styles = StyleSheet.create({
     left: -wp(5),
     opacity: 0.28,
     transform: [{ rotate: "-18deg" }],
-  },
-
-  // ── Balanced Leaf Positions (6 total) ──────────────────────────────────────
-  leaf1: {
-    position: "absolute",
-    top: hp(15),
-    right: wp(14),
-    opacity: 0.62,
-    transform: [{ rotate: "22deg" }],
-  },
-  leaf2: {
-    position: "absolute",
-    top: hp(29),
-    left: wp(46),
-    opacity: 0.44,
-    transform: [{ rotate: "-18deg" }],
-  },
-  leaf3: {
-    position: "absolute",
-    top: hp(47),
-    left: wp(8),
-    opacity: 0.58,
-    transform: [{ rotate: "30deg" }],
-  },
-  leaf4: {
-    position: "absolute",
-    top: hp(63),
-    left: wp(53),
-    opacity: 0.42,
-    transform: [{ rotate: "-14deg" }],
-  },
-  leaf5: {
-    position: "absolute",
-    bottom: hp(22),
-    left: wp(16),
-    opacity: 0.56,
-    transform: [{ rotate: "28deg" }],
-  },
-  leaf6: {
-    position: "absolute",
-    bottom: hp(15),
-    right: wp(16),
-    opacity: 0.5,
-    transform: [{ rotate: "-24deg" }],
   },
 
   // ── Dewdrops ───────────────────────────────────────────────────────────────
