@@ -21,6 +21,16 @@ export function HomeScreen() {
     onContentLayout,
     animatedPageStyle,
     floatingBottom,
+    // Notes & Selection State
+    notes,
+    selectedNoteIds,
+    isSelectionMode,
+    handleToggleSelectNote,
+    handleNoteLongPress,
+    handleDeleteSelected,
+    handlePinSelected,
+    handleArchiveSelected,
+    handleCancelSelection,
   } = useHomeScreen();
 
   return (
@@ -33,7 +43,13 @@ export function HomeScreen() {
         <View style={styles.contentContainer} onLayout={onContentLayout}>
           <Animated.View style={[styles.pageStrip, animatedPageStyle]}>
             <View style={styles.pageWrapper}>
-              <NotesListScreen />
+              <NotesListScreen
+                notes={notes}
+                selectedNoteIds={selectedNoteIds}
+                isSelectionMode={isSelectionMode}
+                onToggleSelectNote={handleToggleSelectNote}
+                onLongPressNote={handleNoteLongPress}
+              />
             </View>
             <View style={styles.pageWrapper}>
               <TasksListScreen />
@@ -42,12 +58,18 @@ export function HomeScreen() {
         </View>
       </GestureDetector>
 
-      {/* Unified Floating Bottom Bar (TabSwitcher + Inline FAB Button) */}
+      {/* Unified Floating Bottom Bar (TabSwitcher + FAB OR ActionButtons in Selection Mode) */}
       <BottomBar
         tabs={HOME_TABS}
         activeTab={activeTab}
         onTabChange={(val) => handleTabPress(val as HomeTab)}
         bottomOffset={floatingBottom}
+        isSelectionMode={isSelectionMode}
+        selectedCount={selectedNoteIds.length}
+        onDelete={handleDeleteSelected}
+        onPin={handlePinSelected}
+        onArchive={handleArchiveSelected}
+        onCancelSelection={handleCancelSelection}
       />
     </View>
   );

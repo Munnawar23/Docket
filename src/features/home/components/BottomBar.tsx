@@ -1,9 +1,8 @@
+import { TabSwitcher, type TabOption } from "@/components";
+import { hp, wp } from "@/helpers/responsiveHelper";
 import React from "react";
 import { StyleSheet, View, type StyleProp, type ViewStyle } from "react-native";
-import { hp, wp } from "@/helpers/responsiveHelper";
-import { spacing } from "@/theme";
-import { useAppTheme } from "@/hooks/useAppTheme";
-import { TabSwitcher, type TabOption } from "@/components";
+import { ActionButtons } from "./ActionButtons";
 import { FAB } from "./FAB";
 
 // ─── Props ────────────────────────────────────────────────────────────────────
@@ -18,6 +17,13 @@ export interface BottomBarProps {
   onAddAudio?: () => void;
   bottomOffset?: number;
   style?: StyleProp<ViewStyle>;
+  // Selection mode props
+  isSelectionMode?: boolean;
+  selectedCount?: number;
+  onDelete?: () => void;
+  onPin?: () => void;
+  onArchive?: () => void;
+  onCancelSelection?: () => void;
 }
 
 // ─── Component ────────────────────────────────────────────────────────────────
@@ -32,27 +38,44 @@ export const BottomBar = React.memo(function BottomBar({
   onAddAudio,
   bottomOffset = hp(3),
   style,
+  isSelectionMode = false,
+  selectedCount = 0,
+  onDelete,
+  onPin,
+  onArchive,
+  onCancelSelection,
 }: BottomBarProps) {
-  const { colors, isDark } = useAppTheme();
-
   return (
     <>
-      {/* Centered Floating Tab Switcher */}
-      <View
-        pointerEvents="box-none"
-        style={[styles.tabBarContainer, { bottom: bottomOffset }, style]}
-      >
-        <TabSwitcher tabs={tabs} activeTab={activeTab} onTabChange={onTabChange} />
-      </View>
+      {isSelectionMode ? (
+        <ActionButtons
+          selectedCount={selectedCount}
+          onDelete={onDelete}
+          onPin={onPin}
+          onArchive={onArchive}
+          onCancel={onCancelSelection}
+          bottomOffset={bottomOffset}
+        />
+      ) : (
+        <>
+          {/* Centered Floating Tab Switcher */}
+          <View
+            pointerEvents="box-none"
+            style={[styles.tabBarContainer, { bottom: bottomOffset }, style]}
+          >
+            <TabSwitcher tabs={tabs} activeTab={activeTab} onTabChange={onTabChange} />
+          </View>
 
-      {/* Floating Action Button */}
-      <FAB
-        onAddNote={onAddNote}
-        onAddTask={onAddTask}
-        onAddImage={onAddImage}
-        onAddAudio={onAddAudio}
-        bottomOffset={bottomOffset}
-      />
+          {/* Floating Action Button */}
+          <FAB
+            onAddNote={onAddNote}
+            onAddTask={onAddTask}
+            onAddImage={onAddImage}
+            onAddAudio={onAddAudio}
+            bottomOffset={bottomOffset}
+          />
+        </>
+      )}
     </>
   );
 });

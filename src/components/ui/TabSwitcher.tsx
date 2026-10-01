@@ -8,8 +8,6 @@ import {
   type StyleProp,
   type ViewStyle,
 } from "react-native";
-import { BlurView } from "expo-blur";
-import { LinearGradient } from "expo-linear-gradient";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
   Easing,
@@ -70,34 +68,6 @@ export const TabSwitcher = React.memo(function TabSwitcher({
   );
 
   const [containerWidth, setContainerWidth] = useState(0);
-
-  // Liquid glass theme values
-  const sheenColors: [string, string, string] = isDark
-    ? [
-        "rgba(255, 255, 255, 0.12)",
-        "rgba(58, 58, 60, 0.15)",
-        "rgba(28, 28, 30, 0.25)",
-      ]
-    : isAestheticTheme
-      ? [
-          "rgba(255, 255, 255, 0.9)",
-          "rgba(255, 255, 255, 0.45)",
-          "rgba(255, 255, 255, 0.15)",
-        ]
-      : [
-          "rgba(255, 255, 255, 0.6)",
-          "rgba(255, 255, 255, 0.2)",
-          "rgba(220, 220, 228, 0.15)",
-        ];
-
-  const glassBaseBg = isDark
-    ? "rgba(30, 30, 34, 0.95)"
-    : isAestheticTheme
-      ? "rgba(255, 255, 255, 0.94)"
-      : "rgba(238, 238, 242, 0.96)";
-
-  const blurIntensity = isDark ? 60 : isAestheticTheme ? 80 : 75;
-  const blurTint: "light" | "dark" = isDark ? "dark" : "light";
 
   const activeIndex = Math.max(
     tabs.findIndex((t) => t.value === activeTab),
@@ -217,24 +187,8 @@ export const TabSwitcher = React.memo(function TabSwitcher({
       )}
 
       <View style={styles.track}>
-        {/* Track Glass Background */}
-        <View style={styles.trackBackground}>
-          <View style={[styles.glassBase, { backgroundColor: glassBaseBg }]} />
-          {Platform.OS === "ios" && (
-            <BlurView
-              intensity={blurIntensity}
-              tint={blurTint}
-              style={StyleSheet.absoluteFill}
-            />
-          )}
-          <LinearGradient
-            colors={sheenColors}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 0.8, y: 1 }}
-            style={StyleSheet.absoluteFill}
-            pointerEvents="none"
-          />
-        </View>
+        {/* Track Solid Theme Background */}
+        <View style={styles.trackBackground} />
 
         <GestureDetector gesture={panGesture}>
           <View style={styles.tabContainer} onLayout={onLayoutContainer}>
@@ -327,9 +281,9 @@ const createStyles = (
       position: "relative",
       overflow: "visible",
       zIndex: 1,
-      shadowColor: "#000000",
+      shadowColor: colors.text,
       shadowOffset: { width: 0, height: spacing.vXs },
-      shadowOpacity: isDark ? 0.35 : 0.12,
+      shadowOpacity: isDark ? 0.35 : 0.08,
       shadowRadius: spacing.sm,
       elevation: 6,
     },
@@ -338,14 +292,8 @@ const createStyles = (
       borderRadius: spacing.xxl,
       overflow: "hidden",
       borderWidth: 1,
-      borderColor: isDark
-        ? "rgba(255, 255, 255, 0.16)"
-        : isAestheticTheme
-          ? `${colors.border}B3`
-          : "rgba(0, 0, 0, 0.08)",
-    },
-    glassBase: {
-      ...(StyleSheet.absoluteFill as any),
+      borderColor: colors.border,
+      backgroundColor: colors.background,
     },
     tabContainer: {
       flexDirection: "row",
@@ -360,16 +308,14 @@ const createStyles = (
       bottom: spacing.xs,
       left: spacing.xs,
       borderRadius: spacing.xl,
-      backgroundColor: isDark ? "rgba(58, 58, 62, 0.98)" : colors.card,
+      backgroundColor: colors.card,
       borderWidth: 1,
-      borderColor: isDark
-        ? "rgba(255, 255, 255, 0.22)"
-        : "rgba(255, 255, 255, 0.95)",
-      shadowColor: "#000000",
+      borderColor: colors.border,
+      shadowColor: colors.text,
       shadowOffset: { width: 0, height: spacing.vXs },
-      shadowOpacity: isDark ? 0.35 : 0.16,
+      shadowOpacity: isDark ? 0.3 : 0.08,
       shadowRadius: spacing.sm,
-      elevation: 4,
+      elevation: 3,
       zIndex: 1,
     },
     tab: {
@@ -389,6 +335,6 @@ const createStyles = (
     },
     tabTextInactive: {
       fontFamily: fontFamily.semiBold,
-      color: isDark ? "rgba(255, 255, 255, 0.65)" : colors.subtext,
+      color: colors.subtext,
     },
   });

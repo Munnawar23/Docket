@@ -1,9 +1,10 @@
 import { AppText } from "@/components/ui/AppText";
-import type { Note } from "@/constants";
+import type { Note, NoteCardProps } from "@/types";
 import { rs } from "@/helpers/responsiveHelper";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { Haptics } from "@/lib/haptics";
 import { spacing, type ThemeColors, type ThemeSpacing } from "@/theme";
+import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import React, { useCallback, useMemo } from "react";
 import {
@@ -15,17 +16,15 @@ import {
 } from "react-native";
 import Animated, { Easing, FadeInDown } from "react-native-reanimated";
 
-export interface NoteCardProps {
-  note: Note;
-  index?: number;
-  onPress?: (note: Note) => void;
-  style?: StyleProp<ViewStyle>;
-}
+export type { NoteCardProps };
 
 export const NoteCard = React.memo(function NoteCard({
   note,
   index = 0,
+  isSelected = false,
+  isSelectionMode = false,
   onPress,
+  onLongPress,
   style,
 }: NoteCardProps) {
   const { colors, isDark, isAestheticTheme } = useAppTheme();
@@ -40,6 +39,11 @@ export const NoteCard = React.memo(function NoteCard({
     onPress?.(note);
   }, [note, onPress]);
 
+  const handleLongPress = useCallback(() => {
+    Haptics.medium();
+    onLongPress?.(note);
+  }, [note, onLongPress]);
+
   // Three natural height profiles:
   // 1. Very big: has image + title + 3 lines of snippet
   // 2. Medium: no image, but longer text content (up to 6 lines)
@@ -51,9 +55,12 @@ export const NoteCard = React.memo(function NoteCard({
     : styles.contentArea;
 
   const getCardStyle = useCallback(
-    ({ pressed }: { pressed: boolean }) =>
-      pressed ? styles.cardActive : styles.card,
-    [styles.card, styles.cardActive],
+    ({ pressed }: { pressed: boolean }) => [
+      styles.card,
+      isSelected ? styles.cardSelected : null,
+      pressed ? styles.cardActive : null,
+    ],
+    [styles.card, styles.cardSelected, styles.cardActive, isSelected],
   );
 
   const enteringAnimation = useMemo(
@@ -73,7 +80,12 @@ export const NoteCard = React.memo(function NoteCard({
       entering={enteringAnimation}
       style={style ? [styles.cardWrapper, style] : styles.cardWrapper}
     >
-      <Pressable onPress={handlePress} style={getCardStyle}>
+      <Pressable
+        onPress={handlePress}
+        onLongPress={handleLongPress}
+        delayLongPress={280}
+        style={getCardStyle}
+      >
         {/* Optional Top Image */}
         {Boolean(note.imageUrl) && (
           <Image
@@ -89,7 +101,7 @@ export const NoteCard = React.memo(function NoteCard({
           {/* Note Title */}
           {Boolean(note.title) && (
             <AppText
-              variant="title"
+              variant="bodyLg"
               semiBold
               numberOfLines={2}
               style={styles.title}
@@ -101,7 +113,7 @@ export const NoteCard = React.memo(function NoteCard({
           {/* Note Content / Snippet */}
           {Boolean(note.content) && (
             <AppText
-              variant="caption"
+              variant="bodySm"
               numberOfLines={maxContentLines}
               style={styles.content}
             >
@@ -120,6 +132,22 @@ export const NoteCard = React.memo(function NoteCard({
             </View>
           )}
         </View>
+
+        {/* Selection Checkmark Badge (Bottom Right) */}
+        {isSelectionMode && (
+          <View
+            style={[
+              styles.selectionBadge,
+              isSelected
+                ? styles.selectionBadgeSelected
+                : styles.selectionBadgeUnselected,
+            ]}
+          >
+            {isSelected && (
+              <Ionicons name="checkmark" size={rs.icon(12)} color="#FFFFFF" />
+            )}
+          </View>
+        )}
       </Pressable>
     </Animated.View>
   );
@@ -143,31 +171,40 @@ const createStyles = (
       borderRadius: spacing.xl,
       overflow: "hidden",
       borderWidth: 1,
-      borderColor: isAestheticTheme
-        ? `${colors.border}B3`
-        : `${colors.border}80`,
+      borderColor: colors.border,
       shadowColor: colors.text,
       shadowOffset: { width: 0, height: spacing.vXs },
       shadowOpacity: isDark ? 0.3 : 0.07,
       shadowRadius: spacing.sm,
       elevation: isDark ? 0 : 2,
     },
-    cardActive: {
-      width: "100%",
-      backgroundColor: colors.card,
-      borderRadius: spacing.xl,
-      overflow: "hidden",
+    cardSelected: {
+      borderColor: colors.primary,
       borderWidth: 1,
-      borderColor: isAestheticTheme
-        ? `${colors.border}B3`
-        : `${colors.border}80`,
-      shadowColor: colors.text,
-      shadowOffset: { width: 0, height: spacing.vXs },
-      shadowOpacity: isDark ? 0.3 : 0.07,
-      shadowRadius: spacing.sm,
-      elevation: isDark ? 0 : 2,
+    },
+    cardActive: {
       opacity: 0.88,
       transform: [{ scale: 0.98 }],
+    },
+    selectionBadge: {
+      position: "absolute",
+      bottom: spacing.sm,
+      right: spacing.sm,
+      width: rs.space(22),
+      height: rs.space(22),
+      borderRadius: rs.space(11),
+      alignItems: "center",
+      justifyContent: "center",
+      zIndex: 20,
+      borderWidth: 1.5,
+    },
+    selectionBadgeSelected: {
+      backgroundColor: colors.primary,
+      borderColor: colors.card,
+    },
+    selectionBadgeUnselected: {
+      backgroundColor: colors.card,
+      borderColor: colors.border,
     },
     image: {
       width: "100%",
@@ -202,9 +239,9 @@ const createStyles = (
       paddingHorizontal: spacing.sm,
       paddingVertical: spacing.vXs / 2,
       borderRadius: spacing.sm,
-      backgroundColor: isAestheticTheme
-        ? `${colors.border}80`
-        : `${colors.border}66`,
+      backgroundColor: colors.background,
+      borderWidth: 1,
+      borderColor: colors.border,
       alignSelf: "flex-start",
     },
     dateText: {

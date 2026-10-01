@@ -1,6 +1,7 @@
 import { AppText } from "@/components/ui/AppText";
 import { EmptyState } from "@/components/ui/EmptyState";
-import { MOCK_NOTES, type Note } from "@/constants";
+import { MOCK_NOTES } from "@/constants";
+import type { Note, NotesListScreenProps } from "@/types";
 import { useAppSafeArea } from "@/hooks/useAppSafeArea";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { Haptics } from "@/lib/haptics";
@@ -13,35 +14,85 @@ import { NoteCard } from "../components/NoteCard";
 // Clearance for the floating bottom navigation bar
 const BOTTOM_BAR_CLEARANCE = spacing.xxxl * 3 + spacing.lg;
 
-export const NotesListScreen = React.memo(function NotesListScreen() {
+export type { NotesListScreenProps };
+
+export const NotesListScreen = React.memo(function NotesListScreen({
+  notes: controlledNotes,
+  selectedNoteIds = [],
+  isSelectionMode = false,
+  onToggleSelectNote,
+  onLongPressNote,
+  onNotePress,
+  onRefresh,
+  refreshing: controlledRefreshing,
+}: NotesListScreenProps = {}) {
   const { colors } = useAppTheme();
   const { bottom } = useAppSafeArea();
-  const [notes, setNotes] = useState<Note[]>(MOCK_NOTES);
-  const [refreshing, setRefreshing] = useState(false);
+
+  const [internalNotes, setInternalNotes] = useState<Note[]>(MOCK_NOTES);
+  const notes = controlledNotes ?? internalNotes;
+
+  const [internalRefreshing, setInternalRefreshing] = useState(false);
+  const refreshing = controlledRefreshing ?? internalRefreshing;
 
   const styles = useMemo(() => createStyles(spacing), []);
 
   const handleRefresh = useCallback(() => {
+    if (onRefresh) {
+      onRefresh();
+      return;
+    }
     Haptics.light();
-    setRefreshing(true);
+    setInternalRefreshing(true);
     setTimeout(() => {
       // Refresh / reload mock data
-      setNotes([...MOCK_NOTES]);
-      setRefreshing(false);
+      setInternalNotes([...MOCK_NOTES]);
+      setInternalRefreshing(false);
     }, 1000);
-  }, []);
+  }, [onRefresh]);
 
-  const handleNotePress = useCallback((note: Note) => {
-    console.log("[NotesListScreen] Note pressed:", note.title);
-  }, []);
+  const handleNotePress = useCallback(
+    (note: Note) => {
+      if (isSelectionMode) {
+        onToggleSelectNote?.(note);
+      } else {
+        onNotePress?.(note);
+        console.log("[NotesListScreen] Note pressed:", note.title);
+      }
+    },
+    [isSelectionMode, onToggleSelectNote, onNotePress],
+  );
+
+  const handleNoteLongPress = useCallback(
+    (note: Note) => {
+      onLongPressNote?.(note);
+    },
+    [onLongPressNote],
+  );
 
   const renderNoteItem = useCallback(
-    ({ item, index }: { item: Note; index: number }) => (
-      <View style={styles.cardItemWrapper}>
-        <NoteCard note={item} index={index} onPress={handleNotePress} />
-      </View>
-    ),
-    [handleNotePress, styles.cardItemWrapper],
+    ({ item, index }: { item: Note; index: number }) => {
+      const isSelected = selectedNoteIds.includes(item.id);
+      return (
+        <View style={styles.cardItemWrapper}>
+          <NoteCard
+            note={item}
+            index={index}
+            isSelected={isSelected}
+            isSelectionMode={isSelectionMode}
+            onPress={handleNotePress}
+            onLongPress={handleNoteLongPress}
+          />
+        </View>
+      );
+    },
+    [
+      handleNotePress,
+      handleNoteLongPress,
+      selectedNoteIds,
+      isSelectionMode,
+      styles.cardItemWrapper,
+    ],
   );
 
   const keyExtractor = useCallback((item: Note) => item.id, []);

@@ -1,3 +1,7 @@
+import { MOCK_NOTES } from "@/constants";
+import type { Note } from "@/types";
+import { verticalScale } from "@/helpers/responsiveHelper";
+import { useAppSafeArea } from "@/hooks/useAppSafeArea";
 import { Haptics } from "@/lib/haptics";
 import { useCallback, useMemo, useState } from "react";
 import { Dimensions, LayoutChangeEvent } from "react-native";
@@ -8,8 +12,6 @@ import Animated, {
   withSpring,
   type WithSpringConfig,
 } from "react-native-reanimated";
-import { useAppSafeArea } from "@/hooks/useAppSafeArea";
-import { verticalScale } from "@/helpers/responsiveHelper";
 import { scheduleOnRN, scheduleOnUI } from "react-native-worklets";
 
 export type HomeTab = "notes" | "tasks";
@@ -31,6 +33,11 @@ const PAGE_SPRING_CONFIG: WithSpringConfig = {
 export function useHomeScreen() {
   const [activeTab, setActiveTab] = useState<HomeTab>("notes");
   const { bottom } = useAppSafeArea();
+
+  // Notes data and multi-select state
+  const [notes, setNotes] = useState<Note[]>(MOCK_NOTES);
+  const [selectedNoteIds, setSelectedNoteIds] = useState<string[]>([]);
+  const isSelectionMode = selectedNoteIds.length > 0;
 
   // Keep pageWidth on the UI thread — gesture handlers read it without bridging
   const pageWidth = useSharedValue(SCREEN_WIDTH);
@@ -133,6 +140,50 @@ export function useHomeScreen() {
     transform: [{ translateX: contentTranslateX.value }],
   }));
 
+  // Selection handlers
+  const handleToggleSelectNote = useCallback((note: Note) => {
+    Haptics.light();
+    setSelectedNoteIds((prev) => {
+      if (prev.includes(note.id)) {
+        return prev.filter((id) => id !== note.id);
+      }
+      return [...prev, note.id];
+    });
+  }, []);
+
+  const handleNoteLongPress = useCallback((note: Note) => {
+    Haptics.medium();
+    setSelectedNoteIds((prev) => {
+      if (prev.includes(note.id)) {
+        return prev;
+      }
+      return [...prev, note.id];
+    });
+  }, []);
+
+  const handleDeleteSelected = useCallback(() => {
+    Haptics.medium();
+    setNotes((prev) => prev.filter((n) => !selectedNoteIds.includes(n.id)));
+    setSelectedNoteIds([]);
+  }, [selectedNoteIds]);
+
+  const handlePinSelected = useCallback(() => {
+    Haptics.light();
+    console.log("[HomeScreen] Pinned notes:", selectedNoteIds);
+    setSelectedNoteIds([]);
+  }, [selectedNoteIds]);
+
+  const handleArchiveSelected = useCallback(() => {
+    Haptics.light();
+    setNotes((prev) => prev.filter((n) => !selectedNoteIds.includes(n.id)));
+    setSelectedNoteIds([]);
+  }, [selectedNoteIds]);
+
+  const handleCancelSelection = useCallback(() => {
+    Haptics.light();
+    setSelectedNoteIds([]);
+  }, []);
+
   const floatingBottom = Math.max(bottom, verticalScale(16)) + verticalScale(22);
 
   return {
@@ -142,5 +193,16 @@ export function useHomeScreen() {
     onContentLayout,
     animatedPageStyle,
     floatingBottom,
+    // Notes & Selection State
+    notes,
+    setNotes,
+    selectedNoteIds,
+    isSelectionMode,
+    handleToggleSelectNote,
+    handleNoteLongPress,
+    handleDeleteSelected,
+    handlePinSelected,
+    handleArchiveSelected,
+    handleCancelSelection,
   };
 }
