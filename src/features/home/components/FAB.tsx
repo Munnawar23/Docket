@@ -82,50 +82,6 @@ export const FAB = React.memo(function FAB({
     [colors, fontFamily, isDark, isAestheticTheme]
   );
 
-  const sheenColors = useMemo<[string, string, string]>(() => {
-    if (isDark) {
-      return [
-        "rgba(255, 255, 255, 0.22)",
-        "rgba(58, 58, 60, 0.35)",
-        "rgba(28, 28, 30, 0.5)",
-      ];
-    }
-    if (isAestheticTheme) {
-      return [
-        "rgba(255, 255, 255, 0.9)",
-        "rgba(255, 255, 255, 0.45)",
-        "rgba(255, 255, 255, 0.15)",
-      ];
-    }
-    return [
-      "rgba(255, 255, 255, 0.85)",
-      "rgba(255, 255, 255, 0.35)",
-      "rgba(230, 230, 238, 0.3)",
-    ];
-  }, [isDark, isAestheticTheme]);
-
-  const blurIntensity = isDark ? 60 : isAestheticTheme ? 80 : 75;
-  const blurTint = isDark ? "dark" : "light";
-
-  const borderColor = isDark
-    ? "rgba(255, 255, 255, 0.2)"
-    : isAestheticTheme
-    ? "rgba(255, 255, 255, 0.9)"
-    : "rgba(255, 255, 255, 0.85)";
-
-  const glassBaseBg =
-    Platform.OS === "android"
-      ? isDark
-        ? "rgba(30, 30, 34, 0.68)"
-        : isAestheticTheme
-        ? "rgba(255, 255, 255, 0.55)"
-        : "rgba(255, 255, 255, 0.6)"
-      : isDark
-      ? "rgba(28, 28, 30, 0.35)"
-      : isAestheticTheme
-      ? "rgba(255, 255, 255, 0.35)"
-      : "rgba(255, 255, 255, 0.35)";
-
   // Separate shared value per concern — all live on UI thread
   const backdropProgress = useSharedValue(0);
   const iconProgress     = useSharedValue(0);
@@ -246,41 +202,32 @@ export const FAB = React.memo(function FAB({
           />
         ))}
 
-        {/* Liquid Glass FAB button */}
+        {/* Primary FAB button */}
         <Pressable
           onPress={toggleMenu}
           hitSlop={spacing.sm}
           style={({ pressed }) => [
             styles.fab,
-            { borderColor },
             pressed && styles.fabPressed,
           ]}
         >
-          {/* 1. Android & Fallback Translucent Underlay */}
-          <View style={[styles.glassBase, { backgroundColor: glassBaseBg }]} />
-
-          {/* 2. Expo Blur (iOS only) */}
-          {Platform.OS === "ios" && (
-            <BlurView
-              intensity={blurIntensity}
-              tint={blurTint}
-              style={StyleSheet.absoluteFill}
-            />
-          )}
-
-          {/* 3. Liquid Glass Specular Gradient Sheen */}
+          {/* Subtle Specular Sheen */}
           <LinearGradient
-            colors={sheenColors}
+            colors={[
+              "rgba(255, 255, 255, 0.32)",
+              "rgba(255, 255, 255, 0.08)",
+              "rgba(0, 0, 0, 0.12)",
+            ]}
             start={{ x: 0, y: 0 }}
             end={{ x: 0.8, y: 1 }}
             style={StyleSheet.absoluteFill}
             pointerEvents="none"
           />
 
-          {/* 4. Icon Content */}
+          {/* Icon Content */}
           <View style={styles.fabContent}>
             <Animated.View style={fabIconStyle}>
-              <Ionicons name="add" size={scale(24)} color={colors.text} />
+              <Ionicons name="add" size={scale(24)} color="#FFFFFF" />
             </Animated.View>
           </View>
         </Pressable>
@@ -454,25 +401,14 @@ const createStyles = (
       borderRadius: FAB_SIZE / 2,
       overflow: "hidden",
       borderWidth: 1,
+      borderColor: "rgba(255, 255, 255, 0.28)",
       position: "relative",
-      backgroundColor: "transparent",
-      ...Platform.select({
-        ios: {
-          shadowColor: isDark ? "#000000" : colors.text,
-          shadowOffset: { width: 0, height: hp(0.5) },
-          shadowOpacity: isDark ? 0.35 : 0.22,
-          shadowRadius: wp(2),
-        },
-        android: {
-          elevation: 0,
-        },
-        web: {
-          shadowColor: isDark ? "#000000" : colors.text,
-          shadowOffset: { width: 0, height: hp(0.5) },
-          shadowOpacity: isDark ? 0.35 : 0.22,
-          shadowRadius: wp(2),
-        },
-      }),
+      backgroundColor: colors.primary,
+      shadowColor: colors.primary,
+      shadowOffset: { width: 0, height: spacing.vXs },
+      shadowOpacity: 0.38,
+      shadowRadius: spacing.sm,
+      elevation: 6,
     },
     fabContent: {
       flex: 1,

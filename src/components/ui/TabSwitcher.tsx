@@ -74,9 +74,9 @@ export const TabSwitcher = React.memo(function TabSwitcher({
   // Liquid glass theme values
   const sheenColors: [string, string, string] = isDark
     ? [
-        "rgba(255, 255, 255, 0.22)",
-        "rgba(58, 58, 60, 0.35)",
-        "rgba(28, 28, 30, 0.5)",
+        "rgba(255, 255, 255, 0.12)",
+        "rgba(58, 58, 60, 0.15)",
+        "rgba(28, 28, 30, 0.25)",
       ]
     : isAestheticTheme
       ? [
@@ -85,19 +85,16 @@ export const TabSwitcher = React.memo(function TabSwitcher({
           "rgba(255, 255, 255, 0.15)",
         ]
       : [
-          "rgba(255, 255, 255, 0.85)",
-          "rgba(255, 255, 255, 0.35)",
-          "rgba(230, 230, 238, 0.3)",
+          "rgba(255, 255, 255, 0.6)",
+          "rgba(255, 255, 255, 0.2)",
+          "rgba(220, 220, 228, 0.15)",
         ];
 
-  const glassBaseBg =
-    Platform.OS === "android"
-      ? isDark
-        ? "rgba(30, 30, 34, 0.72)"
-        : "rgba(255, 255, 255, 0.65)"
-      : isDark
-        ? "rgba(28, 28, 30, 0.4)"
-        : "rgba(255, 255, 255, 0.4)";
+  const glassBaseBg = isDark
+    ? "rgba(30, 30, 34, 0.95)"
+    : isAestheticTheme
+      ? "rgba(255, 255, 255, 0.94)"
+      : "rgba(238, 238, 242, 0.96)";
 
   const blurIntensity = isDark ? 60 : isAestheticTheme ? 80 : 75;
   const blurTint: "light" | "dark" = isDark ? "dark" : "light";
@@ -330,6 +327,11 @@ const createStyles = (
       position: "relative",
       overflow: "visible",
       zIndex: 1,
+      shadowColor: "#000000",
+      shadowOffset: { width: 0, height: spacing.vXs },
+      shadowOpacity: isDark ? 0.35 : 0.12,
+      shadowRadius: spacing.sm,
+      elevation: 6,
     },
     trackBackground: {
       ...(StyleSheet.absoluteFill as any),
@@ -337,10 +339,10 @@ const createStyles = (
       overflow: "hidden",
       borderWidth: 1,
       borderColor: isDark
-        ? "rgba(255, 255, 255, 0.2)"
+        ? "rgba(255, 255, 255, 0.16)"
         : isAestheticTheme
-          ? "rgba(255, 255, 255, 0.9)"
-          : "rgba(255, 255, 255, 0.85)",
+          ? `${colors.border}B3`
+          : "rgba(0, 0, 0, 0.08)",
     },
     glassBase: {
       ...(StyleSheet.absoluteFill as any),
@@ -358,15 +360,15 @@ const createStyles = (
       bottom: spacing.xs,
       left: spacing.xs,
       borderRadius: spacing.xl,
-      backgroundColor: isDark ? "rgba(58, 58, 60, 0.9)" : colors.card,
+      backgroundColor: isDark ? "rgba(58, 58, 62, 0.98)" : colors.card,
       borderWidth: 1,
       borderColor: isDark
         ? "rgba(255, 255, 255, 0.22)"
         : "rgba(255, 255, 255, 0.95)",
       shadowColor: "#000000",
-      shadowOffset: { width: 0, height: verticalScale(3) },
+      shadowOffset: { width: 0, height: spacing.vXs },
       shadowOpacity: isDark ? 0.35 : 0.16,
-      shadowRadius: scale(6),
+      shadowRadius: spacing.sm,
       elevation: 4,
       zIndex: 1,
     },
@@ -386,7 +388,7 @@ const createStyles = (
       color: colors.primary,
     },
     tabTextInactive: {
-      fontFamily: fontFamily.medium,
-      color: colors.subtext,
+      fontFamily: fontFamily.semiBold,
+      color: isDark ? "rgba(255, 255, 255, 0.65)" : colors.subtext,
     },
   });

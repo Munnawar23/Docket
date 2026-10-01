@@ -3,15 +3,13 @@ import { useCallback, useMemo, useState } from "react";
 import { Dimensions, LayoutChangeEvent } from "react-native";
 import { Gesture } from "react-native-gesture-handler";
 import Animated, {
-  Extrapolation,
-  interpolate,
   useAnimatedStyle,
   useSharedValue,
   withSpring,
   type WithSpringConfig,
 } from "react-native-reanimated";
 import { useAppSafeArea } from "@/hooks/useAppSafeArea";
-import { scale, verticalScale } from "@/helpers/responsiveHelper";
+import { verticalScale } from "@/helpers/responsiveHelper";
 import { scheduleOnRN, scheduleOnUI } from "react-native-worklets";
 
 export type HomeTab = "notes" | "tasks";
@@ -29,8 +27,6 @@ const PAGE_SPRING_CONFIG: WithSpringConfig = {
   stiffness: 240,
   overshootClamping: false,
 };
-
-const TITLE_OFFSET = scale(30);
 
 export function useHomeScreen() {
   const [activeTab, setActiveTab] = useState<HomeTab>("notes");
@@ -137,26 +133,6 @@ export function useHomeScreen() {
     transform: [{ translateX: contentTranslateX.value }],
   }));
 
-  const notesTitleStyle = useAnimatedStyle(() => {
-    const progress = -contentTranslateX.value / (pageWidth.value || 1);
-    return {
-      opacity: interpolate(progress, [0, 0.45, 1], [1, 0, 0], Extrapolation.CLAMP),
-      transform: [
-        { translateX: interpolate(progress, [0, 1], [0, -TITLE_OFFSET], Extrapolation.CLAMP) },
-      ],
-    };
-  });
-
-  const tasksTitleStyle = useAnimatedStyle(() => {
-    const progress = -contentTranslateX.value / (pageWidth.value || 1);
-    return {
-      opacity: interpolate(progress, [0, 0.55, 1], [0, 0, 1], Extrapolation.CLAMP),
-      transform: [
-        { translateX: interpolate(progress, [0, 1], [TITLE_OFFSET, 0], Extrapolation.CLAMP) },
-      ],
-    };
-  });
-
   const floatingBottom = Math.max(bottom, verticalScale(16)) + verticalScale(22);
 
   return {
@@ -165,8 +141,6 @@ export function useHomeScreen() {
     handleTabPress,
     onContentLayout,
     animatedPageStyle,
-    notesTitleStyle,
-    tasksTitleStyle,
     floatingBottom,
   };
 }

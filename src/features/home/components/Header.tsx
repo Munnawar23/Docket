@@ -1,13 +1,13 @@
+import { GlassIconButton } from "@/components";
+import { verticalScale } from "@/helpers/responsiveHelper";
+import { useAppSafeArea } from "@/hooks/useAppSafeArea";
+import { useAppTheme } from "@/hooks/useAppTheme";
+import { Haptics } from "@/lib/haptics";
+import { spacing, type ThemeColors } from "@/theme";
+import { Ionicons } from "@expo/vector-icons";
+import { useNavigation } from "expo-router";
 import React, { useCallback, useMemo } from "react";
 import { StyleSheet, View } from "react-native";
-import { useNavigation } from "expo-router";
-import { Ionicons } from "@expo/vector-icons";
-import { GlassIconButton } from "@/components";
-import { useAppTheme } from "@/hooks/useAppTheme";
-import { useAppSafeArea } from "@/hooks/useAppSafeArea";
-import { Haptics } from "@/lib/haptics";
-import { spacing } from "@/theme";
-import { hp } from "@/helpers/responsiveHelper";
 import SearchBar from "./SearchBar";
 
 export const Header = React.memo(function Header() {
@@ -15,7 +15,7 @@ export const Header = React.memo(function Header() {
   const { top } = useAppSafeArea();
   const navigation = useNavigation<any>();
 
-  const styles = useMemo(() => createStyles(top), [top]);
+  const styles = useMemo(() => createStyles(top, colors), [top, colors]);
 
   const handleOpenDrawer = useCallback(() => {
     Haptics.light();
@@ -59,15 +59,17 @@ export default Header;
 
 // ─── Styles ───────────────────────────────────────────────────────────────────
 
-const createStyles = (topInset: number) =>
+const createStyles = (topInset: number, colors: ThemeColors) =>
   StyleSheet.create({
     container: {
       flexDirection: "row",
       alignItems: "center",
       paddingHorizontal: spacing.screenPadding,
-      paddingTop: topInset + hp(1),
-      paddingBottom: hp(0.5),
+      paddingTop: topInset + verticalScale(5),
+      paddingBottom: verticalScale(6),
       gap: spacing.sm,
+      backgroundColor: colors.background,
+      zIndex: 10,
     },
     searchBarWrapper: {
       flex: 1,
