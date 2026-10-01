@@ -14,7 +14,7 @@ import {
   View,
   ViewStyle,
 } from "react-native";
-import Animated, { Easing, FadeInDown } from "react-native-reanimated";
+import Animated, { Easing, FadeInDown, LinearTransition } from "react-native-reanimated";
 
 export type { NoteCardProps };
 
@@ -54,6 +54,19 @@ export const NoteCard = React.memo(function NoteCard({
     ? styles.contentAreaWithImage
     : styles.contentArea;
 
+  const displayDate = useMemo(() => {
+    if (note.date) return note.date;
+    if (note.createdAt) {
+      const d = new Date(note.createdAt);
+      if (!isNaN(d.getTime())) {
+        const m = String(d.getMonth() + 1).padStart(2, "0");
+        const day = String(d.getDate()).padStart(2, "0");
+        return `${m}/${day}`;
+      }
+    }
+    return null;
+  }, [note.date, note.createdAt]);
+
   const getCardStyle = useCallback(
     ({ pressed }: { pressed: boolean }) => [
       styles.card,
@@ -78,6 +91,7 @@ export const NoteCard = React.memo(function NoteCard({
   return (
     <Animated.View
       entering={enteringAnimation}
+      layout={LinearTransition.duration(280)}
       style={style ? [styles.cardWrapper, style] : styles.cardWrapper}
     >
       <Pressable
@@ -121,14 +135,21 @@ export const NoteCard = React.memo(function NoteCard({
             </AppText>
           )}
 
-          {/* Footer: Date Badge */}
-          {Boolean(note.date) && (
+          {/* Footer: Date Badge & Pin Indicator */}
+          {(Boolean(displayDate) || Boolean(note.isPinned)) && (
             <View style={styles.footerRow}>
-              <View style={styles.dateBadge}>
-                <AppText variant="caption" style={styles.dateText}>
-                  {note.date}
-                </AppText>
-              </View>
+              {Boolean(displayDate) && (
+                <View style={styles.dateBadge}>
+                  <AppText variant="caption" style={styles.dateText}>
+                    {displayDate}
+                  </AppText>
+                </View>
+              )}
+              {Boolean(note.isPinned) && (
+                <View style={styles.pinBadge}>
+                  <Ionicons name="pin" size={rs.icon(11)} color={colors.primary} />
+                </View>
+              )}
             </View>
           )}
         </View>
@@ -247,5 +268,16 @@ const createStyles = (
     dateText: {
       color: colors.subtext,
       letterSpacing: 0.2,
+    },
+    pinBadge: {
+      paddingHorizontal: spacing.xs,
+      paddingVertical: spacing.vXs / 2,
+      borderRadius: spacing.sm,
+      backgroundColor: colors.background,
+      borderWidth: 1,
+      borderColor: colors.border,
+      alignSelf: "flex-start",
+      alignItems: "center",
+      justifyContent: "center",
     },
   });

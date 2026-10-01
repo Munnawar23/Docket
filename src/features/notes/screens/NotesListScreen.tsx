@@ -1,6 +1,7 @@
 import { AppText } from "@/components/ui/AppText";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { MOCK_NOTES } from "@/constants";
+import { sortNotes } from "../utils/sortNotes";
 import type { Note, NotesListScreenProps } from "@/types";
 import { useAppSafeArea } from "@/hooks/useAppSafeArea";
 import { useAppTheme } from "@/hooks/useAppTheme";
@@ -9,6 +10,7 @@ import { spacing, type ThemeSpacing } from "@/theme";
 import { FlashList } from "@shopify/flash-list";
 import React, { useCallback, useMemo, useState } from "react";
 import { RefreshControl, StyleSheet, View } from "react-native";
+import Animated, { LinearTransition } from "react-native-reanimated";
 import { NoteCard } from "../components/NoteCard";
 
 // Clearance for the floating bottom navigation bar
@@ -29,7 +31,7 @@ export const NotesListScreen = React.memo(function NotesListScreen({
   const { colors } = useAppTheme();
   const { bottom } = useAppSafeArea();
 
-  const [internalNotes, setInternalNotes] = useState<Note[]>(MOCK_NOTES);
+  const [internalNotes, setInternalNotes] = useState<Note[]>(() => sortNotes(MOCK_NOTES));
   const notes = controlledNotes ?? internalNotes;
 
   const [internalRefreshing, setInternalRefreshing] = useState(false);
@@ -46,7 +48,7 @@ export const NotesListScreen = React.memo(function NotesListScreen({
     setInternalRefreshing(true);
     setTimeout(() => {
       // Refresh / reload mock data
-      setInternalNotes([...MOCK_NOTES]);
+      setInternalNotes(sortNotes([...MOCK_NOTES]));
       setInternalRefreshing(false);
     }, 1000);
   }, [onRefresh]);
@@ -74,7 +76,11 @@ export const NotesListScreen = React.memo(function NotesListScreen({
     ({ item, index }: { item: Note; index: number }) => {
       const isSelected = selectedNoteIds.includes(item.id);
       return (
-        <View style={styles.cardItemWrapper}>
+        <Animated.View
+          key={item.id}
+          layout={LinearTransition.duration(280)}
+          style={styles.cardItemWrapper}
+        >
           <NoteCard
             note={item}
             index={index}
@@ -83,7 +89,7 @@ export const NotesListScreen = React.memo(function NotesListScreen({
             onPress={handleNotePress}
             onLongPress={handleNoteLongPress}
           />
-        </View>
+        </Animated.View>
       );
     },
     [

@@ -4,6 +4,7 @@
     "title": "Test",
     "content": "ffgrgrgrvLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.",
     "date": "09/18",
+    "createdAt": "2026-09-18T09:00:00.000Z",
     "imageUrl": null
   },
   {
@@ -11,6 +12,7 @@
     "title": "TOP",
     "content": "1. Brown checked jacket\n2. Olive canvas overshirt\n3. Linen relaxed trousers\n4. Minimal leather sneakers",
     "date": "09/18",
+    "createdAt": "2026-09-18T11:30:00.000Z",
     "imageUrl": null
   },
   {
@@ -18,6 +20,7 @@
     "title": "Welcome to Notes!",
     "content": "Notes is a powerful recording tool to organize your thoughts and capture ideas.",
     "date": "09/18",
+    "createdAt": "2026-09-18T14:15:00.000Z",
     "imageUrl": "https://images.unsplash.com/photo-1579783902614-a3fb3927b675?w=500&q=80"
   },
   {
@@ -25,6 +28,7 @@
     "title": "Fgg",
     "content": "hhhhh",
     "date": "09/18",
+    "createdAt": "2026-09-18T16:45:00.000Z",
     "imageUrl": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=500&q=80"
   },
   {
@@ -32,6 +36,7 @@
     "title": "Project Roadmap",
     "content": "• Polish gesture physics\n• SQLite local persistence\n• Audio note recordings\n• Tagging & quick search filter",
     "date": "09/19",
+    "createdAt": "2026-09-19T10:20:00.000Z",
     "imageUrl": null
   },
   {
@@ -39,6 +44,7 @@
     "title": "Design Inspo",
     "content": "Clean typography, fluid spring gestures, and subtle tactile haptics make every touch feel alive.",
     "date": "09/20",
+    "createdAt": "2026-09-20T13:00:00.000Z",
     "imageUrl": "https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?w=500&q=80"
   },
   {
@@ -46,6 +52,7 @@
     "title": "Design",
     "content": "Clean typography",
     "date": "09/20",
+    "createdAt": "2026-09-20T17:40:00.000Z",
     "imageUrl": null
   },
   {
@@ -53,6 +60,7 @@
     "title": "",
     "content": "Just a quick thought: check the flight tickets tonight and make sure the passport is renewed.",
     "date": "09/21",
+    "createdAt": "2026-09-21T08:10:00.000Z",
     "imageUrl": null
   },
   {
@@ -60,6 +68,7 @@
     "title": "Meeting with Sarah",
     "content": "",
     "date": "09/21",
+    "createdAt": "2026-09-21T18:30:00.000Z",
     "imageUrl": null
   }
 ]

@@ -5,6 +5,8 @@ export interface Note {
   title?: string;
   content?: string;
   date: string;
+  createdAt?: number | string;
+  pinnedAt?: number;
   imageUrl?: string | null;
   isPinned?: boolean;
   isArchived?: boolean;

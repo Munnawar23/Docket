@@ -1,4 +1,5 @@
 import { MOCK_NOTES } from "@/constants";
+import { sortNotes } from "@/features/notes";
 import type { Note } from "@/types";
 import { verticalScale } from "@/helpers/responsiveHelper";
 import { useAppSafeArea } from "@/hooks/useAppSafeArea";
@@ -34,8 +35,8 @@ export function useHomeScreen() {
   const [activeTab, setActiveTab] = useState<HomeTab>("notes");
   const { bottom } = useAppSafeArea();
 
-  // Notes data and multi-select state
-  const [notes, setNotes] = useState<Note[]>(MOCK_NOTES);
+  // Notes data and multi-select state (sorted by createdAt, newest first)
+  const [notes, setNotes] = useState<Note[]>(() => sortNotes(MOCK_NOTES));
   const [selectedNoteIds, setSelectedNoteIds] = useState<string[]>([]);
   const isSelectionMode = selectedNoteIds.length > 0;
 
@@ -169,7 +170,24 @@ export function useHomeScreen() {
 
   const handlePinSelected = useCallback(() => {
     Haptics.light();
-    console.log("[HomeScreen] Pinned notes:", selectedNoteIds);
+    setNotes((prev) => {
+      const areAllSelectedPinned = selectedNoteIds.every(
+        (id) => prev.find((n) => n.id === id)?.isPinned
+      );
+      const targetPinnedState = !areAllSelectedPinned;
+      const now = Date.now();
+
+      const updated = prev.map((n) => {
+        if (!selectedNoteIds.includes(n.id)) return n;
+        return {
+          ...n,
+          isPinned: targetPinnedState,
+          pinnedAt: targetPinnedState ? now : undefined,
+        };
+      });
+
+      return sortNotes(updated);
+    });
     setSelectedNoteIds([]);
   }, [selectedNoteIds]);
 
