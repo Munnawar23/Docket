@@ -93,55 +93,45 @@ export const AppText = forwardRef<RNText, AppTextProps>(function AppText(
   },
   ref,
 ) {
-  // Get active theme colors, font families, and theme mode
-  const { colors, fontFamily, isAestheticTheme } = useAppTheme();
+  // Get active theme colors, font families, font sizes, line heights, and theme mode
+  const {
+    colors,
+    fontFamily,
+    fontSize: themeFontSize,
+    lineHeight: themeLineHeight,
+    isAestheticTheme,
+  } = useAppTheme();
 
   // ── Step 1: Calculate Responsive Font Size ──
-  // If custom number is passed, scale it with rs.font(). Otherwise use theme preset.
-  const baseSize =
+  // If custom number is passed, scale it with rs.font(). Otherwise use active theme token preset.
+  const resolvedSize =
     typeof size === "number"
       ? rs.font(size)
-      : size && size in fontSize
-        ? fontSize[size as keyof ThemeFontSize]
-        : (fontSize[variant] ?? fontSize.body);
-
-  // In special/aesthetic themes (Boogaloo font), heading glyphs are naturally smaller.
-  // Scale up headers in aesthetic theme so they match visual weight.
-  const resolvedSize = isAestheticTheme
-    ? variant === "largeTitle" || size === "largeTitle"
-      ? rs.font(44)
-      : variant === "heading" || size === "heading"
-        ? rs.font(30)
-        : variant === "cardTitle" || size === "cardTitle"
-          ? rs.font(23)
-          : variant === "title" || size === "title"
-            ? rs.font(21)
-            : baseSize
-    : baseSize;
+      : size && size in themeFontSize
+        ? themeFontSize[size as keyof ThemeFontSize]
+        : (themeFontSize[variant] ?? themeFontSize.body);
 
   // ── Step 2: Calculate Line Height ──
   // Pairs line height with font size to prevent text from clipping at the top/bottom
   const resolvedLineHeight =
     typeof customLineHeight === "number"
       ? customLineHeight
-      : isAestheticTheme &&
-          (variant === "largeTitle" ||
-            variant === "heading" ||
-            variant === "cardTitle" ||
-            variant === "title")
-        ? Math.round(resolvedSize * 1.25)
-        : typeof size === "number"
-          ? Math.round(resolvedSize * 1.35)
-          : size && size in lineHeight
-            ? lineHeight[size as keyof ThemeFontSize]
-            : (lineHeight[variant] ?? lineHeight.body);
+      : typeof size === "number"
+        ? Math.round(resolvedSize * 1.35)
+        : size && size in themeLineHeight
+          ? themeLineHeight[size as keyof ThemeFontSize]
+          : (themeLineHeight[variant] ?? themeLineHeight.body);
 
   // ── Step 3: Calculate Letter Spacing ──
   // Spacing between characters for crisp readability
   const resolvedLetterSpacing =
     typeof customLetterSpacing === "number"
       ? customLetterSpacing
-      : isAestheticTheme && (variant === "largeTitle" || variant === "heading")
+      : isAestheticTheme &&
+          (variant === "largeTitle" ||
+            variant === "heading" ||
+            variant === "title" ||
+            variant === "cardTitle")
         ? 0.2
         : size && size in letterSpacing
           ? letterSpacing[size as keyof ThemeFontSize]

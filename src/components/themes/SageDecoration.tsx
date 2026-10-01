@@ -8,7 +8,7 @@ import Svg, {
   Stop,
   LinearGradient as SvgLinearGradient,
 } from "react-native-svg";
-import { FloatingLeaves } from "@/components";
+import { FloatingLeaves } from "../skia/FloatingLeaves";
 
 interface SageDecorationProps {
   color?: string;

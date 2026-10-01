@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, useRef, useState } from "react";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { Haptics } from "@/lib/haptics";
-import { fontSize, spacing, type ThemeColors, type ThemeFontFamily } from "@/theme";
+import { spacing, type ThemeColors, type ThemeFontFamily, type ThemeFontSize } from "@/theme";
 import { Ionicons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
@@ -43,7 +43,7 @@ export const SearchBar = React.memo(function SearchBar({
   onSubmit,
   style,
 }: SearchBarProps = {}) {
-  const { colors, fontFamily, isDark, isAestheticTheme, themeMode } = useAppTheme();
+  const { colors, fontFamily, fontSize: themeFontSize, isDark, isAestheticTheme, themeMode } = useAppTheme();
   const [internalQuery, setInternalQuery] = useState("");
   const isControlled = controlledValue !== undefined;
   const query = isControlled ? controlledValue : internalQuery;
@@ -58,8 +58,8 @@ export const SearchBar = React.memo(function SearchBar({
   }, []);
 
   const styles = useMemo(
-    () => createStyles(colors, fontFamily, isDark, isAestheticTheme),
-    [colors, fontFamily, isDark, isAestheticTheme]
+    () => createStyles(colors, fontFamily, themeFontSize, isDark, isAestheticTheme),
+    [colors, fontFamily, themeFontSize, isDark, isAestheticTheme]
   );
 
   const handleFocus = useCallback(() => {
@@ -252,6 +252,7 @@ export default SearchBar;
 const createStyles = (
   colors: ThemeColors,
   fontFamily: ThemeFontFamily,
+  fontSize: ThemeFontSize,
   isDark: boolean,
   isAestheticTheme: boolean
 ) =>

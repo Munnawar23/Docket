@@ -1,6 +1,6 @@
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { Haptics } from "@/lib/haptics";
-import { fontSize, spacing, type ThemeColors, type ThemeFontFamily } from "@/theme";
+import { spacing, type ThemeColors, type ThemeFontFamily } from "@/theme";
 import { AppText } from "@/components";
 import { Ionicons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
@@ -407,7 +407,7 @@ const OptionPill = React.memo(function OptionPill({
 
         {/* 4. Pill Content (Refined Label on Left + Circular Icon Badge on Right) */}
         <View style={styles.pillContent}>
-          <AppText semiBold style={styles.pillLabel}>
+          <AppText variant="bodyLg" semiBold style={styles.pillLabel}>
             {option.label}
           </AppText>
           <View style={styles.pillIconBadge}>
@@ -545,7 +545,6 @@ const createStyles = (
       transform: [{ scale: 0.96 }],
     },
     pillLabel: {
-      fontSize: fontSize.bodyLg,
       color: colors.text,
       letterSpacing: 0.2,
     },

@@ -24,10 +24,11 @@ import { scheduleOnRN } from "react-native-worklets";
 
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { Haptics } from "@/lib/haptics";
-import { fontSize, spacing, type ThemeColors, type ThemeFontFamily } from "@/theme";
+import { spacing, type ThemeColors, type ThemeFontFamily } from "@/theme";
 import { hp, scale, verticalScale, wp } from "@/helpers/responsiveHelper";
 import { AppText } from "./AppText";
-import { JumpingFrog, PeekingCat } from "@/components";
+import { JumpingFrog } from "../skia/JumpingFrog";
+import { PeekingCat } from "../skia/PeekingCat";
 
 export interface TabOption {
   label: string;
@@ -379,7 +380,6 @@ const createStyles = (
     },
     tabText: {
       textAlign: "center",
-      fontSize: fontSize.body,
     },
     tabTextActive: {
       fontFamily: fontFamily.bold,

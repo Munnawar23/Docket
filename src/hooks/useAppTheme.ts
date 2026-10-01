@@ -1,6 +1,13 @@
 import { useColorScheme } from "react-native";
 import { AESTHETIC_THEMES, useThemeStore, type ThemeMode } from "@/store/themeStore";
-import { theme, type ResolvedTheme, type ThemeColors, type ThemeFontFamily } from "@/theme";
+import {
+  theme,
+  type ResolvedTheme,
+  type ThemeColors,
+  type ThemeFontFamily,
+  type ThemeFontSize,
+  type ThemeLineHeight,
+} from "@/theme";
 
 export function useAppTheme() {
   const themeMode = useThemeStore((state) => state.themeMode);
@@ -24,6 +31,8 @@ export function useAppTheme() {
 
   const colors: ThemeColors = resolvedTheme.colors;
   const fontFamily: ThemeFontFamily = resolvedTheme.fontFamily;
+  const fontSize: ThemeFontSize = resolvedTheme.fontSize;
+  const lineHeight: ThemeLineHeight = resolvedTheme.lineHeight;
   const isDark =
     !isAestheticTheme && (
       themeMode === "dark" ||
@@ -33,6 +42,8 @@ export function useAppTheme() {
   return {
     colors,
     fontFamily,
+    fontSize,
+    lineHeight,
     isDark,
     isAestheticTheme,
     themeMode,

@@ -40,10 +40,16 @@ export function useHomeScreen() {
   const pageWidth = useSharedValue(SCREEN_WIDTH);
   const contentTranslateX = useSharedValue(0);
   const startTranslateX = useSharedValue(0);
+  const currentTabIndex = useSharedValue(0);
 
   const handleSwipeTabChange = useCallback((newTab: HomeTab) => {
-    Haptics.light();
-    setActiveTab(newTab);
+    setActiveTab((prev) => {
+      if (prev !== newTab) {
+        Haptics.light();
+        return newTab;
+      }
+      return prev;
+    });
   }, []);
 
   const swipeGesture = useMemo(
@@ -68,18 +74,31 @@ export function useHomeScreen() {
             contentTranslateX.value = raw;
           }
         })
-        .onFinalize((event) => {
+        .onFinalize((event, success) => {
           "worklet";
           const w = pageWidth.value;
           if (w <= 0) return;
+
+          if (!success) {
+            contentTranslateX.value = withSpring(
+              -currentTabIndex.value * w,
+              PAGE_SPRING_CONFIG
+            );
+            return;
+          }
+
           const progress = -contentTranslateX.value / w;
           let targetIndex = Math.round(progress);
           if (event.velocityX < -400) targetIndex = 1;
           else if (event.velocityX > 400) targetIndex = 0;
           targetIndex = Math.max(0, Math.min(1, targetIndex));
           contentTranslateX.value = withSpring(-targetIndex * w, PAGE_SPRING_CONFIG);
-          const newTab: HomeTab = targetIndex === 0 ? "notes" : "tasks";
-          scheduleOnRN(handleSwipeTabChange, newTab);
+
+          if (targetIndex !== currentTabIndex.value) {
+            currentTabIndex.value = targetIndex;
+            const newTab: HomeTab = targetIndex === 0 ? "notes" : "tasks";
+            scheduleOnRN(handleSwipeTabChange, newTab);
+          }
         }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [] // shared values are stable refs — safe to omit
@@ -88,6 +107,7 @@ export function useHomeScreen() {
   // Tab-bar press: run entirely on UI thread to avoid reading .value on JS thread
   const handleTabPress = (val: HomeTab) => {
     const targetIndex = val === "notes" ? 0 : 1;
+    currentTabIndex.value = targetIndex;
     scheduleOnUI(() => {
       "worklet";
       contentTranslateX.value = withSpring(
@@ -102,6 +122,7 @@ export function useHomeScreen() {
     const w = e.nativeEvent.layout.width;
     if (w <= 0) return;
     const snapIndex = activeTab === "tasks" ? 1 : 0;
+    currentTabIndex.value = snapIndex;
     scheduleOnUI(() => {
       "worklet";
       if (w === pageWidth.value) return;
