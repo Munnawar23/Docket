@@ -1,7 +1,5 @@
-import { createMMKV, type MMKV } from "react-native-mmkv";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { StateStorage } from "zustand/middleware";
-
-export const storage: MMKV = createMMKV({ id: "docket-storage" });
 
 export const STORAGE_KEYS = {
   THEME: "theme-storage",
@@ -11,41 +9,76 @@ export type StorageKey = (typeof STORAGE_KEYS)[keyof typeof STORAGE_KEYS];
 export type AppStorageKey = StorageKey | (string & {});
 
 export const appStorage = {
-  get<T>(key: AppStorageKey): T | null {
+  async get<T>(key: AppStorageKey): Promise<T | null> {
     try {
-      const raw = storage.getString(key);
+      const raw = await AsyncStorage.getItem(key);
       return raw != null ? (JSON.parse(raw) as T) : null;
     } catch {
       return null;
     }
   },
 
-  set<T>(key: AppStorageKey, value: T): void {
+  async set<T>(key: AppStorageKey, value: T): Promise<void> {
     try {
-      storage.set(key, JSON.stringify(value));
+      await AsyncStorage.setItem(key, JSON.stringify(value));
     } catch {}
   },
 
-  getString: (key: AppStorageKey): string | null => storage.getString(key) ?? null,
-  setString: (key: AppStorageKey, value: string): void => storage.set(key, value),
+  getString: async (key: AppStorageKey): Promise<string | null> => {
+    try {
+      return await AsyncStorage.getItem(key);
+    } catch {
+      return null;
+    }
+  },
 
-  remove: (key: AppStorageKey): boolean => storage.remove(key),
-  delete: (key: AppStorageKey): boolean => storage.remove(key),
+  setString: async (key: AppStorageKey, value: string): Promise<void> => {
+    try {
+      await AsyncStorage.setItem(key, value);
+    } catch {}
+  },
 
-  contains: (key: AppStorageKey): boolean => storage.contains(key),
-  has: (key: AppStorageKey): boolean => storage.contains(key),
+  remove: async (key: AppStorageKey): Promise<void> => {
+    try {
+      await AsyncStorage.removeItem(key);
+    } catch {}
+  },
 
-  clear: (): void => storage.clearAll(),
-  getAllKeys: (): string[] => storage.getAllKeys(),
+  delete: async (key: AppStorageKey): Promise<void> => {
+    try {
+      await AsyncStorage.removeItem(key);
+    } catch {}
+  },
+
+  clear: async (): Promise<void> => {
+    try {
+      await AsyncStorage.clear();
+    } catch {}
+  },
+
+  getAllKeys: async (): Promise<readonly string[]> => {
+    try {
+      return await AsyncStorage.getAllKeys();
+    } catch {
+      return [];
+    }
+  },
 };
 
 /**
- * Synchronous Zustand StateStorage adapter.
- * Zustand handles its own JSON serialization, so we use raw MMKV strings directly.
+ * Zustand StateStorage adapter for AsyncStorage.
+ * Zustand's createJSONStorage supports Promise-returning StateStorage methods.
  */
 export const zustandStorage: StateStorage = {
-  getItem: (name) => storage.getString(name) ?? null,
-  setItem: (name, value) => storage.set(name, value),
-  removeItem: (name) => storage.remove(name),
+  getItem: async (name: string): Promise<string | null> => {
+    const value = await AsyncStorage.getItem(name);
+    return value ?? null;
+  },
+  setItem: async (name: string, value: string): Promise<void> => {
+    await AsyncStorage.setItem(name, value);
+  },
+  removeItem: async (name: string): Promise<void> => {
+    await AsyncStorage.removeItem(name);
+  },
 };
 
