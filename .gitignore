@@ -1,35 +1,15 @@
-# OSX
-.DS_Store
+# Learn more https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files
 
-# Xcode
-build/
-*.pbxuser
-!default.pbxuser
-*.mode1v3
-!default.mode1v3
-*.mode2v3
-!default.mode2v3
-*.perspectivev3
-!default.perspectivev3
-xcuserdata
-*.xccheckout
-*.moved-aside
-DerivedData
-*.hmap
-*.ipa
-*.xcuserstate
-**/.xcode.env.local
+# dependencies
+node_modules/
 
-# Android / IntelliJ
-build/
-.idea
-.gradle
-local.properties
-*.iml
-*.hprof
-.cxx/
-*.keystore
-!debug.keystore
+# Expo
+.expo/
+dist/
+web-build/
+expo-env.d.ts
+
+# Native
 .kotlin/
 *.orig.*
 *.jks
@@ -38,36 +18,17 @@ local.properties
 *.key
 *.mobileprovision
 
-# node.js / dependencies
-node_modules/
+# Metro
+.metro-health-check*
+
+# debug
 npm-debug.*
 yarn-debug.*
 yarn-error.*
 
-# Expo
-.expo/
-dist/
-web-build/
-expo-env.d.ts
-
-# fastlane
-**/fastlane/report.xml
-**/fastlane/Preview.html
-**/fastlane/screenshots
-**/fastlane/test_output
-
-# Bundle artifact
-*.jsbundle
-
-# Ruby / CocoaPods
-**/Pods/
-/vendor/bundle/
-
-# Metro
-.metro-health-check*
-
-# testing
-/coverage
+# macOS
+.DS_Store
+*.pem
 
 # local env files
 .env*.local
@@ -75,23 +36,8 @@ expo-env.d.ts
 # typescript
 *.tsbuildinfo
 
-# Yarn
-.yarn/*
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/sdks
-!.yarn/versions
+example
 
-# Docs & Agent scratch
-docs/
-.code-review-graph/
-.agents/
-
-# Lockfiles (this project uses yarn)
-package-lock.json
-
-# Built APKs / AABs
-apk-out/
-*.apk
-*.aab
+# generated native folders
+/ios
+/android
