@@ -12,7 +12,6 @@ import {
   useFrameCallback,
   useSharedValue,
 } from "react-native-reanimated";
-import { useAppTheme } from "@/hooks/useAppTheme";
 import { hp, scale, wp } from "@/helpers/responsiveHelper";
 
 export interface FloatingLeavesProps {
@@ -25,7 +24,7 @@ const SCREEN_HEIGHT = hp(100);
 export const FloatingLeaves = React.memo(function FloatingLeaves({
   style,
 }: FloatingLeavesProps) {
-  const { themeMode } = useAppTheme();
+  
 
   // 1. Shared continuous animation clock on UI thread (120 FPS)
   const animTime = useSharedValue(0);
@@ -276,9 +275,6 @@ export const FloatingLeaves = React.memo(function FloatingLeaves({
   const sageStroke = "rgba(55, 88, 32, 0.55)";
   const veinColor = "rgba(255, 255, 255, 0.42)";
 
-  if (themeMode !== "sage") {
-    return null;
-  }
 
   return (
     <View style={[styles.container, style]} pointerEvents="none">

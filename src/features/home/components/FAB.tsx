@@ -34,13 +34,13 @@ const PILL_GAP = verticalScale(10);
 const PILL_OFFSET_Y = verticalScale(14); // slide-in distance
 const STAGGER_MS = 60; // delay between each pill on open
 
-// Spring configs — tuned for 120 fps feel
+// Spring configs ΓÇö tuned for 120 fps feel
 const BACKDROP_SPRING = { damping: 20, stiffness: 160, mass: 0.8 };
 const ICON_SPRING     = { damping: 14, stiffness: 320, mass: 0.55 };
 const PILL_SPRING     = { damping: 15, stiffness: 280, mass: 0.6 };
 const CLOSE_SPRING    = { damping: 22, stiffness: 340, mass: 0.55 };
 
-// ─── Types ───────────────────────────────────────────────────────────────────
+// ΓöÇΓöÇΓöÇ Types ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 
 type FABOptionId = "note" | "task" | "image" | "audio";
 
@@ -66,7 +66,7 @@ export interface FABProps {
   style?: StyleProp<ViewStyle>;
 }
 
-// ─── FAB ─────────────────────────────────────────────────────────────────────
+// ΓöÇΓöÇΓöÇ FAB ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 
 export const FAB = React.memo(function FAB({
   onAddNote,
@@ -76,16 +76,16 @@ export const FAB = React.memo(function FAB({
   bottomOffset = hp(3),
   style,
 }: FABProps = {}) {
-  const { colors, fontFamily, isDark, isAestheticTheme } = useAppTheme();
+  const { colors, fontFamily, isDark } = useAppTheme();
   const styles = useMemo(
-    () => createStyles(colors, fontFamily, isDark, isAestheticTheme),
-    [colors, fontFamily, isDark, isAestheticTheme]
+    () => createStyles(colors, fontFamily, isDark),
+    [colors, fontFamily, isDark]
   );
 
-  // Separate shared value per concern — all live on UI thread
+  // Separate shared value per concern ΓÇö all live on UI thread
   const backdropProgress = useSharedValue(0);
   const iconProgress     = useSharedValue(0);
-  // One shared value per pill — explicit (rules of hooks: no hooks in loops)
+  // One shared value per pill ΓÇö explicit (rules of hooks: no hooks in loops)
   const pill0 = useSharedValue(0);
   const pill1 = useSharedValue(0);
   const pill2 = useSharedValue(0);
@@ -129,7 +129,7 @@ export const FAB = React.memo(function FAB({
     else openMenu();
   }, [isMenuOpen, openMenu, closeMenu]);
 
-  // ── Animated styles — pure UI thread, no JS calls ──
+  // ΓöÇΓöÇ Animated styles ΓÇö pure UI thread, no JS calls ΓöÇΓöÇ
 
   const backdropStyle = useAnimatedStyle(() => ({
     opacity: interpolate(
@@ -140,7 +140,7 @@ export const FAB = React.memo(function FAB({
     ),
   }));
 
-  // + rotates 45° → becomes ×
+  // + rotates 45┬░ ΓåÆ becomes ├ù
   const fabIconStyle = useAnimatedStyle(() => ({
     transform: [
       {
@@ -182,8 +182,7 @@ export const FAB = React.memo(function FAB({
             colors={colors}
             fontFamily={fontFamily}
             isDark={isDark}
-            isAestheticTheme={isAestheticTheme}
-            pillSV={pillProgress[index]}
+                        pillSV={pillProgress[index]}
             index={index}
             isMenuOpen={isMenuOpen}
             onPress={() => {
@@ -236,7 +235,7 @@ export const FAB = React.memo(function FAB({
   );
 });
 
-// ─── Option Pill ─────────────────────────────────────────────────────────────
+// ΓöÇΓöÇΓöÇ Option Pill ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 
 type OptionPillProps = {
   option: FABOption;
@@ -244,8 +243,7 @@ type OptionPillProps = {
   colors: ThemeColors;
   fontFamily: ThemeFontFamily;
   isDark: boolean;
-  isAestheticTheme: boolean;
-  pillSV: SharedValue<number>;
+    pillSV: SharedValue<number>;
   index: number;
   isMenuOpen: boolean;
   onPress: () => void;
@@ -257,26 +255,21 @@ const OptionPill = React.memo(function OptionPill({
   colors,
   fontFamily,
   isDark,
-  isAestheticTheme,
-  pillSV,
+    pillSV,
   index,
   isMenuOpen,
   onPress,
 }: OptionPillProps) {
-  // Pre-computed bottom offset — safe, not inside worklet
+  // Pre-computed bottom offset ΓÇö safe, not inside worklet
   const bottomOffset = FAB_SIZE + spacing.sm + index * (PILL_HEIGHT + PILL_GAP);
 
   const glassBaseBg =
     Platform.OS === "android"
       ? isDark
         ? "rgba(30, 30, 34, 0.78)"
-        : isAestheticTheme
-        ? "rgba(255, 255, 255, 0.75)"
         : "rgba(255, 255, 255, 0.8)"
       : isDark
       ? "rgba(28, 28, 30, 0.45)"
-      : isAestheticTheme
-      ? "rgba(255, 255, 255, 0.45)"
       : "rgba(255, 255, 255, 0.45)";
 
   const sheenColors = useMemo<[string, string, string]>(() => {
@@ -287,19 +280,12 @@ const OptionPill = React.memo(function OptionPill({
         "rgba(28, 28, 30, 0.5)",
       ];
     }
-    if (isAestheticTheme) {
-      return [
-        "rgba(255, 255, 255, 0.9)",
-        "rgba(255, 255, 255, 0.45)",
-        "rgba(255, 255, 255, 0.15)",
-      ];
-    }
     return [
       "rgba(255, 255, 255, 0.85)",
       "rgba(255, 255, 255, 0.35)",
       "rgba(230, 230, 238, 0.3)",
     ];
-  }, [isDark, isAestheticTheme]);
+  }, [isDark]);
 
   // Pure worklet: only reads pillSV.value + module-level constants
   const animatedStyle = useAnimatedStyle(() => {
@@ -372,14 +358,13 @@ const OptionPill = React.memo(function OptionPill({
 
 export default FAB;
 
-// ─── Styles ──────────────────────────────────────────────────────────────────
+// ΓöÇΓöÇΓöÇ Styles ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 
 const createStyles = (
   colors: ThemeColors,
   fontFamily: ThemeFontFamily,
   isDark: boolean,
-  isAestheticTheme: boolean
-) =>
+  ) =>
   StyleSheet.create({
     backdrop: {
       ...StyleSheet.absoluteFill as any,
@@ -436,8 +421,6 @@ const createStyles = (
       borderWidth: 1,
       borderColor: isDark
         ? "rgba(255, 255, 255, 0.2)"
-        : isAestheticTheme
-        ? "rgba(255, 255, 255, 0.9)"
         : "rgba(255, 255, 255, 0.85)",
       position: "relative",
       backgroundColor: "transparent",

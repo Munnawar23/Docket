@@ -27,11 +27,11 @@ export const NoteCard = React.memo(function NoteCard({
   onLongPress,
   style,
 }: NoteCardProps) {
-  const { colors, isDark, isAestheticTheme } = useAppTheme();
+  const { colors, isDark } = useAppTheme();
 
   const styles = useMemo(
-    () => createStyles(colors, spacing, isDark, isAestheticTheme),
-    [colors, isDark, isAestheticTheme],
+    () => createStyles(colors, spacing, isDark),
+    [colors, isDark],
   );
 
   const handlePress = useCallback(() => {
@@ -180,8 +180,7 @@ const createStyles = (
   colors: ThemeColors,
   spacing: ThemeSpacing,
   isDark: boolean,
-  isAestheticTheme: boolean,
-) =>
+  ) =>
   StyleSheet.create({
     cardWrapper: {
       width: "100%",

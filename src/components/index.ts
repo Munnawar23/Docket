@@ -18,8 +18,3 @@ export { EmptyState, type EmptyStateProps, type ExpoIconFamily } from "./ui/Empt
 export { RoseDecoration } from "./themes/RoseDecoration";
 export { SkyDecoration } from "./themes/SkyDecoration";
 export { SageDecoration } from "./themes/SageDecoration";
-export {
-  ThemeBackground,
-  ThemeDecorationLayer,
-  type ThemeBackgroundProps,
-} from "./themes/ThemeBackground";

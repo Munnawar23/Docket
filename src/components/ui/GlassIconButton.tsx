@@ -39,7 +39,7 @@ export const GlassIconButton = React.memo(function GlassIconButton({
   accessibilityLabel,
   testID,
 }: GlassIconButtonProps) {
-  const { colors, isDark, isAestheticTheme } = useAppTheme();
+  const { colors, isDark } = useAppTheme();
 
   const styles = useMemo(
     () => createStyles(colors, isDark, size),
@@ -55,41 +55,28 @@ export const GlassIconButton = React.memo(function GlassIconButton({
         "rgba(28, 28, 30, 0.5)",
       ];
     }
-    if (isAestheticTheme) {
-      return [
-        "rgba(255, 255, 255, 0.9)",
-        "rgba(255, 255, 255, 0.45)",
-        "rgba(255, 255, 255, 0.15)",
-      ];
-    }
     return [
       "rgba(255, 255, 255, 0.85)",
       "rgba(255, 255, 255, 0.35)",
       "rgba(230, 230, 238, 0.3)",
     ];
-  }, [isDark, isAestheticTheme]);
+  }, [isDark]);
 
-  const blurIntensity = isDark ? 60 : isAestheticTheme ? 80 : 75;
+  const blurIntensity = isDark ? 60 : 75;
   const blurTint = isDark ? "dark" : "light";
 
   const borderColor = isDark
     ? "rgba(255, 255, 255, 0.2)"
-    : isAestheticTheme
-      ? `${colors.border}E6`
-      : `${colors.border}B3`;
+    : `${colors.border}B3`;
 
   const glassBaseBg =
     Platform.OS === "android"
       ? isDark
         ? `${colors.card}B3`
-        : isAestheticTheme
-          ? `${colors.card}CC`
-          : `${colors.card}99`
+        : `${colors.card}99`
       : isDark
         ? "rgba(28, 28, 30, 0.35)"
-        : isAestheticTheme
-          ? "rgba(255, 255, 255, 0.35)"
-          : "rgba(255, 255, 255, 0.35)";
+        : "rgba(255, 255, 255, 0.35)";
 
   return (
     <Pressable

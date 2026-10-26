@@ -39,7 +39,7 @@ export const JumpingFrog = React.memo(function JumpingFrog({
   containerWidth = scale(190),
   style,
 }: JumpingFrogProps) {
-  const { colors, themeMode } = useAppTheme();
+  const { colors } = useAppTheme();
 
   // Precomputed responsive dimensions (numbers safely captured by UI worklet)
   const hopHeight = scale(18);
@@ -336,9 +336,6 @@ export const JumpingFrog = React.memo(function JumpingFrog({
     );
   }, [jumpY, cloverY, cloverOpacity]);
 
-  if (themeMode !== "sage") {
-    return null;
-  }
 
   return (
     <View style={[styles.container, style]} pointerEvents="box-none">

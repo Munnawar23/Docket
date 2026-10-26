@@ -16,35 +16,4 @@ export const darkColors = {
   border: "#2A2A2A",
 };
 
-// ─── Aesthetic Themes (standalone — no dark/light variant) ───────────────────
-
-export const roseColors = {
-  background: "#F7DEE8",
-  card: "#FFF2F6",
-  text: "#3E0F27",
-  subtext: "#8A3D63",
-  primary: "#E83685",
-  border: "#ECC3D5",
-};
-
-export const skyColors = {
-  background: "#E2EFFB",
-  card: "#F4FAFF",
-  text: "#0A2540",
-  subtext: "#366485",
-  primary: "#0284C7",
-  border: "#BFDCF5",
-};
-
-export const sageColors = {
-  background: "#EBF1E8",
-  card: "#F6FAF4",
-  text: "#192413",
-  subtext: "#4D6636",
-  primary: "#557E34",
-  border: "#CBDCC3",
-};
-
 export type ThemeColors = typeof lightColors;
-
-

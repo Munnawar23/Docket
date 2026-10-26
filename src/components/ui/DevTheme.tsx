@@ -26,7 +26,6 @@ export function DevTheme() {
     colors,
     fontFamily,
     isDark,
-    isAestheticTheme,
     themeMode,
     setThemeMode,
     activeScheme,
@@ -51,40 +50,6 @@ export function DevTheme() {
       label: "System",
       icon: "⚙️",
       desc: `Auto (${systemColorScheme})`,
-    },
-  ];
-
-  const aestheticOptions: {
-    mode: ThemeMode;
-    label: string;
-    icon: string;
-    desc: string;
-    bg: string;
-    accent: string;
-  }[] = [
-    {
-      mode: "rose",
-      label: "Rose",
-      icon: "🌸",
-      desc: "Soft & romantic",
-      bg: "#FFF0F5",
-      accent: "#F43F8E",
-    },
-    {
-      mode: "sky",
-      label: "Sky",
-      icon: "☁️",
-      desc: "Airy & calm",
-      bg: "#E2EFFB",
-      accent: "#0284C7",
-    },
-    {
-      mode: "sage",
-      label: "Olive",
-      icon: "🫒",
-      desc: "Rich olive botanical",
-      bg: "#EBF1E8",
-      accent: "#557E34",
     },
   ];
 
@@ -174,29 +139,6 @@ export function DevTheme() {
             </Text>
           </View>
 
-          {/* Atmospheric Decoration Status (Special Themes Only) */}
-          {isAestheticTheme && (
-            <View
-              style={[
-                styles.decorationBadge,
-                {
-                  backgroundColor: colors.card,
-                  borderColor: colors.border,
-                },
-              ]}
-            >
-              <Text
-                style={[
-                  styles.decorationBadgeText,
-                  { color: colors.subtext, fontFamily: fontFamily.medium },
-                ]}
-              >
-                {themeMode === "rose" && "🌸 Background: Blooming Roses & Floating Petals"}
-                {themeMode === "sky" && "☁️ Background: Soft Clouds, Birds & Sky Glints"}
-                {themeMode === "sage" && "🫒 Background: Olive Branch, Fern & Dewdrop Leaves"}
-              </Text>
-            </View>
-          )}
         </View>
 
         {/* Standard Theme Switcher */}
@@ -258,129 +200,6 @@ export function DevTheme() {
               );
             })}
           </View>
-        </View>
-
-        {/* ✨ Aesthetic Themes */}
-        <View style={styles.section}>
-          <Text
-            style={[
-              styles.sectionTitle,
-              { color: colors.text, fontFamily: fontFamily.title },
-            ]}
-          >
-            ✨ Aesthetic Themes
-          </Text>
-          <Text
-            style={[
-              styles.sectionSubtitle,
-              { color: colors.subtext, fontFamily: fontFamily.text },
-            ]}
-          >
-            Standalone palette + Boogaloo & Nunito fonts
-          </Text>
-          <View style={styles.aestheticRow}>
-            {aestheticOptions.map((item) => {
-              const isSelected = themeMode === item.mode;
-              return (
-                <TouchableOpacity
-                  key={item.mode}
-                  activeOpacity={0.75}
-                  onPress={() => handleSelectMode(item.mode)}
-                  style={[
-                    styles.aestheticButton,
-                    {
-                      backgroundColor: item.bg,
-                      borderColor: isSelected ? item.accent : `${item.accent}44`,
-                      borderWidth: isSelected ? 2.5 : 1.5,
-                    },
-                  ]}
-                >
-                  {/* Selected indicator dot */}
-                  {isSelected && (
-                    <View
-                      style={[
-                        styles.selectedDot,
-                        { backgroundColor: item.accent },
-                      ]}
-                    />
-                  )}
-                  <Text style={styles.aestheticIcon}>{item.icon}</Text>
-                  <Text
-                    style={[
-                      styles.aestheticLabel,
-                      {
-                        color: isSelected ? item.accent : "#333",
-                        fontFamily: "Boogaloo-Regular",
-                      },
-                    ]}
-                  >
-                    {item.label}
-                  </Text>
-                  <Text
-                    style={[
-                      styles.aestheticDesc,
-                      {
-                        color: isSelected ? item.accent : "#888",
-                        fontFamily: "Nunito-Regular",
-                      },
-                    ]}
-                  >
-                    {item.desc}
-                  </Text>
-                  {/* Color preview strip */}
-                  <View
-                    style={[
-                      styles.accentStrip,
-                      { backgroundColor: item.accent },
-                    ]}
-                  />
-                </TouchableOpacity>
-              );
-            })}
-          </View>
-
-          {/* Font preview when aesthetic theme active */}
-          {isAestheticTheme && (
-            <View
-              style={[
-                styles.fontPreviewCard,
-                { backgroundColor: colors.card, borderColor: colors.border },
-              ]}
-            >
-              <Text
-                style={[
-                  styles.fontPreviewHeading,
-                  { color: colors.primary, fontFamily: "Boogaloo-Regular" },
-                ]}
-              >
-                Boogaloo — Heading Style
-              </Text>
-              <Text
-                style={[
-                  styles.fontPreviewBody,
-                  { color: colors.text, fontFamily: "Nunito-Regular" },
-                ]}
-              >
-                Nunito Regular — body text flows cleanly
-              </Text>
-              <Text
-                style={[
-                  styles.fontPreviewBody,
-                  { color: colors.subtext, fontFamily: "Nunito-SemiBold" },
-                ]}
-              >
-                Nunito SemiBold — labels & subtitles
-              </Text>
-              <Text
-                style={[
-                  styles.fontPreviewBody,
-                  { color: colors.text, fontFamily: "Nunito-Bold" },
-                ]}
-              >
-                Nunito Bold — section headings
-              </Text>
-            </View>
-          )}
         </View>
 
         {/* Color Palette List */}
@@ -651,40 +470,6 @@ const styles = StyleSheet.create({
   buttonDesc: {
     fontSize: fontSize.caption - 1,
     textAlign: "center",
-  },
-  // Aesthetic themes
-  aestheticRow: {
-    flexDirection: "row",
-    gap: spacing.itemGap,
-  },
-  aestheticButton: {
-    flex: 1,
-    paddingVertical: spacing.vMd,
-    paddingHorizontal: spacing.sm,
-    borderRadius: spacing.md,
-    alignItems: "center",
-    overflow: "hidden",
-  },
-  selectedDot: {
-    position: "absolute",
-    top: spacing.vXs,
-    right: spacing.xs,
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-  },
-  aestheticIcon: {
-    fontSize: fontSize.heading,
-    marginBottom: spacing.vXs,
-  },
-  aestheticLabel: {
-    fontSize: fontSize.bodyLg,
-    marginBottom: 2,
-  },
-  aestheticDesc: {
-    fontSize: fontSize.caption - 1,
-    textAlign: "center",
-    marginBottom: spacing.vSm,
   },
   accentStrip: {
     height: 3,

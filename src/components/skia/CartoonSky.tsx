@@ -14,7 +14,6 @@ import {
   useFrameCallback,
   useSharedValue,
 } from "react-native-reanimated";
-import { useAppTheme } from "@/hooks/useAppTheme";
 import { hp, scale, wp } from "@/helpers/responsiveHelper";
 
 export interface CartoonSkyProps {
@@ -27,7 +26,7 @@ const SCREEN_HEIGHT = hp(100);
 export const CartoonSky = React.memo(function CartoonSky({
   style,
 }: CartoonSkyProps) {
-  const { themeMode } = useAppTheme();
+  
 
   // Trajectory Dimensions (centered vertically in screen)
   const planeStartY = SCREEN_HEIGHT * 0.48;
@@ -307,9 +306,6 @@ export const CartoonSky = React.memo(function CartoonSky({
   const windColor = "rgba(255, 255, 255, 0.72)";
   const windSkyTint = "rgba(2, 132, 199, 0.35)";
 
-  if (themeMode !== "sky") {
-    return null;
-  }
 
   return (
     <View style={[styles.container, style]} pointerEvents="none">

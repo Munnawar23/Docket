@@ -61,10 +61,10 @@ export const TabSwitcher = React.memo(function TabSwitcher({
   onTabChange,
   style,
 }: TabSwitcherProps) {
-  const { colors, fontFamily, isDark, isAestheticTheme, themeMode } = useAppTheme();
+  const { colors, fontFamily, isDark, themeMode } = useAppTheme();
   const styles = useMemo(
-    () => createStyles(colors, fontFamily, isDark, isAestheticTheme),
-    [colors, fontFamily, isDark, isAestheticTheme],
+    () => createStyles(colors, fontFamily, isDark),
+    [colors, fontFamily, isDark],
   );
 
   const [containerWidth, setContainerWidth] = useState(0);
@@ -165,27 +165,6 @@ export const TabSwitcher = React.memo(function TabSwitcher({
 
   return (
     <Animated.View style={[styles.container, style, animatedContainerStyle]}>
-      {/* Peeking Cat standing behind TabSwitcher (Rose Theme Only) */}
-      {themeMode === "rose" && (
-        <View style={styles.peekingCatWrapper} pointerEvents="box-none">
-          <PeekingCat
-            activeX={translateX}
-            tabWidth={tabWidth}
-            containerWidth={containerWidth}
-          />
-        </View>
-      )}
-      {/* Jumping Frog on TabSwitcher (Sage Theme Only) */}
-      {themeMode === "sage" && (
-        <View style={styles.jumpingFrogWrapper} pointerEvents="box-none">
-          <JumpingFrog
-            activeX={translateX}
-            tabWidth={tabWidth}
-            containerWidth={containerWidth}
-          />
-        </View>
-      )}
-
       <View style={styles.track}>
         {/* Track Solid Theme Background */}
         <View style={styles.trackBackground} />
@@ -251,8 +230,7 @@ const createStyles = (
   colors: ThemeColors,
   fontFamily: ThemeFontFamily,
   isDark: boolean,
-  isAestheticTheme: boolean,
-) =>
+  ) =>
   StyleSheet.create({
     container: {
       width: scale(190),

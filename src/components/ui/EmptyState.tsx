@@ -117,7 +117,7 @@ export const EmptyState = React.memo(function EmptyState({
   style,
   children,
 }: EmptyStateProps) {
-  const { colors, isDark, isAestheticTheme } = useAppTheme();
+  const { colors, isDark } = useAppTheme();
 
   // Resolved colors
   const resolvedIconColor = iconColor || colors.primary;
@@ -129,9 +129,7 @@ export const EmptyState = React.memo(function EmptyState({
     descriptionColor ||
     (isDark
       ? "rgba(255, 255, 255, 0.72)"
-      : isAestheticTheme
-        ? `${colors.text}CC`
-        : "#4E4E4E");
+      : "#4E4E4E");
 
   const styles = useMemo(
     () => createStyles(colors, isDark, resolvedBadgeBg),

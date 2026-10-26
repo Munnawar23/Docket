@@ -40,7 +40,7 @@ export const PeekingCat = React.memo(function PeekingCat({
   containerWidth = scale(190),
   style,
 }: PeekingCatProps) {
-  const { colors, themeMode } = useAppTheme();
+  const { colors } = useAppTheme();
 
   // 1. Shared values for 120 FPS UI thread animations
   const catX = useSharedValue(containerWidth / 2);
@@ -176,7 +176,7 @@ export const PeekingCat = React.memo(function PeekingCat({
     { scale: heartOpacity.value },
   ]);
 
-  // 5. Aesthetic theme colors
+  // 5. Theme colors
   const furColor = "#FFFDF9";
   const strokeColor = "rgba(44, 30, 26, 0.9)";
   const eyeColor = "#221512";
@@ -201,9 +201,6 @@ export const PeekingCat = React.memo(function PeekingCat({
     );
   }, [duckY, heartY, heartOpacity]);
 
-  if (themeMode !== "rose") {
-    return null;
-  }
 
   return (
     <View style={[styles.container, style]} pointerEvents="box-none">

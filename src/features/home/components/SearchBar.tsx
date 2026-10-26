@@ -43,7 +43,7 @@ export const SearchBar = React.memo(function SearchBar({
   onSubmit,
   style,
 }: SearchBarProps = {}) {
-  const { colors, fontFamily, fontSize: themeFontSize, isDark, isAestheticTheme, themeMode } = useAppTheme();
+  const { colors, fontFamily, fontSize: themeFontSize, isDark, themeMode } = useAppTheme();
   const [internalQuery, setInternalQuery] = useState("");
   const isControlled = controlledValue !== undefined;
   const query = isControlled ? controlledValue : internalQuery;
@@ -58,8 +58,8 @@ export const SearchBar = React.memo(function SearchBar({
   }, []);
 
   const styles = useMemo(
-    () => createStyles(colors, fontFamily, themeFontSize, isDark, isAestheticTheme),
-    [colors, fontFamily, themeFontSize, isDark, isAestheticTheme]
+    () => createStyles(colors, fontFamily, themeFontSize, isDark),
+    [colors, fontFamily, themeFontSize, isDark]
   );
 
   const handleFocus = useCallback(() => {
@@ -107,8 +107,6 @@ export const SearchBar = React.memo(function SearchBar({
   // Dynamic frosted glass border with smooth animated focus glow
   const restBorderColor = isDark
     ? "rgba(255, 255, 255, 0.2)"
-    : isAestheticTheme
-    ? `${colors.border}E6`
     : `${colors.border}B3`;
 
   const activeBorderColor = `${colors.primary}CC`;
@@ -127,33 +125,19 @@ export const SearchBar = React.memo(function SearchBar({
         "rgba(28, 28, 30, 0.5)",
       ];
     }
-    if (isAestheticTheme) {
-      return [
-        "rgba(255, 255, 255, 0.9)",
-        "rgba(255, 255, 255, 0.45)",
-        "rgba(255, 255, 255, 0.15)",
-      ];
-    }
     return [
       "rgba(255, 255, 255, 0.85)",
       "rgba(255, 255, 255, 0.35)",
       "rgba(230, 230, 238, 0.3)",
     ];
-  }, [isDark, isAestheticTheme]);
+  }, [isDark]);
 
   // Optimized blur configuration across platforms
-  const blurIntensity = isDark ? 60 : isAestheticTheme ? 80 : 75;
+  const blurIntensity = isDark ? 60 : 75;
   const blurTint = isDark ? "dark" : "light";
 
   return (
     <View style={[styles.container, style]} onLayout={handleContainerLayout}>
-      {/* Skia 120 FPS Walking Cat (Rose Theme Only) */}
-      {themeMode === "rose" && (
-        <View style={styles.catWrapper} pointerEvents="box-none">
-          <WalkingCat barWidth={barWidth} isFocused={isFocused} />
-        </View>
-      )}
-
       <RNAnimated.View style={[styles.outerWrapper, { borderColor }]}>
         {/* 1. Base translucent underlay */}
         <View style={styles.glassBase} />
@@ -254,8 +238,7 @@ const createStyles = (
   fontFamily: ThemeFontFamily,
   fontSize: ThemeFontSize,
   isDark: boolean,
-  isAestheticTheme: boolean
-) =>
+  ) =>
   StyleSheet.create({
     container: {
       flex: 1,
@@ -302,13 +285,9 @@ const createStyles = (
         Platform.OS === "android"
           ? isDark
             ? `${colors.card}B3`
-            : isAestheticTheme
-            ? `${colors.card}CC`
             : `${colors.card}99`
           : isDark
           ? "rgba(28, 28, 30, 0.35)"
-          : isAestheticTheme
-          ? "rgba(255, 255, 255, 0.35)"
           : "rgba(255, 255, 255, 0.35)",
     },
     row: {

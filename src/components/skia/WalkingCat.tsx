@@ -36,7 +36,7 @@ export const WalkingCat = React.memo(function WalkingCat({
   isFocused = false,
   style,
 }: WalkingCatProps) {
-  const { colors, themeMode } = useAppTheme();
+  const { colors } = useAppTheme();
 
   // 1. Shared values for 120 FPS UI thread animations
   const catX = useSharedValue(24);
@@ -302,7 +302,7 @@ export const WalkingCat = React.memo(function WalkingCat({
     { scale: heartOpacity.value },
   ]);
 
-  // 5. Aesthetic theme colors
+  // 5. Theme colors
   const furColor = "#FFFDF9";
   const furShadow = "#ECE6DF";
   const strokeColor = "rgba(48, 34, 30, 0.88)";
@@ -328,9 +328,6 @@ export const WalkingCat = React.memo(function WalkingCat({
     );
   }, [jumpY, heartY, heartOpacity]);
 
-  if (themeMode !== "rose") {
-    return null;
-  }
 
   return (
     <View style={[styles.container, style]} pointerEvents="box-none">
