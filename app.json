@@ -32,7 +32,10 @@
           "image": "./assets/images/icon.png",
           "imageWidth": 200
         }
-      ]
+      ],
+      "expo-font",
+      "expo-image",
+      "expo-status-bar"
     ],
     "experiments": {
       "typedRoutes": true,
