@@ -11,7 +11,7 @@ export { DevTheme } from "./ui/DevTheme";
 export { TabSwitcher, type TabOption, type TabSwitcherProps } from "./ui/TabSwitcher";
 export { AppText, AnimatedAppText, type AppTextProps } from "./ui/AppText";
 export { AppTextInput, type AppTextInputProps, type AppTextInputRef } from "./ui/AppTextInput";
-export { GlassIconButton, type GlassIconButtonProps } from "./ui/GlassIconButton";
+export { GlassButton, type GlassButtonProps } from "./ui/GlassButton";
 export { EmptyState, type EmptyStateProps, type ExpoIconFamily } from "./ui/EmptyState";
 
 // ─── Theme Decorations ───────────────────────────────────────────────────────

@@ -1,32 +1,16 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { useMemo } from "react";
 import {
-  Platform,
   Pressable,
   StyleSheet,
   View,
-  type LayoutChangeEvent,
   type StyleProp,
   type ViewStyle,
 } from "react-native";
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
-import Animated, {
-  Easing,
-  useAnimatedStyle,
-  useSharedValue,
-  withSequence,
-  withSpring,
-  withTiming,
-  type WithSpringConfig,
-} from "react-native-reanimated";
-import { scheduleOnRN } from "react-native-worklets";
-
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { Haptics } from "@/lib/haptics";
 import { spacing, type ThemeColors, type ThemeFontFamily } from "@/theme";
-import { hp, scale, verticalScale, wp } from "@/helpers/responsiveHelper";
+import { scale } from "@/helpers/responsiveHelper";
 import { AppText } from "./AppText";
-import { JumpingFrog } from "../skia/JumpingFrog";
-import { PeekingCat } from "../skia/PeekingCat";
 
 export interface TabOption {
   label: string;
@@ -40,187 +24,48 @@ export interface TabSwitcherProps {
   style?: StyleProp<ViewStyle>;
 }
 
-// Bouncy iOS-like physics
-const SPRING_CONFIG: WithSpringConfig = {
-  mass: 0.65,
-  damping: 17,
-  stiffness: 240,
-  overshootClamping: false,
-};
-
-const SCALE_SPRING_CONFIG: WithSpringConfig = {
-  mass: 0.55,
-  damping: 14,
-  stiffness: 260,
-  overshootClamping: false,
-};
-
 export const TabSwitcher = React.memo(function TabSwitcher({
   tabs,
   activeTab,
   onTabChange,
   style,
 }: TabSwitcherProps) {
-  const { colors, fontFamily, isDark, themeMode } = useAppTheme();
+  const { colors, fontFamily, isDark } = useAppTheme();
   const styles = useMemo(
     () => createStyles(colors, fontFamily, isDark),
     [colors, fontFamily, isDark],
   );
 
-  const [containerWidth, setContainerWidth] = useState(0);
-
-  const activeIndex = Math.max(
-    tabs.findIndex((t) => t.value === activeTab),
-    0,
-  );
-  const tabWidth =
-    containerWidth > 0 ? (containerWidth - spacing.xs * 2) / tabs.length : 0;
-
-  const translateX = useSharedValue(0);
-  const pillScale = useSharedValue(1);
-  const containerScale = useSharedValue(1);
-  const startX = useSharedValue(0);
-  const isDragging = useSharedValue(false);
-  // Tracks whether the pill has been snapped to its initial position.
-  // We can only do this once tabWidth > 0 (after the first layout).
-  const isInitialized = useRef(false);
-
-  useEffect(() => {
-    if (tabWidth <= 0 || isDragging.value) return;
-
-    if (!isInitialized.current) {
-      // Snap instantly on first render — no animation
-      translateX.value = activeIndex * tabWidth;
-      isInitialized.current = true;
-      return;
-    }
-
-    // Subsequent tab changes: animate with spring + scale pop
-    pillScale.value = withSequence(
-      withTiming(1.45, {
-        duration: 140,
-        easing: Easing.out(Easing.quad),
-      }),
-      withSpring(1.0, SCALE_SPRING_CONFIG),
-    );
-    translateX.value = withSpring(activeIndex * tabWidth, SPRING_CONFIG);
-  }, [activeIndex, tabWidth]);
-
-  const handleTabChange = useCallback(
-    (val: string) => {
-      Haptics.light();
-      onTabChange(val);
-    },
-    [onTabChange],
-  );
-
-  const panGesture = Gesture.Pan()
-    .onBegin(() => {
-      "worklet";
-      isDragging.value = true;
-      startX.value = translateX.value;
-      pillScale.value = withSpring(1.45, SCALE_SPRING_CONFIG);
-      containerScale.value = withSpring(1.08, SCALE_SPRING_CONFIG);
-    })
-    .onUpdate((event) => {
-      "worklet";
-      if (tabWidth <= 0) return;
-      const maxTranslate = tabWidth * (tabs.length - 1);
-      const rawX = startX.value + event.translationX;
-      if (rawX < 0) {
-        translateX.value = rawX * 0.45;
-      } else if (rawX > maxTranslate) {
-        translateX.value = maxTranslate + (rawX - maxTranslate) * 0.45;
-      } else {
-        translateX.value = rawX;
-      }
-    })
-    .onFinalize(() => {
-      "worklet";
-      isDragging.value = false;
-      pillScale.value = withSpring(1.0, SCALE_SPRING_CONFIG);
-      containerScale.value = withSpring(1.0, SCALE_SPRING_CONFIG);
-      if (tabWidth <= 0) return;
-      const closestIndex = Math.round(translateX.value / tabWidth);
-      const boundedIndex = Math.max(0, Math.min(closestIndex, tabs.length - 1));
-      translateX.value = withSpring(boundedIndex * tabWidth, SPRING_CONFIG);
-      const selectedTab = tabs[boundedIndex];
-      if (selectedTab && selectedTab.value !== activeTab) {
-        scheduleOnRN(handleTabChange, selectedTab.value);
-      }
-    });
-
-  const animatedPillStyle = useAnimatedStyle(() => ({
-    transform: [{ translateX: translateX.value }, { scale: pillScale.value }],
-    width: tabWidth > 0 ? tabWidth : 0,
-  }));
-
-  const animatedContainerStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: containerScale.value }],
-  }));
-
-  const onLayoutContainer = useCallback((e: LayoutChangeEvent) => {
-    setContainerWidth(e.nativeEvent.layout.width);
-  }, []);
-
   return (
-    <Animated.View style={[styles.container, style, animatedContainerStyle]}>
+    <View style={[styles.container, style]}>
       <View style={styles.track}>
-        {/* Track Solid Theme Background */}
-        <View style={styles.trackBackground} />
-
-        <GestureDetector gesture={panGesture}>
-          <View style={styles.tabContainer} onLayout={onLayoutContainer}>
-            {/* Animated Active Pill Indicator */}
-            {tabWidth > 0 && (
-              <Animated.View
-                pointerEvents="none"
-                style={[styles.activePill, animatedPillStyle]}
-              />
-            )}
-
-            {/* Tab Items (Notes / Tasks) */}
-            {tabs.map((tab) => {
-              const isActive = activeTab === tab.value;
-              return (
-                <Pressable
-                  key={tab.value}
-                  style={styles.tab}
-                  hitSlop={spacing.xs}
-                  onPressIn={() => {
-                    containerScale.value = withSpring(1.08, SCALE_SPRING_CONFIG);
-                    if (isActive) {
-                      pillScale.value = withSpring(1.2, SCALE_SPRING_CONFIG);
-                    }
-                  }}
-                  onPressOut={() => {
-                    containerScale.value = withSpring(1.0, SCALE_SPRING_CONFIG);
-                    if (isActive) {
-                      pillScale.value = withSpring(1.0, SCALE_SPRING_CONFIG);
-                    }
-                  }}
-                  onPress={() => {
-                    if (!isActive) {
-                      handleTabChange(tab.value);
-                    }
-                  }}
-                >
-                  <AppText
-                    style={[
-                      styles.tabText,
-                      isActive ? styles.tabTextActive : styles.tabTextInactive,
-                    ]}
-                    numberOfLines={1}
-                  >
-                    {tab.label}
-                  </AppText>
-                </Pressable>
-              );
-            })}
-          </View>
-        </GestureDetector>
+        {tabs.map((tab) => {
+          const isActive = activeTab === tab.value;
+          return (
+            <Pressable
+              key={tab.value}
+              style={[styles.tab, isActive && styles.activeTab]}
+              onPress={() => {
+                if (!isActive) {
+                  Haptics.light();
+                  onTabChange(tab.value);
+                }
+              }}
+            >
+              <AppText
+                style={[
+                  styles.tabText,
+                  isActive ? styles.tabTextActive : styles.tabTextInactive,
+                ]}
+                numberOfLines={1}
+              >
+                {tab.label}
+              </AppText>
+            </Pressable>
+          );
+        })}
       </View>
-    </Animated.View>
+    </View>
   );
 });
 
@@ -230,71 +75,24 @@ const createStyles = (
   colors: ThemeColors,
   fontFamily: ThemeFontFamily,
   isDark: boolean,
-  ) =>
+) =>
   StyleSheet.create({
     container: {
       width: scale(190),
       alignSelf: "center",
-      overflow: "visible",
-      position: "relative",
-    },
-    peekingCatWrapper: {
-      position: "absolute",
-      top: -verticalScale(26),
-      left: 0,
-      right: 0,
-      zIndex: 2,
-      overflow: "visible",
-    },
-    jumpingFrogWrapper: {
-      position: "absolute",
-      top: -verticalScale(63),
-      left: 0,
-      right: 0,
-      zIndex: 20,
-      overflow: "visible",
     },
     track: {
-      width: "100%",
-      position: "relative",
-      overflow: "visible",
-      zIndex: 1,
+      flexDirection: "row",
+      backgroundColor: colors.background,
+      borderRadius: spacing.xxl,
+      borderWidth: 1,
+      borderColor: colors.border,
+      padding: spacing.xs,
       shadowColor: colors.text,
       shadowOffset: { width: 0, height: spacing.vXs },
       shadowOpacity: isDark ? 0.35 : 0.08,
       shadowRadius: spacing.sm,
-      elevation: 6,
-    },
-    trackBackground: {
-      ...(StyleSheet.absoluteFill as any),
-      borderRadius: spacing.xxl,
-      overflow: "hidden",
-      borderWidth: 1,
-      borderColor: colors.border,
-      backgroundColor: colors.background,
-    },
-    tabContainer: {
-      flexDirection: "row",
-      padding: spacing.xs,
-      position: "relative",
-      overflow: "visible",
-      zIndex: 1,
-    },
-    activePill: {
-      position: "absolute",
-      top: spacing.xs,
-      bottom: spacing.xs,
-      left: spacing.xs,
-      borderRadius: spacing.xl,
-      backgroundColor: colors.card,
-      borderWidth: 1,
-      borderColor: colors.border,
-      shadowColor: colors.text,
-      shadowOffset: { width: 0, height: spacing.vXs },
-      shadowOpacity: isDark ? 0.3 : 0.08,
-      shadowRadius: spacing.sm,
       elevation: 3,
-      zIndex: 1,
     },
     tab: {
       flex: 1,
@@ -302,7 +100,17 @@ const createStyles = (
       paddingHorizontal: spacing.sm,
       alignItems: "center",
       justifyContent: "center",
-      zIndex: 10,
+      borderRadius: spacing.xl,
+    },
+    activeTab: {
+      backgroundColor: colors.card,
+      borderWidth: 1,
+      borderColor: colors.border,
+      shadowColor: colors.text,
+      shadowOffset: { width: 0, height: spacing.vXs },
+      shadowOpacity: isDark ? 0.25 : 0.08,
+      shadowRadius: spacing.xs,
+      elevation: 2,
     },
     tabText: {
       textAlign: "center",

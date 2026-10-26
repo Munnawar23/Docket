@@ -10,27 +10,21 @@ const BOTTOM_BAR_CLEARANCE = spacing.xxxl * 3 + spacing.lg;
 export const TasksListScreen = React.memo(function TasksListScreen() {
   const { colors } = useAppTheme();
   const { bottom } = useAppSafeArea();
-
   const styles = useMemo(() => createStyles(spacing), []);
 
   const bottomPadding = Math.max(bottom, spacing.screenPadding) + BOTTOM_BAR_CLEARANCE;
-
-  const contentContainerStyle = useMemo(
-    () => [styles.scrollContent, { paddingBottom: bottomPadding }],
-    [styles.scrollContent, bottomPadding],
-  );
 
   return (
     <View style={styles.container}>
       <ScrollView
         style={styles.container}
-        contentContainerStyle={contentContainerStyle}
+        contentContainerStyle={[styles.scrollContent, { paddingBottom: bottomPadding }]}
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.titleContainer}>
           <AppText variant="largeTitle">Tasks</AppText>
         </View>
-        <View style={styles.emptyContainer}>
+        <View style={styles.centerEmptyContainer}>
           <EmptyState
             iconFamily="Ionicons"
             iconName="checkbox-outline"
@@ -52,18 +46,18 @@ const createStyles = (spacing: ThemeSpacing) =>
       flex: 1,
     },
     scrollContent: {
-      paddingHorizontal: spacing.screenPadding,
-      paddingTop: spacing.sm,
+      flexGrow: 1,
     },
     titleContainer: {
-      paddingTop: spacing.vXs,
+      paddingHorizontal: spacing.screenPadding,
+      paddingTop: 0,
       paddingBottom: spacing.sm,
     },
-    emptyContainer: {
-      flex: 1,
+    centerEmptyContainer: {
       alignItems: "center",
       justifyContent: "center",
-      paddingTop: spacing.xxxl * 2,
+      paddingHorizontal: spacing.screenPadding,
+      paddingTop: spacing.xxxl * 3,
       paddingBottom: spacing.xxxl * 2,
     },
   });

@@ -1,4 +1,4 @@
-import { GlassIconButton } from "@/components";
+import { GlassButton } from "@/components";
 import { verticalScale } from "@/helpers/responsiveHelper";
 import { useAppSafeArea } from "@/hooks/useAppSafeArea";
 import { useAppTheme } from "@/hooks/useAppTheme";
@@ -30,13 +30,13 @@ export const Header = React.memo(function Header() {
   return (
     <View style={styles.container}>
       {/* Drawer Toggle */}
-      <GlassIconButton onPress={handleOpenDrawer}>
+      <GlassButton onPress={handleOpenDrawer}>
         <Ionicons
           name="reorder-four-outline"
           size={spacing.iconMd}
           color={colors.text}
         />
-      </GlassIconButton>
+      </GlassButton>
 
       {/* Search Bar */}
       <View style={styles.searchBarWrapper}>
@@ -44,13 +44,13 @@ export const Header = React.memo(function Header() {
       </View>
 
       {/* Profile */}
-      <GlassIconButton onPress={handleProfilePress}>
+      <GlassButton onPress={handleProfilePress}>
         <Ionicons
           name="person-outline"
           size={spacing.iconMd}
           color={colors.text}
         />
-      </GlassIconButton>
+      </GlassButton>
     </View>
   );
 });
@@ -66,7 +66,7 @@ const createStyles = (topInset: number, colors: ThemeColors) =>
       alignItems: "center",
       paddingHorizontal: spacing.screenPadding,
       paddingTop: topInset + verticalScale(5),
-      paddingBottom: verticalScale(6),
+      paddingBottom: 0,
       gap: spacing.sm,
       backgroundColor: colors.background,
       zIndex: 10,

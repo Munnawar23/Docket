@@ -1,17 +1,17 @@
 import { AppText } from "@/components/ui/AppText";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { MOCK_NOTES } from "@/constants";
-import { sortNotes } from "../utils/sortNotes";
-import type { Note, NotesListScreenProps } from "@/types";
 import { useAppSafeArea } from "@/hooks/useAppSafeArea";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { Haptics } from "@/lib/haptics";
 import { spacing, type ThemeSpacing } from "@/theme";
+import type { Note, NotesListScreenProps } from "@/types";
 import { FlashList } from "@shopify/flash-list";
 import React, { useCallback, useMemo, useState } from "react";
 import { RefreshControl, StyleSheet, View } from "react-native";
 import Animated, { LinearTransition } from "react-native-reanimated";
 import { NoteCard } from "../components/NoteCard";
+import { sortNotes } from "../utils/sortNotes";
 
 // Clearance for the floating bottom navigation bar
 const BOTTOM_BAR_CLEARANCE = spacing.xxxl * 3 + spacing.lg;
@@ -31,7 +31,9 @@ export const NotesListScreen = React.memo(function NotesListScreen({
   const { colors } = useAppTheme();
   const { bottom } = useAppSafeArea();
 
-  const [internalNotes, setInternalNotes] = useState<Note[]>(() => sortNotes(MOCK_NOTES));
+  const [internalNotes, setInternalNotes] = useState<Note[]>(() =>
+    sortNotes(MOCK_NOTES),
+  );
   const notes = controlledNotes ?? internalNotes;
 
   const [internalRefreshing, setInternalRefreshing] = useState(false);
@@ -47,22 +49,15 @@ export const NotesListScreen = React.memo(function NotesListScreen({
     Haptics.light();
     setInternalRefreshing(true);
     setTimeout(() => {
-      // Refresh / reload mock data
-      setInternalNotes(sortNotes([...MOCK_NOTES]));
       setInternalRefreshing(false);
-    }, 1000);
+    }, 600);
   }, [onRefresh]);
 
   const handleNotePress = useCallback(
     (note: Note) => {
-      if (isSelectionMode) {
-        onToggleSelectNote?.(note);
-      } else {
-        onNotePress?.(note);
-        console.log("[NotesListScreen] Note pressed:", note.title);
-      }
+      onNotePress?.(note);
     },
-    [isSelectionMode, onToggleSelectNote, onNotePress],
+    [onNotePress],
   );
 
   const handleNoteLongPress = useCallback(
@@ -77,7 +72,6 @@ export const NotesListScreen = React.memo(function NotesListScreen({
       const isSelected = selectedNoteIds.includes(item.id);
       return (
         <Animated.View
-          key={item.id}
           layout={LinearTransition.duration(280)}
           style={styles.cardItemWrapper}
         >
@@ -112,22 +106,8 @@ export const NotesListScreen = React.memo(function NotesListScreen({
     [styles.titleContainer],
   );
 
-  const renderEmpty = useCallback(
-    () => (
-      <View style={styles.emptyContainer}>
-        <EmptyState
-          iconFamily="Ionicons"
-          iconName="document-text-outline"
-          iconColor={colors.primary}
-          title="No notes yet"
-          description="Capture your thoughts and ideas."
-        />
-      </View>
-    ),
-    [colors.primary, styles.emptyContainer],
-  );
-
-  const bottomPadding = Math.max(bottom, spacing.screenPadding) + BOTTOM_BAR_CLEARANCE;
+  const bottomPadding =
+    Math.max(bottom, spacing.screenPadding) + BOTTOM_BAR_CLEARANCE;
 
   const contentContainerStyle = useMemo(
     () => [styles.listContent, { paddingBottom: bottomPadding }],
@@ -145,7 +125,17 @@ export const NotesListScreen = React.memo(function NotesListScreen({
         optimizeItemArrangement
         showsVerticalScrollIndicator={false}
         ListHeaderComponent={renderHeader}
-        ListEmptyComponent={renderEmpty}
+        ListEmptyComponent={
+          <View style={styles.centerEmptyContainer}>
+            <EmptyState
+              iconFamily="Ionicons"
+              iconName="document-text-outline"
+              iconColor={colors.primary}
+              title="No notes yet"
+              description="Capture your thoughts and ideas."
+            />
+          </View>
+        }
         contentContainerStyle={contentContainerStyle}
         refreshControl={
           <RefreshControl
@@ -170,23 +160,22 @@ const createStyles = (spacing: ThemeSpacing) =>
     },
     listContent: {
       paddingHorizontal: spacing.screenPadding - spacing.xs,
-      paddingTop: spacing.sm,
+      paddingTop: 0,
     },
     titleContainer: {
-      paddingHorizontal: spacing.xs,
-      paddingTop: spacing.vXs,
+      paddingHorizontal: spacing.screenPadding,
+      paddingTop: 0,
       paddingBottom: spacing.sm,
     },
     cardItemWrapper: {
       paddingHorizontal: spacing.xs,
       paddingBottom: spacing.itemGap,
     },
-    emptyContainer: {
-      flex: 1,
+    centerEmptyContainer: {
       alignItems: "center",
       justifyContent: "center",
       paddingHorizontal: spacing.screenPadding,
-      paddingTop: spacing.xxxl * 2,
+      paddingTop: spacing.xxxl * 3,
       paddingBottom: spacing.xxxl * 2,
     },
   });

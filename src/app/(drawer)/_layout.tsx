@@ -8,7 +8,6 @@ export default function DrawerLayout() {
 
   return (
     <Drawer
-      initialRouteName="index"
       screenOptions={{
         headerStyle: {
           backgroundColor: colors.background,
@@ -39,7 +38,7 @@ export default function DrawerLayout() {
           drawerLabel: "Home",
           title: "Home",
           drawerIcon: ({ color, size }) => (
-            <Ionicons name="home-outline" size={size} color={color} />
+            <Ionicons name="home-outline" size={size} color={String(color || colors.text)} />
           ),
         }}
       />
@@ -49,7 +48,7 @@ export default function DrawerLayout() {
           drawerLabel: "Settings",
           title: "Settings",
           drawerIcon: ({ color, size }) => (
-            <Ionicons name="settings-outline" size={size} color={color} />
+            <Ionicons name="settings-outline" size={size} color={String(color || colors.subtext)} />
           ),
         }}
       />

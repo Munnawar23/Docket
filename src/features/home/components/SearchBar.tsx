@@ -107,7 +107,7 @@ export const SearchBar = React.memo(function SearchBar({
   // Dynamic frosted glass border with smooth animated focus glow
   const restBorderColor = isDark
     ? "rgba(255, 255, 255, 0.2)"
-    : `${colors.border}B3`;
+    : colors.border;
 
   const activeBorderColor = `${colors.primary}CC`;
 
@@ -285,10 +285,10 @@ const createStyles = (
         Platform.OS === "android"
           ? isDark
             ? `${colors.card}B3`
-            : `${colors.card}99`
+            : colors.card
           : isDark
           ? "rgba(28, 28, 30, 0.35)"
-          : "rgba(255, 255, 255, 0.35)",
+          : colors.card,
     },
     row: {
       flex: 1,

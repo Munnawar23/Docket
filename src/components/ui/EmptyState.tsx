@@ -117,23 +117,15 @@ export const EmptyState = React.memo(function EmptyState({
   style,
   children,
 }: EmptyStateProps) {
-  const { colors, isDark } = useAppTheme();
+  const { colors } = useAppTheme();
 
-  // Resolved colors
+  // Resolved theme colors (strictly using theme palette)
   const resolvedIconColor = iconColor || colors.primary;
-  const resolvedBadgeBg =
-    iconBackgroundColor ||
-    (isDark ? "rgba(255, 255, 255, 0.06)" : "rgba(0, 0, 0, 0.035)");
-
-  const resolvedDescColor =
-    descriptionColor ||
-    (isDark
-      ? "rgba(255, 255, 255, 0.72)"
-      : "#4E4E4E");
+  const resolvedBadgeBg = iconBackgroundColor || colors.card;
 
   const styles = useMemo(
-    () => createStyles(colors, isDark, resolvedBadgeBg),
-    [colors, isDark, resolvedBadgeBg],
+    () => createStyles(colors, resolvedBadgeBg),
+    [colors, resolvedBadgeBg],
   );
 
   // Dynamic icon component lookup
@@ -179,7 +171,7 @@ export const EmptyState = React.memo(function EmptyState({
         <AppText
           variant="body"
           medium
-          color={resolvedDescColor}
+          color={descriptionColor || "subtext"}
           align="center"
           style={styles.description}
         >
@@ -200,11 +192,16 @@ export const EmptyState = React.memo(function EmptyState({
             <Ionicons
               name={actionIcon}
               size={spacing.iconSm}
-              color="#FFFFFF"
+              color={colors.card}
               style={styles.actionIcon}
             />
           ) : null}
-          <AppText variant="bodySm" semiBold style={styles.actionButtonText}>
+          <AppText
+            variant="bodySm"
+            semiBold
+            color={colors.card}
+            style={styles.actionButtonText}
+          >
             {actionLabel}
           </AppText>
         </Pressable>
@@ -220,13 +217,14 @@ export default EmptyState;
 
 // ─── Styles ───────────────────────────────────────────────────────────────────
 
-const createStyles = (colors: ThemeColors, isDark: boolean, badgeBg: string) =>
+const createStyles = (colors: ThemeColors, badgeBg: string) =>
   StyleSheet.create({
     container: {
+      flex: 1,
       alignItems: "center",
       justifyContent: "center",
       paddingHorizontal: spacing.xxl,
-      paddingVertical: verticalScale(28),
+      paddingVertical: verticalScale(32),
     },
     iconBadge: {
       width: scale(80),
@@ -235,16 +233,20 @@ const createStyles = (colors: ThemeColors, isDark: boolean, badgeBg: string) =>
       backgroundColor: badgeBg,
       alignItems: "center",
       justifyContent: "center",
-      marginBottom: verticalScale(10),
+      marginBottom: verticalScale(14),
       borderWidth: 1,
-      borderColor: isDark ? "rgba(255, 255, 255, 0.08)" : "rgba(0, 0, 0, 0.04)",
+      borderColor: colors.border,
+      shadowColor: colors.text,
+      shadowOffset: { width: 0, height: verticalScale(2) },
+      shadowOpacity: 0.08,
+      shadowRadius: scale(4),
+      elevation: 2,
     },
     title: {
       marginBottom: verticalScale(6),
     },
     description: {
       maxWidth: scale(310),
-      lineHeight: verticalScale(23),
     },
     actionButton: {
       flexDirection: "row",
@@ -264,6 +266,6 @@ const createStyles = (colors: ThemeColors, isDark: boolean, badgeBg: string) =>
       marginRight: scale(6),
     },
     actionButtonText: {
-      color: "#FFFFFF",
+      // Handled via AppText color prop
     },
   });

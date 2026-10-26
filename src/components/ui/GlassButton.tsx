@@ -16,7 +16,7 @@ import { spacing, type ThemeColors } from "@/theme";
 
 // ─── Props ────────────────────────────────────────────────────────────────────
 
-export interface GlassIconButtonProps {
+export interface GlassButtonProps {
   onPress?: () => void;
   children: React.ReactNode;
   size?: number;
@@ -29,7 +29,7 @@ export interface GlassIconButtonProps {
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
-export const GlassIconButton = React.memo(function GlassIconButton({
+export const GlassButton = React.memo(function GlassButton({
   onPress,
   children,
   size = wp(10.8),
@@ -38,7 +38,7 @@ export const GlassIconButton = React.memo(function GlassIconButton({
   disabled,
   accessibilityLabel,
   testID,
-}: GlassIconButtonProps) {
+}: GlassButtonProps) {
   const { colors, isDark } = useAppTheme();
 
   const styles = useMemo(
@@ -67,16 +67,16 @@ export const GlassIconButton = React.memo(function GlassIconButton({
 
   const borderColor = isDark
     ? "rgba(255, 255, 255, 0.2)"
-    : `${colors.border}B3`;
+    : colors.border;
 
   const glassBaseBg =
     Platform.OS === "android"
       ? isDark
         ? `${colors.card}B3`
-        : `${colors.card}99`
+        : colors.card
       : isDark
         ? "rgba(28, 28, 30, 0.35)"
-        : "rgba(255, 255, 255, 0.35)";
+        : colors.card;
 
   return (
     <Pressable
@@ -120,7 +120,7 @@ export const GlassIconButton = React.memo(function GlassIconButton({
   );
 });
 
-export default GlassIconButton;
+export default GlassButton;
 
 // ─── Styles ───────────────────────────────────────────────────────────────────
 

@@ -6,7 +6,7 @@ import { useAppSafeArea } from "@/hooks/useAppSafeArea";
 import { Haptics } from "@/lib/haptics";
 import { useCallback, useMemo, useState } from "react";
 import { Dimensions, LayoutChangeEvent } from "react-native";
-import { Gesture } from "react-native-gesture-handler";
+import { usePanGesture } from "react-native-gesture-handler";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -56,57 +56,65 @@ export function useHomeScreen() {
     });
   }, []);
 
-  const swipeGesture = useMemo(
-    () =>
-      Gesture.Pan()
-        .activeOffsetX([-15, 15])
-        .failOffsetY([-15, 15])
-        .onBegin(() => {
-          "worklet";
-          startTranslateX.value = contentTranslateX.value;
-        })
-        .onUpdate((event) => {
-          "worklet";
-          const w = pageWidth.value;
-          if (w <= 0) return;
-          const raw = startTranslateX.value + event.translationX;
-          if (raw > 0) {
-            contentTranslateX.value = raw * 0.2;
-          } else if (raw < -w) {
-            contentTranslateX.value = -w + (raw + w) * 0.2;
-          } else {
-            contentTranslateX.value = raw;
-          }
-        })
-        .onFinalize((event, success) => {
-          "worklet";
-          const w = pageWidth.value;
-          if (w <= 0) return;
+  const swipeGesture = usePanGesture({
+    activeOffsetX: [-15, 15],
+    failOffsetY: [-15, 15],
+    onBegin: () => {
+      "worklet";
+      startTranslateX.value = contentTranslateX.value;
+    },
+    onUpdate: (event) => {
+      "worklet";
+      const w = pageWidth.value;
+      if (w <= 0) return;
+      const raw = startTranslateX.value + event.translationX;
+      if (raw > 0) {
+        contentTranslateX.value = raw * 0.2;
+      } else if (raw < -w) {
+        contentTranslateX.value = -w + (raw + w) * 0.2;
+      } else {
+        contentTranslateX.value = raw;
+      }
+    },
+    onDeactivate: (event) => {
+      "worklet";
+      const w = pageWidth.value;
+      if (w <= 0) return;
 
-          if (!success) {
-            contentTranslateX.value = withSpring(
-              -currentTabIndex.value * w,
-              PAGE_SPRING_CONFIG
-            );
-            return;
-          }
+      if (event.canceled) {
+        contentTranslateX.value = withSpring(
+          -currentTabIndex.value * w,
+          PAGE_SPRING_CONFIG
+        );
+        return;
+      }
 
-          const progress = -contentTranslateX.value / w;
-          let targetIndex = Math.round(progress);
-          if (event.velocityX < -400) targetIndex = 1;
-          else if (event.velocityX > 400) targetIndex = 0;
-          targetIndex = Math.max(0, Math.min(1, targetIndex));
-          contentTranslateX.value = withSpring(-targetIndex * w, PAGE_SPRING_CONFIG);
+      const progress = -contentTranslateX.value / w;
+      let targetIndex = Math.round(progress);
+      if (event.velocityX < -400) targetIndex = 1;
+      else if (event.velocityX > 400) targetIndex = 0;
+      targetIndex = Math.max(0, Math.min(1, targetIndex));
+      contentTranslateX.value = withSpring(-targetIndex * w, PAGE_SPRING_CONFIG);
 
-          if (targetIndex !== currentTabIndex.value) {
-            currentTabIndex.value = targetIndex;
-            const newTab: HomeTab = targetIndex === 0 ? "notes" : "tasks";
-            scheduleOnRN(handleSwipeTabChange, newTab);
-          }
-        }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [] // shared values are stable refs — safe to omit
-  );
+      if (targetIndex !== currentTabIndex.value) {
+        currentTabIndex.value = targetIndex;
+        const newTab: HomeTab = targetIndex === 0 ? "notes" : "tasks";
+        scheduleOnRN(handleSwipeTabChange, newTab);
+      }
+    },
+    onFinalize: (event) => {
+      "worklet";
+      const w = pageWidth.value;
+      if (w <= 0) return;
+
+      if (event.canceled) {
+        contentTranslateX.value = withSpring(
+          -currentTabIndex.value * w,
+          PAGE_SPRING_CONFIG
+        );
+      }
+    },
+  });
 
   // Tab-bar press: run entirely on UI thread to avoid reading .value on JS thread
   const handleTabPress = (val: HomeTab) => {

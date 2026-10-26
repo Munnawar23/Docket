@@ -3,8 +3,6 @@ import { Haptics } from "@/lib/haptics";
 import { spacing, type ThemeColors, type ThemeFontFamily } from "@/theme";
 import { AppText } from "@/components";
 import { Ionicons } from "@expo/vector-icons";
-import { BlurView } from "expo-blur";
-import { LinearGradient } from "expo-linear-gradient";
 import React, { useCallback, useMemo, useState } from "react";
 import {
   Platform,
@@ -14,33 +12,12 @@ import {
   View,
   type ViewStyle,
 } from "react-native";
-import Animated, {
-  interpolate,
-  Extrapolation,
-  runOnJS,
-  useAnimatedReaction,
-  useAnimatedStyle,
-  useSharedValue,
-  withDelay,
-  withSpring,
-  type SharedValue,
-} from "react-native-reanimated";
 import { hp, wp, scale, verticalScale } from "@/helpers/responsiveHelper";
 
 const FAB_SIZE = scale(48);
 const PILL_HEIGHT = verticalScale(46);
-const PILL_WIDTH = scale(105);
+const PILL_WIDTH = scale(115);
 const PILL_GAP = verticalScale(10);
-const PILL_OFFSET_Y = verticalScale(14); // slide-in distance
-const STAGGER_MS = 60; // delay between each pill on open
-
-// Spring configs ΓÇö tuned for 120 fps feel
-const BACKDROP_SPRING = { damping: 20, stiffness: 160, mass: 0.8 };
-const ICON_SPRING     = { damping: 14, stiffness: 320, mass: 0.55 };
-const PILL_SPRING     = { damping: 15, stiffness: 280, mass: 0.6 };
-const CLOSE_SPRING    = { damping: 22, stiffness: 340, mass: 0.55 };
-
-// ΓöÇΓöÇΓöÇ Types ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 
 type FABOptionId = "note" | "task" | "image" | "audio";
 
@@ -66,8 +43,6 @@ export interface FABProps {
   style?: StyleProp<ViewStyle>;
 }
 
-// ΓöÇΓöÇΓöÇ FAB ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
-
 export const FAB = React.memo(function FAB({
   onAddNote,
   onAddTask,
@@ -82,87 +57,26 @@ export const FAB = React.memo(function FAB({
     [colors, fontFamily, isDark]
   );
 
-  // Separate shared value per concern ΓÇö all live on UI thread
-  const backdropProgress = useSharedValue(0);
-  const iconProgress     = useSharedValue(0);
-  // One shared value per pill ΓÇö explicit (rules of hooks: no hooks in loops)
-  const pill0 = useSharedValue(0);
-  const pill1 = useSharedValue(0);
-  const pill2 = useSharedValue(0);
-  const pill3 = useSharedValue(0);
-  const pillProgress = useMemo(() => [pill0, pill1, pill2, pill3], [pill0, pill1, pill2, pill3]);
-
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  // Track open state for pointerEvents (JS state, never .value in render)
-  useAnimatedReaction(
-    () => backdropProgress.value,
-    (cur, prev) => {
-      if (cur !== prev) runOnJS(setIsMenuOpen)(cur > 0.05);
-    }
-  );
-
-  const openMenu = useCallback(() => {
+  const toggleMenu = useCallback(() => {
     Haptics.light();
-    backdropProgress.value = withSpring(1, BACKDROP_SPRING);
-    iconProgress.value     = withSpring(1, ICON_SPRING);
-    // Stagger: pill0 fires immediately, subsequent pills fire after STAGGER_MS steps
-    pill0.value = withSpring(1, PILL_SPRING);
-    pill1.value = withDelay(STAGGER_MS, withSpring(1, PILL_SPRING));
-    pill2.value = withDelay(STAGGER_MS * 2, withSpring(1, PILL_SPRING));
-    pill3.value = withDelay(STAGGER_MS * 3, withSpring(1, PILL_SPRING));
-  }, [backdropProgress, iconProgress, pill0, pill1, pill2, pill3]);
+    setIsMenuOpen((prev) => !prev);
+  }, []);
 
   const closeMenu = useCallback(() => {
     Haptics.light();
-    // Reverse stagger on close
-    pill3.value = withSpring(0, CLOSE_SPRING);
-    pill2.value = withDelay(STAGGER_MS, withSpring(0, CLOSE_SPRING));
-    pill1.value = withDelay(STAGGER_MS * 2, withSpring(0, CLOSE_SPRING));
-    pill0.value = withDelay(STAGGER_MS * 3, withSpring(0, CLOSE_SPRING));
-    backdropProgress.value = withDelay(STAGGER_MS * 3, withSpring(0, CLOSE_SPRING));
-    iconProgress.value     = withSpring(0, ICON_SPRING);
-  }, [backdropProgress, iconProgress, pill0, pill1, pill2, pill3]);
-
-  const toggleMenu = useCallback(() => {
-    if (isMenuOpen) closeMenu();
-    else openMenu();
-  }, [isMenuOpen, openMenu, closeMenu]);
-
-  // ΓöÇΓöÇ Animated styles ΓÇö pure UI thread, no JS calls ΓöÇΓöÇ
-
-  const backdropStyle = useAnimatedStyle(() => ({
-    opacity: interpolate(
-      backdropProgress.value,
-      [0, 1],
-      [0, 0.58],
-      Extrapolation.CLAMP
-    ),
-  }));
-
-  // + rotates 45┬░ ΓåÆ becomes ├ù
-  const fabIconStyle = useAnimatedStyle(() => ({
-    transform: [
-      {
-        rotate: `${interpolate(
-          iconProgress.value,
-          [0, 1],
-          [0, 45],
-          Extrapolation.CLAMP
-        )}deg`,
-      },
-    ],
-  }));
+    setIsMenuOpen(false);
+  }, []);
 
   return (
     <>
       {/* Backdrop */}
-      <Animated.View
-        style={[styles.backdrop, backdropStyle]}
-        pointerEvents={isMenuOpen ? "auto" : "none"}
-      >
-        <Pressable style={styles.backdropPressable} onPress={toggleMenu} />
-      </Animated.View>
+      {isMenuOpen && (
+        <View style={styles.backdrop}>
+          <Pressable style={styles.backdropPressable} onPress={closeMenu} />
+        </View>
+      )}
 
       {/* FAB Container */}
       <View
@@ -174,32 +88,44 @@ export const FAB = React.memo(function FAB({
         pointerEvents="box-none"
       >
         {/* Pill options */}
-        {FAB_OPTIONS.map((option, index) => (
-          <OptionPill
-            key={option.id}
-            option={option}
-            styles={styles}
-            colors={colors}
-            fontFamily={fontFamily}
-            isDark={isDark}
-                        pillSV={pillProgress[index]}
-            index={index}
-            isMenuOpen={isMenuOpen}
-            onPress={() => {
-              Haptics.light();
-              closeMenu();
-              if (option.id === "note") {
-                onAddNote?.();
-              } else if (option.id === "task") {
-                onAddTask?.();
-              } else if (option.id === "image") {
-                onAddImage?.();
-              } else if (option.id === "audio") {
-                onAddAudio?.();
-              }
-            }}
-          />
-        ))}
+        {isMenuOpen &&
+          FAB_OPTIONS.map((option, index) => {
+            const pillBottom =
+              FAB_SIZE + spacing.sm + index * (PILL_HEIGHT + PILL_GAP);
+            return (
+              <View
+                key={option.id}
+                style={[styles.pillWrapper, { bottom: pillBottom }]}
+              >
+                <Pressable
+                  onPress={() => {
+                    closeMenu();
+                    if (option.id === "note") onAddNote?.();
+                    else if (option.id === "task") onAddTask?.();
+                    else if (option.id === "image") onAddImage?.();
+                    else if (option.id === "audio") onAddAudio?.();
+                  }}
+                  style={({ pressed }) => [
+                    styles.pill,
+                    pressed && styles.pillPressed,
+                  ]}
+                >
+                  <View style={styles.pillContent}>
+                    <AppText variant="bodyLg" semiBold style={styles.pillLabel}>
+                      {option.label}
+                    </AppText>
+                    <View style={styles.pillIconBadge}>
+                      <Ionicons
+                        name={option.icon}
+                        size={scale(16)}
+                        color="#FFFFFF"
+                      />
+                    </View>
+                  </View>
+                </Pressable>
+              </View>
+            );
+          })}
 
         {/* Primary FAB button */}
         <Pressable
@@ -210,24 +136,12 @@ export const FAB = React.memo(function FAB({
             pressed && styles.fabPressed,
           ]}
         >
-          {/* Subtle Specular Sheen */}
-          <LinearGradient
-            colors={[
-              "rgba(255, 255, 255, 0.32)",
-              "rgba(255, 255, 255, 0.08)",
-              "rgba(0, 0, 0, 0.12)",
-            ]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 0.8, y: 1 }}
-            style={StyleSheet.absoluteFill}
-            pointerEvents="none"
-          />
-
-          {/* Icon Content */}
           <View style={styles.fabContent}>
-            <Animated.View style={fabIconStyle}>
-              <Ionicons name="add" size={scale(24)} color="#FFFFFF" />
-            </Animated.View>
+            <Ionicons
+              name={isMenuOpen ? "close" : "add"}
+              size={scale(24)}
+              color="#FFFFFF"
+            />
           </View>
         </Pressable>
       </View>
@@ -235,140 +149,17 @@ export const FAB = React.memo(function FAB({
   );
 });
 
-// ΓöÇΓöÇΓöÇ Option Pill ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
-
-type OptionPillProps = {
-  option: FABOption;
-  styles: ReturnType<typeof createStyles>;
-  colors: ThemeColors;
-  fontFamily: ThemeFontFamily;
-  isDark: boolean;
-    pillSV: SharedValue<number>;
-  index: number;
-  isMenuOpen: boolean;
-  onPress: () => void;
-};
-
-const OptionPill = React.memo(function OptionPill({
-  option,
-  styles,
-  colors,
-  fontFamily,
-  isDark,
-    pillSV,
-  index,
-  isMenuOpen,
-  onPress,
-}: OptionPillProps) {
-  // Pre-computed bottom offset ΓÇö safe, not inside worklet
-  const bottomOffset = FAB_SIZE + spacing.sm + index * (PILL_HEIGHT + PILL_GAP);
-
-  const glassBaseBg =
-    Platform.OS === "android"
-      ? isDark
-        ? "rgba(30, 30, 34, 0.78)"
-        : "rgba(255, 255, 255, 0.8)"
-      : isDark
-      ? "rgba(28, 28, 30, 0.45)"
-      : "rgba(255, 255, 255, 0.45)";
-
-  const sheenColors = useMemo<[string, string, string]>(() => {
-    if (isDark) {
-      return [
-        "rgba(255, 255, 255, 0.22)",
-        "rgba(58, 58, 60, 0.35)",
-        "rgba(28, 28, 30, 0.5)",
-      ];
-    }
-    return [
-      "rgba(255, 255, 255, 0.85)",
-      "rgba(255, 255, 255, 0.35)",
-      "rgba(230, 230, 238, 0.3)",
-    ];
-  }, [isDark]);
-
-  // Pure worklet: only reads pillSV.value + module-level constants
-  const animatedStyle = useAnimatedStyle(() => {
-    const p = pillSV.value;
-    return {
-      opacity: p,
-      transform: [
-        {
-          translateY: interpolate(
-            p,
-            [0, 1],
-            [PILL_OFFSET_Y, 0],
-            Extrapolation.CLAMP
-          ),
-        },
-        {
-          scale: interpolate(p, [0, 1], [0.85, 1], Extrapolation.CLAMP),
-        },
-      ],
-    };
-  });
-
-  return (
-    <Animated.View
-      style={[styles.pillWrapper, { bottom: bottomOffset }, animatedStyle]}
-      pointerEvents={isMenuOpen ? "auto" : "none"}
-    >
-      <Pressable
-        onPress={onPress}
-        style={({ pressed }) => [styles.pill, pressed && styles.pillPressed]}
-      >
-        {/* 1. Base Glass Underlay */}
-        <View style={[styles.glassBase, { backgroundColor: glassBaseBg }]} />
-
-        {/* 2. BlurView (iOS only) */}
-        {Platform.OS === "ios" && (
-          <BlurView
-            intensity={isDark ? 60 : 80}
-            tint={isDark ? "dark" : "light"}
-            style={StyleSheet.absoluteFill}
-          />
-        )}
-
-        {/* 3. Specular Gradient Sheen */}
-        <LinearGradient
-          colors={sheenColors}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 0.8, y: 1 }}
-          style={StyleSheet.absoluteFill}
-          pointerEvents="none"
-        />
-
-        {/* 4. Pill Content (Refined Label on Left + Circular Icon Badge on Right) */}
-        <View style={styles.pillContent}>
-          <AppText variant="bodyLg" semiBold style={styles.pillLabel}>
-            {option.label}
-          </AppText>
-          <View style={styles.pillIconBadge}>
-            <Ionicons
-              name={option.icon}
-              size={scale(16)}
-              color="#FFFFFF"
-            />
-          </View>
-        </View>
-      </Pressable>
-    </Animated.View>
-  );
-});
-
 export default FAB;
-
-// ΓöÇΓöÇΓöÇ Styles ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 
 const createStyles = (
   colors: ThemeColors,
   fontFamily: ThemeFontFamily,
   isDark: boolean,
-  ) =>
+) =>
   StyleSheet.create({
     backdrop: {
       ...StyleSheet.absoluteFill as any,
-      backgroundColor: "#000000",
+      backgroundColor: "rgba(0, 0, 0, 0.45)",
       zIndex: 90,
     },
     backdropPressable: {
@@ -384,10 +175,8 @@ const createStyles = (
       width: FAB_SIZE,
       height: FAB_SIZE,
       borderRadius: FAB_SIZE / 2,
-      overflow: "hidden",
       borderWidth: 1,
       borderColor: "rgba(255, 255, 255, 0.28)",
-      position: "relative",
       backgroundColor: colors.primary,
       shadowColor: colors.primary,
       shadowOffset: { width: 0, height: spacing.vXs },
@@ -399,46 +188,38 @@ const createStyles = (
       flex: 1,
       alignItems: "center",
       justifyContent: "center",
-      zIndex: 1,
     },
     fabPressed: {
-      opacity: 0.72,
+      opacity: 0.8,
       transform: [{ scale: 0.94 }],
-    },
-    glassBase: {
-      ...(StyleSheet.absoluteFill as any),
     },
     pillWrapper: {
       position: "absolute",
-      right: wp(0),
+      right: 0,
       alignItems: "flex-end",
     },
     pill: {
       width: PILL_WIDTH,
       height: PILL_HEIGHT,
       borderRadius: PILL_HEIGHT / 2,
-      overflow: "hidden",
       borderWidth: 1,
-      borderColor: isDark
-        ? "rgba(255, 255, 255, 0.2)"
-        : "rgba(255, 255, 255, 0.85)",
-      position: "relative",
-      backgroundColor: "transparent",
+      borderColor: isDark ? colors.border : "rgba(0, 0, 0, 0.08)",
+      backgroundColor: colors.card,
       ...Platform.select({
         ios: {
           shadowColor: "#000000",
-          shadowOffset: { width: 0, height: verticalScale(3) },
-          shadowOpacity: isDark ? 0.35 : 0.14,
-          shadowRadius: scale(6),
+          shadowOffset: { width: 0, height: verticalScale(2) },
+          shadowOpacity: isDark ? 0.35 : 0.12,
+          shadowRadius: scale(4),
         },
         android: {
-          elevation: 0,
+          elevation: 4,
         },
         web: {
           shadowColor: "#000000",
-          shadowOffset: { width: 0, height: verticalScale(3) },
-          shadowOpacity: isDark ? 0.35 : 0.14,
-          shadowRadius: scale(6),
+          shadowOffset: { width: 0, height: verticalScale(2) },
+          shadowOpacity: isDark ? 0.35 : 0.12,
+          shadowRadius: scale(4),
         },
       }),
     },
@@ -449,7 +230,6 @@ const createStyles = (
       justifyContent: "space-between",
       paddingLeft: scale(14),
       paddingRight: scale(8),
-      zIndex: 1,
     },
     pillIconBadge: {
       width: scale(28),
@@ -465,6 +245,6 @@ const createStyles = (
     },
     pillLabel: {
       color: colors.text,
-      letterSpacing: 0.2,
+      fontFamily: fontFamily.semiBold,
     },
   });

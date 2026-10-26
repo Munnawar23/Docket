@@ -18,7 +18,7 @@ export const spacing = {
   vXxxl: rs.space(32),
 
   // Semantic layout tokens
-  screenPadding: rs.space(16),
+  screenPadding: rs.space(12),
   sectionHeaderTop: rs.space(16),
   sectionHeaderBottom: rs.space(10),
   cardMarginTop: rs.space(6),

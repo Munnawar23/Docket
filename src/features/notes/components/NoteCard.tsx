@@ -14,7 +14,12 @@ import {
   View,
   ViewStyle,
 } from "react-native";
-import Animated, { Easing, FadeInDown, LinearTransition } from "react-native-reanimated";
+import Animated, {
+  Easing,
+  LinearTransition,
+  withDelay,
+  withTiming,
+} from "react-native-reanimated";
 
 export type { NoteCardProps };
 
@@ -76,15 +81,27 @@ export const NoteCard = React.memo(function NoteCard({
     [styles.card, styles.cardSelected, styles.cardActive, isSelected],
   );
 
-  const enteringAnimation = useMemo(
-    () =>
-      FadeInDown.delay(index * 80)
-        .duration(650)
-        .easing(Easing.out(Easing.cubic))
-        .withInitialValues({
-          transform: [{ translateY: 45 }],
-          opacity: 0,
-        }),
+  const enteringAnimation = useCallback(
+    (targetValues: any) => {
+      "worklet";
+      const delay = index * 60;
+      return {
+        initialValues: {
+          originY: targetValues.targetOriginY + 35,
+          opacity: 1,
+        },
+        animations: {
+          originY: withDelay(
+            delay,
+            withTiming(targetValues.targetOriginY, {
+              duration: 400,
+              easing: Easing.out(Easing.cubic),
+            })
+          ),
+          opacity: 1,
+        },
+      };
+    },
     [index],
   );
 
